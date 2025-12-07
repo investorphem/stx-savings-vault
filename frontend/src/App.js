@@ -5,7 +5,7 @@ import { connect, authenticate, userSession } from '@stacks/connect';
 import { StacksMocknet, StacksTestnet, StacksMainnet } from '@stacks/network';
 import { callReadOnlyFunction, makeContractCall, StacksTransaction } from '@stacks/transactions';
 
-const contractAddress = 'STYOURCONTRACTADDRESSHERE'; // Replace with your testnet/mainnet address
+const contractAddress = 'STYOURCONTRACTADDRESSHERE'; // Repl with your testnet/mainnet address
 const contractName = 'stx-vault';
 const functionNameDeposit = 'deposit-stx';
 const functionNameWithdraw = 'withdraw-stx';
