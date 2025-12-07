@@ -1,4 +1,4 @@
-// frontend/src/index.js
+// fronted/src/index.js
 
 import React rom 'reat';
 impotReacM m 'react-dom/client';
