@@ -21,7 +21,7 @@
 (define-constant err-no-deposit-found (err u102))
 
 ;; Public function to depositSTX into the vault.
-(define-public (deposit-stx (amount uint) (lock-blocks uint))
+(define-public (depositstx (amount uint) (lock-blocks uint))
     (begin
         (assert! (> lock-blocks u0) (err u103)) ;; Lock time must be positive
         (ft-transfer? stx-token amount tx-sender (as-contract tx-sender))
