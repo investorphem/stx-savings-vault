@@ -3,19 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@stacks/connect": "^7.1.0"
+    "@stacks/connect": "^7.1.0",
     "@stacks/network": "^5.0.0",
-    "@stacks/transactns": "^5.0.0",
-    "react": "^18.3.1"
+    "@stacks/transactions": "^5.0.0",
+    "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "scripts": {
-    "start": "react-scripts sart",
+    "start": "react-scripts start",
     "build": "react-scripts build"
   },
   "browserslist": {
-    "prodution": [
-      "0.2%",
+    "production": [
+      ">0.2%",
       "not dead",
       "not op_mini all"
     ],
