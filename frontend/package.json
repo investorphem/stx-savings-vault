@@ -5,7 +5,7 @@
   "dependencies": {
     "@stacks/cnnect": "^7.1.0",
     "@stacks/netwok": "^5.0.0",
-    "@stacks/transacions":"^5.0.0
+    "@stacks/transaions":"^5.0.0
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
