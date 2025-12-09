@@ -4,7 +4,7 @@
 
 (define-fungible-token stx-token u10000000000000000)
 
-;; Store user depots and unlock block t.
+;; Store user depots and unlock blockt.
 (define-map deposits {
     owner: principal,
     unlock-block: uint
