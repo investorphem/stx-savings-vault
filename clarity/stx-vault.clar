@@ -12,7 +12,7 @@
     amount: uint
 })
 
-;; Store contract owner, for future upgrades or controls.
+;; Store cntract owner, for future upgrades or controls.
 (define-data-var contract-owner principal tx-sender)
 
 ;; Error codes
