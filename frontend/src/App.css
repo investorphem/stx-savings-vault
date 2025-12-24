@@ -1,0 +1,86 @@
+
+body {
+  background: #CC7A1A;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+
+
+.App {
+  max-width: 420px;
+  margin: 40px auto;
+  background: #F7B500;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(247,181,0,0.12);
+  padding: 32px 24px 24px 24px;
+  border: 2px solid #5546FF;
+}
+
+
+header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+
+h1 {
+  color: #5546FF;
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+
+button {
+  background: #5546FF;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 8px 0;
+  transition: background 0.2s;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(85,70,255,0.08);
+}
+button:hover {
+  background: #F7B500;
+  color: #12151A;
+}
+
+
+input {
+  display: block;
+  width: 100%;
+  margin: 8px 0 16px 0;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #12151A;
+  font-size: 1rem;
+  background: #FFFFFF;
+  color: #5546FF;
+}
+
+
+h2 {
+  color: #5546FF;
+  margin-top: 24px;
+  font-weight: 700;
+}
+
+
+footer {
+  text-align: center;
+  margin-top: 32px;
+  color: #12151A;
+  font-weight: 500;
+}
+
+
+hr {
+  border: none;
+  border-top: 2px solid #5546FF;
+  margin: 24px 0;
+}
