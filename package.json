@@ -1,0 +1,32 @@
+{
+  "name": "stx-savings-vault",
+  "version": "1.0.0",
+  "description": "Bitcoin-backed STX savings vault with time-locks",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "clarinet:check": "clarinet check",
+    "clarinet:console": "clarinet console"
+  },
+  "keywords": [
+    "stacks",
+    "clarity",
+    "blockchain",
+    "defi",
+    "vault",
+    "savings"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "clarinet": "^2.9.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "@stacks/transactions": "^6.0.0"
+  }
+}
