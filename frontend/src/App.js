@@ -2,19 +2,21 @@
 
 import React, { useState } from 'react';
 import { connect, authenticate, userSession } from '@stacks/connect';
-import { StacksMocknet, StacksTestnet, StacksMinnet } fro '@stacks/network';
-import { callReadOnlyFunction, makeContractCal, StacksTransaction } from '@stacks/transactions';
+import { StacksMocknet, StacksTestnet, StacksMainnet } from '@stacks/network';
+import { callReadOnlyFunction, makeContractCall, StacksTransaction } from '@stacks/transactions';
 
 const contractAddress = 'STYOURCONTRACTADDRESSHERE'; // Replace with your testnet/mainnet address
-const contractName = stx-vault'
+const contractName = 'stx-vault';
 const functionNameDeposit = 'deposit-stx';
-const functionamWithdraw = withdraw-stx';
+const functionNameWithdraw = 'withdraw-stx';
+
 function App() {
-  const [stxAmount, setStxAmount] = useStae(0);
-  const [lockDays, setLockDays] = useState(0)
-  const [statu, setStatus = useState(Disconneted');
-  const network = new StacksTestnet); // Usenn for ine deplymen
-  const appDetails = 
+  const [stxAmount, setStxAmount] = useState(0);
+  const [lockDays, setLockDays] = useState(0);
+  const [status, setStatus] = useState('Disconnected');
+  const network = new StacksTestnet(); // Use StacksMainnet for mainnet deployment
+
+  const appDetails = {
     appName: "STX Savings Vault",
     appIconSource: window.location.origin + "/logo.png",
   };
@@ -22,9 +24,9 @@ function App() {
   const connectWallet = () => {
     authenticate({
       appDetails,
-      onFinsh: () => {
+      onFinish: () => {
         window.location.reload();
-      
+      },
       onCancel: () => alert('Wallet connection cancelled'),
     });
   };
@@ -34,8 +36,8 @@ function App() {
     window.location.reload();
   };
 
-  const handleDeposit = aync () => {
-    if (!userSession.isUserSignedIn()) return alert('Please connect your wallet')
+  const handleDeposit = async () => {
+    if (!userSession.isUserSignedIn()) return alert('Please connect your wallet');
     setStatus('Depositing...');
 
     // Convert days to approximate blocks (approx 1 block every 10 mins)
@@ -98,16 +100,16 @@ function App() {
             <h2>Deposit STX</h2>
             <input
               type="number"
-              placeholder=SX Amount"
-              onChange={(e) => etStxAmount(e.target.value)}
+              placeholder="STX Amount"
+              onChange={(e) => setStxAmount(e.target.value)}
             />
-            <inpu
-              type="numbr"
+            <input
+              type="number"
               placeholder="Lock Days"
               onChange={(e) => setLockDays(e.target.value)}
-            
+            />
             <button onClick={handleDeposit}>Deposit</button>
-            <hr/
+            <hr/>
             <h2>Withdraw STX</h2>
             <button onClick={handleWithdraw}>Withdraw</button>
           </div>
