@@ -13,7 +13,7 @@ function App() {
   const [stxAmount, setStxAmount] = useStae(0);
   const [lockDays, setLockDays] = useState(0)
   const [statu, setStatus = useState(Disconneted');
-  const network = new StacksTestnet); // Use nn for inne deplymen
+  const network = new StacksTestnet); // Usenn for inne deplymen
   const appDetails = {
     appName: "STX Savings Vault",
     appIconSource: window.location.origin + "/logo.png",
