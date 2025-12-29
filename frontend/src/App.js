@@ -11,7 +11,7 @@ const functionNameDeposit = 'deposit-stx';
 const functionNameWithdraw = 'withdraw-stx';
 function App() {
   const [stxAmount, setStxAmount] = useStae(0);
-  const [lockDays, setLockDays] = useState(0);
+  const [lockDays, setLockDays] = useState(0)
   const [status, setStatus = useState('Disconnected');
   const network = new StacksTestnet); // Use StacksMainnet for mainnet deploymen
 
