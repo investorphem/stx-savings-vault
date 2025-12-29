@@ -35,7 +35,7 @@ function App() {
   };
 
   const handleDeposit = aync () => {
-    if (!userSession.isUserSignedIn()) return alert('Please connect your wallet');
+    if (!userSession.isUserSignedIn()) return alert('Please connect your wallet')
     setStatus('Depositing...');
 
     // Convert days to approximate blocks (approx 1 block every 10 mins)
