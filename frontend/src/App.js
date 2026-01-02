@@ -1,9 +1,10 @@
 // frontend/src/App.js
 
 import React, { useState } from 'react';
-import { connect, authenticate, userSession } from '@stacks/connect';
+import './App.css';
+import { authenticate, UserSession, AppConfig } from '@stacks/connect';
 import { StacksMocknet, StacksTestnet, StacksMainnet } from '@stacks/network';
-import { callReadOnlyFunction, makeContractCall, StacksTransaction } from '@stacks/transactions';
+import { callReadOnlyFunction, makeContractCall, StacksTransaction, uintCV } from '@stacks/transactions';
 
 const contractAddress = 'STYOURCONTRACTADDRESSHERE'; // Replace with your testnet/mainnet address
 const contractName = 'stx-vault';
@@ -16,14 +17,15 @@ function App() {
   const [status, setStatus] = useState('Disconnected');
   const network = new StacksTestnet(); // Use StacksMainnet for mainnet deployment
 
-  const appDetails = {
-    appName: "STX Savings Vault",
-    appIconSource: window.location.origin + "/logo.png",
-  };
+  const appConfig = new AppConfig(['store_write', 'publish_data']);
+  const userSession = new UserSession({ appConfig });
 
   const connectWallet = () => {
     authenticate({
-      appDetails,
+      appDetails: {
+        name: "STX Savings Vault",
+        icon: window.location.origin + "/logo.png"
+      },
       onFinish: () => {
         window.location.reload();
       },
@@ -53,7 +55,10 @@ function App() {
       contractName,
       functionName: functionNameDeposit,
       functionArgs,
-      appDetails,
+      appDetails: {
+        name: "STX Savings Vault",
+        icon: window.location.origin + "/logo.png"
+      },
       onFinish: (data) => {
         console.log('Transaction finished:', data.txId);
         setStatus('Deposit successful!');
@@ -73,7 +78,10 @@ function App() {
         contractName,
         functionName: functionNameWithdraw,
         functionArgs: [], // Withdraw function takes no arguments
-        appDetails,
+        appDetails: {
+          name: "STX Savings Vault",
+          icon: window.location.origin + "/logo.png"
+        },
         onFinish: (data) => {
           console.log('Transaction finished:', data.txId);
           setStatus('Withdrawal successful!');
