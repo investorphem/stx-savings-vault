@@ -2,7 +2,7 @@
   "name": "stx-savings-vault",
   "version": "1.0.0",
   "description": "Bitcoin-backed STX savings vault with time-locks",
-  "main": "index.js",
+  "homepage": "https://github.com/AdekunleBamz/stx-savings-vault",  "main": "index.js",
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
