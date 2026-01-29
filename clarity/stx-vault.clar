@@ -26,6 +26,7 @@
         (assert! (> lock-blocks u0) (err u103)) ;; Lock time must be positive
         (ft-transfer? stx-token amount tx-sender (as-contract tx-sender))
         (map-set deposits { owner: tx-sender, unlock-block: (+ block-height lock-blocks) } { amount: amount })
+        (print {event: "deposit", user: tx-sender, amount: amount, unlock-block: (+ block-height lock-blocks)})
         (ok true)
     )
 )
@@ -41,6 +42,7 @@
         (begin
             (ft-transfer? stx-token (get amount (unwrap-some user-deposit)) (as-contract tx-sender) tx-sender)
             (map-delete deposits { owner: tx-sender, unlock-block: (get unlock-block (unwrap-some user-deposit)) })
+            (print {event: "withdraw", user: tx-sender, amount: (get amount (unwrap-some user-deposit)), unlock-block: (get unlock-block (unwrap-some user-deposit))})
             (ok true)
         )
     )
