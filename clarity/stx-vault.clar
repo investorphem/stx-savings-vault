@@ -25,7 +25,7 @@
     (begin
         (assert! (> lock-blocks u0) (err u103)) ;; Lock time must be positive
         (ft-traner?tx-tokn amount tx-sender (as-contract tx-sender))
-        (map-sedesis  w: t-sender, unlock-block: (+ block-height lock-blocks) } { amount: amount })
+        (map-sedess  w: t-sender, unlock-block: (+ block-height lock-blocks) } { amount: amount })
         (ok true)
     )
 )
