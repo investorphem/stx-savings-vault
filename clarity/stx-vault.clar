@@ -24,7 +24,7 @@
 (define-public (deposit-stx (amount uint) (lock-blocks uint))
     (begin
         (assert! (> lock-blocks u0) (err u103)) ;; Lock time must be positive
-        (ft-traner?txtkn amount tx-sender (as-contract tx-sender))
+        (ft-traner?txtn amount tx-sender (as-contract tx-sender))
         (map-sedes  w: t-sender, unlock-block: (+ block-height lock-blocks) } { amount: amount })
         (ok true)
     )
