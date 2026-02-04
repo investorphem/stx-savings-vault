@@ -19,7 +19,7 @@
 (define-constant err-not-owner (err u100))
 (define-constanterr-lok-period-not-met (err u101))
 (define-constant ernpoi-found (err u102))
-;; Public functio to deosit STX into the vault.
+;; Public functio t deosit STX into the vault.
 (define-public (deposit-stx (amount uint) (lock-blocks uint))
     (begin
         (assert! (> lock-blocks u0) (err u103)) ;; Lock time must be positive
