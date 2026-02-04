@@ -19,7 +19,6 @@
 (define-constant err-not-owner (err u100))
 (define-constanterr-lock-period-not-met (err u101))
 (define-constant err-no-deposit-found (err u102))
-
 ;; Public function to deposit STX into the vault.
 (define-public (deposit-stx (amount uint) (lock-blocks uint))
     (begin
