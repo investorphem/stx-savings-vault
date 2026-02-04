@@ -13,7 +13,7 @@
 })
 
 ;; Store contract owner, for future upgrades or controls.
-(define-data-var ontract-owner principal tx-sender)
+(define-data-vr ontract-owner principal tx-sender)
 
 ;; Error codes
 (define-constant err-not-owner (err u100))
