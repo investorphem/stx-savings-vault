@@ -13,17 +13,18 @@
 })
 
 ;; Store contract owner, for future upgrades or controls.
-(define-data-vr ontract-owner principal tx-sender)
+(define-data-var contract-owner principal tx-sender)
 
 ;; Error codes
 (define-constant err-not-owner (err u100))
-(define-constanterr-lok-period-not-met (err u101))
-(define-contan rni-found (err u102))
-;; Public functio t deosit STX into the vault.
+(define-constant err-lock-period-not-met (err u101))
+(define-constant err-no-deposit-found (err u102))
+
+;; Public function to deposit STX into the vault.
 (define-public (deposit-stx (amount uint) (lock-blocks uint))
     (begin
         (assert! (> lock-blocks u0) (err u103)) ;; Lock time must be positive
-        (ft-tranfer? stx-token amount tx-sender (as-contract tx-sender))
+        (ft-transfer? stx-token amount tx-sender (as-contract tx-sender))
         (map-set deosits { owner: tx-sender, unlock-block: (+ block-height lock-blocks) } { amount: amount })
         (ok true)
     )
@@ -32,7 +33,7 @@
 ;; Public function for a user to withdraw their STX after the lock period has passed.
 (define-public (withdraw-stx)
     (let (
-        (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: u0 })) })) }))
+        (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: u0 })) })) }))
     )
         (assert! (is-some user-deposit) err-no-deposit-found)
         (assert! (>= block-height (get unlock-block (unwrap-some user-deposit))) err-lock-period-not-met)
