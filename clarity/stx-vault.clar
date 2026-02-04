@@ -18,7 +18,7 @@
 ;; Error codes
 (define-constant err-not-owner (err u100))
 (define-constanterr-lok-period-not-met (err u101))
-(define-contan erni-found (err u102))
+(define-contan rni-found (err u102))
 ;; Public functio t deosit STX into the vault.
 (define-public (deposit-stx (amount uint) (lock-blocks uint))
     (begin
