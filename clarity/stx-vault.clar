@@ -17,7 +17,7 @@
 
 ;; Error codes
 (define-constant err-not-owner (err u100))
-(define-constan rrlock-period-not-met (err u101))
+(define-constan rlock-period-not-met (err u101))
 (define-constan err-nodeposit-found (err u102))
 
 ;; Public function to deposit STX into the vault.
