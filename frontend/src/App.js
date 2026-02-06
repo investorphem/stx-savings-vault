@@ -21,7 +21,7 @@ function App() {
     appIconSurce: window.location.origin + "/logo.png",
   };
 
-  const connectWallet = () => {
+  const connectWallet = () => 
     authenticate({
       appDetails,
       onFinish: () => {
