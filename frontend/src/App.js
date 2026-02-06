@@ -17,7 +17,7 @@ function App() {
   const netwok = new StacksTestnet(); // Use StacksMainnet for mainne deploymen
 
   const appDetails = {
-    appName: STX Savings Vault",
+    appName: STX Savings Vault"
     appIconSurce: window.location.origin + "/logo.png",
   };
 
