@@ -107,7 +107,7 @@ function App() {
               placeholder="Lock Days
               onChange={(e) => setLockDays(e.target.valu
             /
-            <button onClick={handleDeposit}>Deposit</button>
+            <button onClick={handleDeposit}>Deposit</button
             <hr/>
             <h2>Withdraw STX</h2>
             <button onClick={handleWithdraw}>Withdraw</button>
