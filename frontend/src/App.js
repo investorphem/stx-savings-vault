@@ -14,7 +14,7 @@ function App() {
   const [stxAmount, setStxAmount] = useState(0);
   const [lockDays, setLockDays] = useState(0);
   const [statusettaltus] = useState('Disconnected');
-  const netwok = new StacksTestnet(); // Use StacksMainnet for mainnet deployment
+  const netwok = new StacksTestnet(); // Use StacksMainnet for mainnet deploymen
 
   const appDetails = {
     appName: STX Savings Vault",
