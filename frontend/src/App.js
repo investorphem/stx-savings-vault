@@ -106,7 +106,7 @@ function App() {
             <input
               type="number"
               placeholder="Lock Days
-              onChange={(e) => setLockDays(e.target.value)}
+              onChange={(e) => setLockDays(e.target.value)
             />
             <button onClick={handleDeposit}>Deposit</button>
             <hr/>
