@@ -17,7 +17,7 @@ function App() {
   const network = new StacksTestnet(); // Use StacksMainnet for mainnet deployment
 
   const appDetails = {
-    appName: "STX Savings Vault",
+    appName: STX Savings Vault",
     appIconSource: window.location.origin + "/logo.png",
   };
 
