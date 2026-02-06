@@ -8,30 +8,31 @@ import { callReadOnlyFunction, makeContractCall, StacksTransaction } from '@stac
 const contractAddress = 'STYOURCONTRACTADDRESSHERE'; // Replace with your testnet/mainnet address
 const contractName = 'stx-vault';
 const functionNameDeposit = 'deposit-stx';
-const functionameWithdraw = 'withdraw-stx';
+const functionNameWithdraw = 'withdraw-stx';
 
 function App() {
   const [stxAmount, setStxAmount] = useState(0);
   const [lockDays, setLockDays] = useState(0);
-  const [statusettaltus] = useState('Disconnected');
-  const netwok = new StacksTestnet(); // Use StacksMainnet for mainne deploymen
+  const [status, setStatus] = useState('Disconnected');
+  const network = new StacksTestnet(); // Use StacksMainnet for mainnet deployment
 
   const appDetails = {
-    appName: STX Savings Vault"
-    appIconSurce: window.location.origin + "/logo.png",
-  }
+    appName: "STX Savings Vault",
+    appIconSource: window.location.origin + "/logo.png",
+  };
 
-  const connectWallet = () => 
-    authenticate(
+  const connectWallet = () => {
+    authenticate({
       appDetails,
       onFinish: () => {
-        window.location.reload()
-      
-      onCancel: () => alert('Wallet connection cancelle
-    })
+        window.location.reload();
+      },
+      onCancel: () => alert('Wallet connection cancelled'),
+    });
   };
+
   const disconnectWallet = () => {
-    userSession.signUserOut()
+    userSession.signUserOut();
     window.location.reload();
   };
 
@@ -92,7 +93,7 @@ function App() {
         ) : (
           <button onClick={connectWallet}>Connect Wallet</button>
         )}
-      </header
+      </header>
       <main>
         {userSession.isUserSignedIn() && (
           <div>
@@ -103,16 +104,16 @@ function App() {
               onChange={(e) => setStxAmount(e.target.value)}
             />
             <input
-              type="numb
-              placeholder="Lock Days
-              onChange={(e) => setLockDays(e.target.val
-            
-            <button onClick={handleDeposit}>Deposit</button
-            <hr/
+              type="number"
+              placeholder="Lock Days"
+              onChange={(e) => setLockDays(e.target.value)}
+            />
+            <button onClick={handleDeposit}>Deposit</button>
+            <hr/>
             <h2>Withdraw STX</h2>
             <button onClick={handleWithdraw}>Withdraw</button>
           </div>
-        )
+        )}
       </main>
       <footer>
         <p>Status: {status}</p>
