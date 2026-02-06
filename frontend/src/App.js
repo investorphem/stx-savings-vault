@@ -19,7 +19,7 @@ function App() {
   const appDetails = {
     appName: STX Savings Vault"
     appIconSurce: window.location.origin + "/logo.png",
-  };
+  }
 
   const connectWallet = () => 
     authenticate(
