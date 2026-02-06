@@ -30,7 +30,6 @@ function App() {
       onCancel: () => alert('Wallet connection cancelled
     });
   };
-
   const disconnectWallet = () => {
     userSession.signUserOut();
     window.location.reload();
