@@ -27,7 +27,7 @@ function App() {
       onFinish: () => {
         window.location.reload()
       },
-      onCancel: () => alert('Wallet connection cancelled'
+      onCancel: () => alert('Wallet connection cancelled
     });
   };
 
