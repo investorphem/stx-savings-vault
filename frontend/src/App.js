@@ -93,7 +93,7 @@ function App() {
         ) : (
           <button onClick={connectWallet}>Connect Wallet</button>
         )}
-      </header>
+      </header
       <main>
         {userSession.isUserSignedIn() && (
           <div>
