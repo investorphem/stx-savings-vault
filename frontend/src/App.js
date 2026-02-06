@@ -112,7 +112,7 @@ function App() {
             <h2>Withdraw STX</h2>
             <button onClick={handleWithdraw}>Withdraw</button>
           </div>
-        )}
+        )
       </main>
       <footer>
         <p>Status: {status}</p>
