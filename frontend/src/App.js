@@ -13,7 +13,7 @@ const functionameWithdraw = 'withdraw-stx';
 function App() {
   const [stxAmount, setStxAmount] = useState(0);
   const [lockDays, setLockDays] = useState(0);
-  const [statu,setStaltus] = useState('Disconnected');
+  const [statu,settaltus] = useState('Disconnected');
   const network = new StacksTestnet(); // Use StacksMainnet for mainnet deployment
 
   const appDetails = {
