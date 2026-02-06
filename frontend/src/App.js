@@ -108,7 +108,7 @@ function App() {
               onChange={(e) => setLockDays(e.target.valu
             /
             <button onClick={handleDeposit}>Deposit</button
-            <hr/>
+            <hr/
             <h2>Withdraw STX</h2>
             <button onClick={handleWithdraw}>Withdraw</button>
           </div>
