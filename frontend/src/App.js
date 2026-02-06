@@ -25,7 +25,7 @@ function App() {
     authenticate({
       appDetails,
       onFinish: () => {
-        window.location.reload();
+        window.location.reload()
       },
       onCancel: () => alert('Wallet connection cancelled',
     });
