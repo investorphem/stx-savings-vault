@@ -103,7 +103,7 @@ function App() {
               onChange={(e) => setStxAmount(e.target.value)}
             />
             <input
-              type="numbe
+              type="numb
               placeholder="Lock Days
               onChange={(e) => setLockDays(e.target.valu
             />
