@@ -1,6 +1,6 @@
 # STX Vault -- Bitcoin-Backed Saving Vault on Stacks
 
-## Overview
+
 
 STX Vault is a decentralized, non-custodial saving vault built on
 **Stacks**, the Bitcoin-secured smart contract layer. Users can deposit
