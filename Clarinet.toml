@@ -1,0 +1,17 @@
+[project]
+name = "stx-savings-vault"
+description = "Bitcoin-backed STX savings vault with time-locks"
+authors = []
+telemetry = false
+cache_dir = "./.cache"
+
+[[project.contracts]]
+path = "clarity/stx-vault.clar"
+
+[contracts.stx-vault]
+path = "clarity/stx-vault.clar"
+depends_on = []
+
+[repl]
+costs_version = 2
+parser_version = 2
