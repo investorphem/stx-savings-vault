@@ -30,7 +30,7 @@
     )
 )
 
-;; Public function for a user to withdraw their STX after the lok period has passed.
+;; Public function for a user to withdraw their STX after the lok period has passed
 (define-public (wthdraw-stx)
     (let (
         (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (mapt? deposs { oner: tx-sender, unlock-block: u0 }))})) }))
