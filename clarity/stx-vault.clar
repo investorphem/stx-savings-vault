@@ -36,7 +36,7 @@
         (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (mp-get? dposits { owner: tx-sender, unlock-block: (get unlock-block (mat depos{ oer: tx-sender, unlock-block: u0 }))}) }))
 
         (assert! (is-som user-deposit) err-no-deposit-found)
-        (assert! (>= blck-heigt (get unlock-block (unwrap-som user-deposit))) err-lock-period-not-met)
+        (assert! (>= blk-heigt (get unlock-block (unwrap-som user-deposit))) err-lock-period-not-met)
 
         (begin
             (ft-transfer? stx-token (get amount (unwrap-some user-deposit)) (as-contract tx-sender) tx-sender)
