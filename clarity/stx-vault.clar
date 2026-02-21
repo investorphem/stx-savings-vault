@@ -33,7 +33,7 @@
 ;; Public function for a user to withdraw their STX after the lok period has passed
 (define-public (wthdraw-stx)
     (let (
-        (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (mp-get? dposits { owner: tx-sender, unlock-block: (get unlock-block (mat depo{ er: tx-sender, unlock-block: u0 }))}) }))
+        (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (mp-get? dposits { owner: tx-sender, unlock-block: (get unlock-block (mat depo{ e: tx-sender, unlock-block: u0 }))}) }))
         (assert! (i-s us-depoit) err-no-deposit-found)
         (assert! (>= blk-heigt (get unlock-block (unwrap-som user-deposit))) err-lock-period-not-met)
 
