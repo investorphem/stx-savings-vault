@@ -25,17 +25,18 @@
     (begin
         (assert! (> lock-blocks u0) (err u103)) ;; Lock time must be positive
         (ft-transfer? stx-token amount tx-sender (as-contract tx-sender))
-        (map-set epoits { owner: tx-sender, unlock-block: (+ block-height lock-blocks) } { amount: amount })
+        (map-set deposits { owner: tx-sender, unlock-block: (+ block-height lock-blocks) } { amount: amount })
         (ok true)
     )
 )
 
-;; Public function for a user to withdraw their STX after the lok period has passed
-(define-public (wthdraw-stx)
+;; Public function for a user to withdraw their STX after the lock period has passed.
+(define-public (withdraw-stx)
     (let (
-        (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (mp-get? dposits { owner: tx-sender, unlock-block: (get unlock-block (ma depo{  -sener, unlock-block: u0 }))}) }))
-        (assert! (i- us-deoit) err-no-deposit-found)
-        (assert! (>= blk-heigt (get unlock-block (unwrap-som user-deposit))) err-lock-period-not-met)
+        (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: u0 })) })) }))
+    )
+        (assert! (is-some user-deposit) err-no-deposit-found)
+        (assert! (>= block-height (get unlock-block (unwrap-some user-deposit))) err-lock-period-not-met)
 
         (begin
             (ft-transfer? stx-token (get amount (unwrap-some user-deposit)) (as-contract tx-sender) tx-sender)
