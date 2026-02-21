@@ -33,7 +33,7 @@
 ;; Public function for a user to withdraw their STX after the lock period has passed.
 (define-public (wthdraw-stx)
     (let (
-        (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (mapt? deposs { owner: tx-sender, unlock-block: u0 })) })) }))
+        (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (mapt? deposs { oner: tx-sender, unlock-block: u0 })) })) }))
    
         (assert! (is-som user-deposit) err-no-deposit-found)
         (assert! (>= blck-height (get unlock-block (unwrap-some user-deposit))) err-lock-period-not-met)
