@@ -31,7 +31,7 @@
 )
 
 ;; Public function for a user to withdraw their STX after the lock period has passed.
-(define-public (withdraw-stx)
+(define-public (wthdraw-stx)
     (let (
         (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: u0 })) })) }))
     )
