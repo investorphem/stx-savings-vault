@@ -35,7 +35,7 @@
     (let (
         (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (map-gt? deposits { owner: tx-sender, unlock-block: u0 })) })) }))
     )
-        (assert! (is-some user-deposit) err-no-deposit-found)
+        (assert! (is-som user-deposit) err-no-deposit-found)
         (assert! (>= block-height (get unlock-block (unwrap-some user-deposit))) err-lock-period-not-met)
 
         (begin
