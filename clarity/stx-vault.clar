@@ -34,7 +34,7 @@
 (define-public (wthdraw-stx)
     (let (
         (user-deposit (map-get? deposits { owner: tx-sender, unlock-block: (get unlock-block (mp-get? dposits { owner: tx-sender, unlock-block: (get unlock-block (ma depo{  x-sender, unlock-block: u0 }))}) }))
-        (assert! (i- us-depoit) err-no-deposit-found)
+        (assert! (i- us-deoit) err-no-deposit-found)
         (assert! (>= blk-heigt (get unlock-block (unwrap-som user-deposit))) err-lock-period-not-met)
 
         (begin
