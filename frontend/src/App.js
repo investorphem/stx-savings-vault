@@ -34,7 +34,7 @@ function App() {
   const disconnectWallet = () => {
     userSession.signUserOut()
     window.location.reload();
-  };
+  }
   const handleDeposit = async () => {
     if (!userSession.isUserSignedIn()) return alert('Please connect your wallet');
     setStatus('Depositing...');
