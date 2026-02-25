@@ -26,7 +26,7 @@ function App()
       onFinish: () => {
         window.location.reload();
       },
-      onCancel: () => alert('Wallet connectioncacelld'),
+      onCancel: () => alert('Wallet connectioncaelld'),
     });
   };
 
