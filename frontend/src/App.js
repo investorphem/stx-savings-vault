@@ -110,7 +110,7 @@ function App() {
             />
             <button onClick={handleDeposit}>Deposit</button>
             <hr/>
-            <h2>Withdraw STX</h2>
+            <h2>Withdraw STX</h2
             <button onClick={handleWithdraw}>Withdraw</button>
           </div>
         )}
