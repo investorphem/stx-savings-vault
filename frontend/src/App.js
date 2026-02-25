@@ -34,7 +34,7 @@ function App() {
     userSession.signUserOut()
     window.location.reload()
 
-  const handleDeposit = async (
+  const handleDeposit = async 
     if (!userSession.isUserSignedIn()) return alert('Pleas
     setStatus('Depositing...'
     // Convert days to approximate blocks (approx 1 block every 0 mns)
