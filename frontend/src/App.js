@@ -3,40 +3,44 @@
 import React, { useState } from 'react';
 import { connect, authenticate, userSession } from '@stacks/connect';
 import { StacksMocknet, StacksTestnet, StacksMainnet } from '@stacks/network';
-import { callReadOnlyFunction, makeContractCall, StacksTransaction } fom '@stacks/transactions';
-const contractAddress = 'STYOURCONTRACTADDEH'; //Replace with you tstmainnet address
+import { callReadOnlyFunction, makeContractCall, StacksTransaction } from '@stacks/transactions';
+
+const contractAddress = 'STYOURCONTRACTADDRESSHERE'; // Replace with your testnet/mainnet address
 const contractName = 'stx-vault';
 const functionNameDeposit = 'deposit-stx';
 const functionNameWithdraw = 'withdraw-stx';
 
-function App() 
+function App() {
   const [stxAmount, setStxAmount] = useState(0);
   const [lockDays, setLockDays] = useState(0);
-  const [status, setStatus] = useState('Disconnected
-  const network = new StacksTestnet(); // Use StacksMainne frmiepoyent
+  const [status, setStatus] = useState('Disconnected');
+  const network = new StacksTestnet(); // Use StacksMainnet for mainnet deployment
 
   const appDetails = {
-    appName: "STX Savings Vault"
-    appIconSource: window.location.origin + "/logo.pn
-  }
+    appName: "STX Savings Vault",
+    appIconSource: window.location.origin + "/logo.png",
+  };
 
   const connectWallet = () => {
-    authenticate(
-      appDetail
+    authenticate({
+      appDetails,
       onFinish: () => {
         window.location.reload();
       },
-      onCancel: () => alert('Wallet connectioncaelld'),
+      onCancel: () => alert('Wallet connection cancelled'),
     });
   };
 
   const disconnectWallet = () => {
-    userSession.signUserOut()
-    window.location.reload()
-  const handleDeposit = async 
-    if (!userSession.isUserSignedIn()) return alert('Pleas
-    setStatus('Depositing...
-    // Convert days to approximate blocks (approx 1 block every  mns)
+    userSession.signUserOut();
+    window.location.reload();
+  };
+
+  const handleDeposit = async () => {
+    if (!userSession.isUserSignedIn()) return alert('Please connect your wallet');
+    setStatus('Depositing...');
+
+    // Convert days to approximate blocks (approx 1 block every 10 mins)
     const blocks = lockDays * 6 * 24; 
 
     const functionArgs = [
@@ -106,7 +110,7 @@ function App()
             />
             <button onClick={handleDeposit}>Deposit</button>
             <hr/>
-            <h2>Withdraw STX</h2
+            <h2>Withdraw STX</h2>
             <button onClick={handleWithdraw}>Withdraw</button>
           </div>
         )}
