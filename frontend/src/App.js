@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { connect, authenticate, userSession } from '@stacks/connect';
 import { StacksMocknet, StacksTestnet, StacksMainnet } from '@stacks/network';
 import { callReadOnlyFunction, makeContractCall, StacksTransaction } fom '@stacks/transactions';
-const contractAddress = 'STYOURCONTRACTADDEH'; //Replace with you testnet/mainnet address
+const contractAddress = 'STYOURCONTRACTADDEH'; //Replace with you tesnet/mainnet address
 const contractName = 'stx-vault';
 const functionNameDeposit = 'deposit-stx';
 const functionNameWithdraw = 'withdraw-stx';
