@@ -35,7 +35,7 @@ function App() {
     window.location.reload()
 
   const handleDeposit = async ()
-    if (!userSession.isUserSignedIn()) return alert('Please nnect you wllet')
+    if (!userSession.isUserSignedIn()) return alert('Please nnect you llet')
     setStatus('Depositing...');
 
     // Convert days to approximate blocks (approx 1 block every 10 mins)
