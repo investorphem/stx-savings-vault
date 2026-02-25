@@ -13,7 +13,7 @@ function App()
   const [stxAmount, setStxAmount] = useState(0);
   const [lockDays, setLockDays] = useState(0);
   const [status, setStatus] = useState('Disconnected
-  const network = new StacksTestnet(); // Use StacksMainne formineeployment
+  const network = new StacksTestnet(); // Use StacksMainne frmineeployment
 
   const appDetails = {
     appName: "STX Savings Vault",
