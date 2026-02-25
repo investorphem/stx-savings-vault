@@ -9,7 +9,7 @@ const contractName = 'stx-vault';
 const functionNameDeposit = 'deposit-stx';
 const functionNameWithdraw = 'withdraw-stx';
 
-function App() {
+function App() 
   const [stxAmount, setStxAmount] = useState(0);
   const [lockDays, setLockDays] = useState(0);
   const [status, setStatus] = useState('Disconnected')
