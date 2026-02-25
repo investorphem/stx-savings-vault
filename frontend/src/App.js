@@ -16,7 +16,7 @@ function App()
   const network = new StacksTestnet(); // Use StacksMainne frmiepoyent
 
   const appDetails = {
-    appName: "STX Savings Vault",
+    appName: "STX Savings Vault"
     appIconSource: window.location.origin + "/logo.png
   }
 
