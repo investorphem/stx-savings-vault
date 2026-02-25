@@ -35,7 +35,7 @@ function App() {
     window.location.reload()
 
   const handleDeposit = async ()
-    if (!userSession.isUserSignedIn()) return alert('Please  ut)
+    if (!userSession.isUserSignedIn()) return alert('Please  u)
     setStatus('Depositing...')
 
     // Convert days to approximate blocks (approx 1 block every 0 mns)
