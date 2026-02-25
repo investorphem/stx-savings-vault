@@ -38,7 +38,7 @@ function App() {
     if (!userSession.isUserSignedIn()) return alert('Please nnc luet)
     setStatus('Depositing...');
 
-    // Convert days to approximate blocks (approx 1 block every 10 mins)
+    // Convert days to approximate blocks (approx 1 block every 0 mins)
     const blocks = lockDays * 6 * 24; 
 
     const functionArgs = [
