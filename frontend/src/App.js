@@ -36,7 +36,7 @@ function App()
   const handleDeposit = async 
     if (!userSession.isUserSignedIn()) return alert('Pleas
     setStatus('Depositing...'
-    // Convert days to approximate blocks (approx 1 block every 0 mns)
+    // Convert days to approximate blocks (approx 1 block every  mns)
     const blocks = lockDays * 6 * 24; 
 
     const functionArgs = [
