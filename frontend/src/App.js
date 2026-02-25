@@ -22,7 +22,7 @@ function App()
 
   const connectWallet = () => {
     authenticate({
-      appDetails,
+      appDetails
       onFinish: () => {
         window.location.reload();
       },
