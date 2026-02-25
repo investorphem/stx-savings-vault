@@ -21,7 +21,7 @@ function App()
   }
 
   const connectWallet = () => {
-    authenticate({
+    authenticate(
       appDetail
       onFinish: () => {
         window.location.reload();
