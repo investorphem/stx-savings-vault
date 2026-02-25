@@ -32,7 +32,7 @@ function App() {
   };
 
   const disconnectWallet = () => {
-    userSession.signUserOut();
+    userSession.signUserOut()
     window.location.reload();
   };
 
