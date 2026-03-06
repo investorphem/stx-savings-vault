@@ -1,13 +1,14 @@
 // frontend/src/App.js
 
 import React, { useState } from "react";
-import { showConnect } from "@stacks/connect";
+import { showConnect, openContractCall } from "@stacks/connect";
 import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksTestnet } from "@stacks/network";
-import { makeContractCall, uintCV } from "@stacks/transactions";
+import { uintCV } from "@stacks/transactions";
 
 const contractAddress = "STYOURCONTRACTADDRESSHERE";
 const contractName = "stx-vault";
+
 const functionNameDeposit = "deposit-stx";
 const functionNameWithdraw = "withdraw-stx";
 
@@ -15,8 +16,8 @@ const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
 
 function App() {
-  const [stxAmount, setStxAmount] = useState(0);
-  const [lockDays, setLockDays] = useState(0);
+  const [stxAmount, setStxAmount] = useState("");
+  const [lockDays, setLockDays] = useState("");
   const [status, setStatus] = useState("Disconnected");
 
   const network = new StacksTestnet();
@@ -31,9 +32,12 @@ function App() {
       appDetails,
       userSession,
       onFinish: () => {
+        setStatus("Wallet Connected");
         window.location.reload();
       },
-      onCancel: () => alert("Wallet connection cancelled"),
+      onCancel: () => {
+        setStatus("Wallet connection cancelled");
+      },
     });
   };
 
@@ -47,30 +51,36 @@ function App() {
       return;
     }
 
-    setStatus("Depositing...");
+    try {
+      setStatus("Depositing...");
 
-    const blocks = lockDays * 6 * 24;
+      // convert days -> blocks
+      const blocks = Number(lockDays) * 6 * 24;
 
-    const functionArgs = [
-      uintCV(Number(stxAmount)),
-      uintCV(Number(blocks))
-    ];
+      const functionArgs = [
+        uintCV(Number(stxAmount) * 1000000), // convert STX → microSTX
+        uintCV(blocks),
+      ];
 
-    const options = {
-      contractAddress,
-      contractName,
-      functionName: functionNameDeposit,
-      functionArgs,
-      network,
-      appDetails,
-      onFinish: (data) => {
-        console.log("Transaction:", data.txId);
-        setStatus("Deposit successful!");
-      },
-      onCancel: () => setStatus("Deposit cancelled"),
-    };
-
-    await makeContractCall(options);
+      await openContractCall({
+        contractAddress,
+        contractName,
+        functionName: functionNameDeposit,
+        functionArgs,
+        network,
+        appDetails,
+        onFinish: (data) => {
+          console.log("Transaction:", data.txId);
+          setStatus("Deposit successful!");
+        },
+        onCancel: () => {
+          setStatus("Deposit cancelled");
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      setStatus("Deposit failed");
+    }
   };
 
   const handleWithdraw = async () => {
@@ -79,23 +89,28 @@ function App() {
       return;
     }
 
-    setStatus("Withdrawing...");
+    try {
+      setStatus("Withdrawing...");
 
-    const options = {
-      contractAddress,
-      contractName,
-      functionName: functionNameWithdraw,
-      functionArgs: [],
-      network,
-      appDetails,
-      onFinish: (data) => {
-        console.log("Transaction:", data.txId);
-        setStatus("Withdrawal successful!");
-      },
-      onCancel: () => setStatus("Withdrawal cancelled"),
-    };
-
-    await makeContractCall(options);
+      await openContractCall({
+        contractAddress,
+        contractName,
+        functionName: functionNameWithdraw,
+        functionArgs: [],
+        network,
+        appDetails,
+        onFinish: (data) => {
+          console.log("Transaction:", data.txId);
+          setStatus("Withdrawal successful!");
+        },
+        onCancel: () => {
+          setStatus("Withdrawal cancelled");
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      setStatus("Withdraw failed");
+    }
   };
 
   return (
@@ -118,12 +133,14 @@ function App() {
             <input
               type="number"
               placeholder="STX Amount"
+              value={stxAmount}
               onChange={(e) => setStxAmount(e.target.value)}
             />
 
             <input
               type="number"
               placeholder="Lock Days"
+              value={lockDays}
               onChange={(e) => setLockDays(e.target.value)}
             />
 
