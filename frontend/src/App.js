@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { showConnect, openContractCall } from "@stacks/connect";
 import { AppConfig, UserSession } from "@stacks/auth";
-import { StacksTestnet } from "@stacks/network";
+import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
 
-const contractAddress = "STYOURCONTRACTADDRESSHERE";
+const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Replace with deployed mainnet address
 const contractName = "stx-vault";
 
 const functionNameDeposit = "deposit-stx";
@@ -20,7 +20,8 @@ function App() {
   const [lockDays, setLockDays] = useState("");
   const [status, setStatus] = useState("Disconnected");
 
-  const network = new StacksTestnet();
+  // MAINNET NETWORK
+  const network = new StacksMainnet();
 
   const appDetails = {
     name: "STX Savings Vault",
@@ -54,11 +55,11 @@ function App() {
     try {
       setStatus("Depositing...");
 
-      // convert days -> blocks
+      // Convert days → blocks (approx)
       const blocks = Number(lockDays) * 6 * 24;
 
       const functionArgs = [
-        uintCV(Number(stxAmount) * 1000000), // convert STX → microSTX
+        uintCV(Number(stxAmount) * 1000000), // STX → microSTX
         uintCV(blocks),
       ];
 
@@ -77,6 +78,7 @@ function App() {
           setStatus("Deposit cancelled");
         },
       });
+
     } catch (error) {
       console.error(error);
       setStatus("Deposit failed");
@@ -107,6 +109,7 @@ function App() {
           setStatus("Withdrawal cancelled");
         },
       });
+
     } catch (error) {
       console.error(error);
       setStatus("Withdraw failed");
