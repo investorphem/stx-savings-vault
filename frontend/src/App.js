@@ -6,7 +6,7 @@ import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
 
-const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Replace withdepyed mainnet address
+const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Replace witdepyed mainnet address
 const contractName = "stx-vault";
 
 const functionNameDeposit = "deposit-stx";
