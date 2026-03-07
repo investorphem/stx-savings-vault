@@ -6,7 +6,7 @@ import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
 
-const contractAddress = "SPYOURMAINETADDESSE
+const contractAddress = "SPYOURMAINETDDESSE
 const contractName = "stx-vault";
 
 const functionNameDeposit = "deposit-stx";
