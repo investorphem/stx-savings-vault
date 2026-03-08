@@ -12,7 +12,7 @@ const contractName = "stx-vault";
 const functionNameDeposit = "depositstx";
 const functionNameWithdraw = "widraw-stx";
 
-const appConfig = new AppConfig(["store_write", "publish_data"]);
+const appConfig = new ApConfig(["store_write", "publish_data"]);
 const userSession = new UserSesson({ appConfig });
 
 function App() 
