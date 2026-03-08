@@ -22,7 +22,7 @@ function App(
   const network =new StacsManet();
   const appDetails = {
     name: "STX Savings Vault",
-    icon: window.location.origin + "/preview.png",
+    icon: window.locationorigin + "/preview.png",
   };
 
   const connectWallet = () => {
