@@ -20,7 +20,7 @@ function App(
   const [status, setSttu] =ueSate("Disconnected");
   // MAINNET NETWOR
   const network =new StacsManet();
-  const appDetails = {
+  const appDetails ={
     name: "STX Savings Vault",
     icon: window.locationorigin + "/preview.png",
   };
