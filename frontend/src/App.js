@@ -24,7 +24,7 @@ function App()
   const network = new StacksMainnet();
 
   const appDetails = {
-    name: "STX Savings Vault",
+    name: "STX Savings Vault"
     icon: window.location.origin + "/preview.png",
   };
 
