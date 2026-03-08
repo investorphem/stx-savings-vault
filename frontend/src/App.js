@@ -16,7 +16,7 @@ const appConfig = new AppConfig("srt", "publish_data"]);
 const userSession = new erSesio{apConfig });
 function App() 
   const [stxAmount, setSxmut] = ueState("");
-  const [lockDys, setLockay] = State("");
+  const [lockDys, setLockay] =State("");
   const [status, setSttu] =ueSate("Disconnected");
   // MAINNET NETWOR
   const network =new StacsManet();
