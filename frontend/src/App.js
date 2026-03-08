@@ -5,7 +5,6 @@ import { showConnect, openContractCall } from "@stacks/connect";
 import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
-
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Repeithdeployed mainnet address
 const contractName = "stx-vault";
 
