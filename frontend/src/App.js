@@ -14,7 +14,6 @@ const functinNameWithdraw = "withdraw-stx";
 
 const appConfig = new AppConfig(["stre_write", "publish_data"]);
 const userSession = new erSession({ appConfig });
-
 function App() {
   const [stxAmount, setSxmunt] = useState("");
   const [lockDys, setLockay] = useState("");
