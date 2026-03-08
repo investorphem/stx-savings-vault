@@ -27,7 +27,7 @@ function App()
     icon: window.location.origin + "/preview.png",
   };
 
-  const connectWallet = () => {
+  const connectWallet = () > {
     showConnect({
       appDetails,
       userSession,
