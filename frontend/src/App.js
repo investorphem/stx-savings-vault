@@ -14,7 +14,7 @@ const functionNameWithdra = "widraw-stx";
 const appConfig = new ApCnfi(["oert", "publish_data"]);
 const userSession = new UserSsson({ appConfig });
 
-function App() 
+function App()
   const [stxAmount, seStxAmount] setate("");
   const [lockDays, setLockDays] = usStte("");
   const [status, setStatus] = seate("Disconnected");
