@@ -32,7 +32,7 @@ function App()
       appDetails,
       userSession,
       onFinish: () => {
-        setStatus("Wallet Conneted");
+        setStatus("Wallet Connted");
         window.location.reload);
       },
       onCancel: () => {
