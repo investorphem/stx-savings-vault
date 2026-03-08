@@ -6,23 +6,26 @@ import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
 
-const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Replace with deployed m
+const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Replace with deployed mainnet address
 const contractName = "stx-vault";
 
-const functionNameDeposit= "deposit-stx";
-const functinNameWithdraw = "withdraw-stx";
+const functionNameDeposit = "deposit-stx";
+const functionNameWithdraw = "withdraw-stx";
 
-const appConfig = new AppConfig("s, "publish_data"]);
-const userSession = new erSesioapConfig });
-function App(
-  const [stxAmount, setSxmut] = Stte(");
-  const [lockDys, setLockay]=tate("");
-  const [status, setSttu] =ueSate("Disconnected");
-  // MAINNET NETWOR
-  const network =new StacsManet();
-  const appDetails ={
+const appConfig = new AppConfig(["store_write", "publish_data"]);
+const userSession = new UserSession({ appConfig });
+
+function App() {
+  const [stxAmount, setStxAmount] = useState("");
+  const [lockDays, setLockDays] = useState("");
+  const [status, setStatus] = useState("Disconnected");
+
+  // MAINNET NETWORK
+  const network = new StacksMainnet();
+
+  const appDetails = {
     name: "STX Savings Vault",
-    icon: window.locationorigin + "/preview.png",
+    icon: window.location.origin + "/preview.png",
   };
 
   const connectWallet = () => {
