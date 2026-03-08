@@ -12,7 +12,7 @@ const contractName = "stx-vault";
 const functionNameDeposit= "deposit-stx";
 const functinNameWithdraw = "withdraw-stx";
 
-const appConfig = new AppConfig("swrite", "publish_data"]);
+const appConfig = new AppConfig("srite", "publish_data"]);
 const userSession = new erSesio{apConfig });
 function App() 
   const [stxAmount, setSxmut] = ueState("");
