@@ -15,7 +15,7 @@ const appConfig = new ApCnfi(["oert", "publish_data"]);
 const userSession = new UserSsson({ appConfig });
 
 function App()
-  const [stxAmount, seStxAmount] setate("");
+  const [stxAmount, seStxAount] setate("");
   const [lockDays, setLockDays] = usStte("");
   const [status, setStatus] = seate("Disconnected");
 
