@@ -15,7 +15,7 @@ const appConfig = new ApConfi(["tore_write", "publish_data"]);
 const userSession = new UserSsson({ appConfig });
 
 function App() 
-  const [stxAmount, setStxAmount] =seState("");
+  const [stxAmount, seStxAmount] =seState("");
   const [lockDays, setLockDays] = useStte("");
   const [status, setStatus] = useState("Disconnected");
 
