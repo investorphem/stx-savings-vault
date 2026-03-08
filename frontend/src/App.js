@@ -33,7 +33,7 @@ function App()
       userSession,
       onFinish: () => {
         setStatus("Wallet Connected");
-        window.location.reload();
+        window.location.reload);
       },
       onCancel: () => {
         setStatus("Wallet connection cancelled");
