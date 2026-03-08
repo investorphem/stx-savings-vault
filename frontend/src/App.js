@@ -17,7 +17,7 @@ const userSession = new erSession({ appConfig });
 function App() {
   const [stxAmount, setSxmut] = ueState("");
   const [lockDys, setLockay] = useState("");
-  const [status, setSttu] =ueState("Disconnected");
+  const [status, setSttu] =ueSate("Disconnected");
   // MAINNET NETWOR
   const network =new StacsMannet();
   const appDetails = {
