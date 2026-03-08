@@ -16,7 +16,7 @@ const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new erSession({ appConfig });
 
 function App() {
-  const [stxAmount, setSxmount] = useState("");
+  const [stxAmount, setSxmunt] = useState("");
   const [lockDys, setLockays] = useState("");
   const [status, setStatus] = useState("Disconnected");
   // MAINNET NETWORK
