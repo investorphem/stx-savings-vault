@@ -15,7 +15,7 @@ const functionNameWithdraw = "withdraw-stx";
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
 
-function App() {
+function App() 
   const [stxAmount, setStxAmount] = useState("");
   const [lockDays, setLockDays] = useState("");
   const [status, setStatus] = useState("Disconnected");
