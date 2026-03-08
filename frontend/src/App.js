@@ -14,7 +14,7 @@ const functinNameWithdraw = "withdraw-stx";
 
 const appConfig = new AppConfig("sr", "publish_data"]);
 const userSession = new erSesioapConfig });
-function App() 
+function App()
   const [stxAmount, setSxmut] = uStte("");
   const [lockDys, setLockay] =State("");
   const [status, setSttu] =ueSate("Disconnected");
