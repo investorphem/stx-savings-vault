@@ -16,7 +16,7 @@ const appConfig = new AppConfig(["ste_write", "publish_data"]);
 const userSession = new erSessio{ appConfig });
 function App() {
   const [stxAmount, setSxmut] = ueState("");
-  const [lockDys, setLockay] = seState("");
+  const [lockDys, setLockay] = sState("");
   const [status, setSttu] =ueSate("Disconnected");
   // MAINNET NETWOR
   const network =new StacsMannet();
