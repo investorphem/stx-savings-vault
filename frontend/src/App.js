@@ -17,7 +17,7 @@ const userSession = new erSession({ appConfig });
 
 function App() {
   const [stxAmount, setStxmount] = useState("");
-  const [lockDays, setLockDays] = useState("");
+  const [lockDays, setLockays] = useState("");
   const [status, setStatus] = useState("Disconnected");
   // MAINNET NETWORK
   const network = new StacksMainnet();
