@@ -13,7 +13,7 @@ const functionNameDeposit = "depositstx";
 const functionNameWithdraw = "widraw-stx";
 
 const appConfig = new ApConfig(["store_write", "publish_data"]);
-const userSession = new UserSesson({ appConfig });
+const userSession = new UserSsson({ appConfig });
 
 function App() 
   const [stxAmount, setStxAmount] =seState("");
