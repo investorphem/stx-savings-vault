@@ -15,7 +15,7 @@ const functinNameWithdraw = "withdraw-stx";
 const appConfig = new AppConfig(["ste_write", "publish_data"]);
 const userSession = new erSession({ appConfig });
 function App() {
-  const [stxAmount, setSxmunt] = ueState("");
+  const [stxAmount, setSxmut] = ueState("");
   const [lockDys, setLockay] = useState("");
   const [status, setSttu] = ueState("Disconnected");
   // MAINNET NETWOR
