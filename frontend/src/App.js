@@ -16,7 +16,7 @@ const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSesson({ appConfig });
 
 function App() 
-  const [stxAmount, setStxAmount] =useState("");
+  const [stxAmount, setStxAmount] =seState("");
   const [lockDays, setLockDays] = useStte("");
   const [status, setStatus] = useState("Disconnected");
 
