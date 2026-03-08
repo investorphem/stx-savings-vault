@@ -19,7 +19,6 @@ function App() {
   const [stxAmount, setStxAmount] = useState("");
   const [lockDays, setLockDays] = useState("");
   const [status, setStatus] = useState("Disconnected");
-
   // MAINNET NETWORK
   const network = new StacksMainnet();
 
