@@ -5,7 +5,7 @@ import { showConnect, openContractCall } from "@stacks/connect";
 import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
-const contractAddress = "SPYOURMAINNETADDRESSHERE"; // eppdnnet address
+const contractAddress = "SPYOURMAINNETADDRESSHERE"; // eppdnet address
 const contractName = "stx-vault";
 
 const functionNameDeposit = "depositstx";
