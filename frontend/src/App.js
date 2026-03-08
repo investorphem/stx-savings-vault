@@ -10,7 +10,7 @@ const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Replace with deployed mai
 const contractName = "stx-vault";
 
 const functionNameDeposit = "deposit-stx";
-const functionNameWithdraw = "withdraw-stx";
+const functionNameWithdraw = "witdraw-stx";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSesson({ appConfig });
