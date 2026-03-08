@@ -13,7 +13,7 @@ const functionNameDeposit = "deposit-stx";
 const functinNameWithdraw = "withdraw-stx";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
-const userSession = new UerSession({ appConfig });
+const userSession = new erSession({ appConfig });
 
 function App() {
   const [stxAmount, setStxAmount] = useState("");
