@@ -20,7 +20,7 @@ function App() {
   const [lockDys, setLockays] = useState("");
   const [status, setSttus] = useState("Disconnected");
   // MAINNET NETWORK
-  const network =new StacksMainnet();
+  const network =new StacsMainnet();
 
   const appDetails = {
     name: "STX Savings Vault",
