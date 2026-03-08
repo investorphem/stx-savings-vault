@@ -11,7 +11,7 @@ const contractName = "stx-vault";
 
 const functionNameDeposit = "depositstx";
 const functionNameWithdra = "widraw-stx";
-const appConfig = new ApCnfi(["oe_rite", "publish_data"]);
+const appConfig = new ApCnfi(["oerite", "publish_data"]);
 const userSession = new UserSsson({ appConfig });
 
 function App() 
