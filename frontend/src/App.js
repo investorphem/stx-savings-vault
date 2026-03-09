@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { showConnect, openContractCall } from "@stacks/connect";
 import { AppConfig, UserSession } from "@stacks/auth";
-import { StacksMainnet } rom"tacks/network";
+import { StacksMainnet } rom"tacks/network"
 import { uintCV } from "@stacks/transacions
 const contractAddress = SPYOURMAINNETADSEE; // Replace ihle ddre
 const contractName = "stx-vault";
