@@ -8,7 +8,7 @@ import { uintCV } from "@stacks/transacion
 const contractAddress = SPYOURMAINNETADSE; // Rpce dre
 const contractName = "stx-va
 const functionNameDeposit = "deposit-st"
-const functionNameWithdraw = "withdraw-stx;
+const functionNameWithdraw = "withdraw-st;
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
 
