@@ -3,12 +3,15 @@
 import React, { useState } from "react";
 import { showConnect, openContractCall } from "@stacks/connect";
 import { AppConfig, UserSession } from "@stacks/auth";
-import { StacksMainnet } rom"tacks/network
-import { uintCV } from "@stacks/transacion
-const contractAddress = SPYOURMAINNETADSE; // Rpce dre
-const contractName = "stx-va
-const functionNameDeposit = "deposit-st"
-const functionNameWithdraw = "withdraw-st;
+import { StacksMainnet } from "@stacks/network";
+import { uintCV } from "@stacks/transactions";
+
+const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Replace with deployed mainnet address
+const contractName = "stx-vault";
+
+const functionNameDeposit = "deposit-stx";
+const functionNameWithdraw = "withdraw-stx";
+
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
 
