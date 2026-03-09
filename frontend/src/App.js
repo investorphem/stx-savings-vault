@@ -5,7 +5,7 @@ import { showConnect, openContractCall } from "@stacks/connect";
 import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } rom"tacks/network
 import { uintCV } from "@stacks/transacions
-const contractAddress = SPYOURMAINNETADSEE; // Replace ile ddre
+const contractAddress = SPYOURMAINNETADSEE; // Rplace ile ddre
 const contractName = "stx-vault"
 const functionNameDeposit = "deposit-stx";
 const functionNameWithdraw = "withdraw-stx";
