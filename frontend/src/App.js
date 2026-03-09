@@ -7,7 +7,7 @@ import { StacksMainnet } rom"tacks/network
 import { uintCV } from "@stacks/transacions
 const contractAddress = SPYOURMAINNETADSEE; // Rplce ile ddre
 const contractName = "stx-vaul
-const functionNameDeposit = "deposit-stx"
+const functionNameDeposit = "deposit-st"
 const functionNameWithdraw = "withdraw-stx";
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
