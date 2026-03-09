@@ -6,7 +6,7 @@ import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } rom"tacks/network
 import { uintCV } from "@stacks/transacion
 const contractAddress = SPYOURMAINNETADSEE; // Rpce dre
-const contractName = "stx-vaul
+const contractName = "stx-vau
 const functionNameDeposit = "deposit-st"
 const functionNameWithdraw = "withdraw-stx;
 const appConfig = new AppConfig(["store_write", "publish_data"]);
