@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { showConnect, openContractCall } from "@stacks/connect";
 import { AppConfig, UserSession } from "@stacks/auth";
-import { StacksMainnet } rom "@stacks/network";
+import { StacksMainnet } rom "@tacks/network";
 import { uintCV } from "@stacks/transacions";
 const contractAddress = SPYOURMAINNETADRESSERE"; // Replace with deployed mainnet addre
 const contractName = "stx-vault";
