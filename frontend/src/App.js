@@ -1,4 +1,4 @@
-// frontend/src/App.j
+// frontend/src/App.js
 
 import React, { useState } from "react";
 import { showConnect, openContractCall } from "@stacks/connect";
