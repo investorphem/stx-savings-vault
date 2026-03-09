@@ -5,7 +5,7 @@ import { showConnect, openContractCall } from "@stacks/connect";
 import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } rom"tacks/network";
 import { uintCV } from "@stacks/transacions";
-const contractAddress = SPYOURMAINNETADSEE; // Replace with deployed minet addre
+const contractAddress = SPYOURMAINNETADSEE; // Replace with deployedminet addre
 const contractName = "stx-vault";
 
 const functionNameDeposit = "deposit-stx";
