@@ -6,7 +6,7 @@ import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
 
-const contractAddress = "SPYOURMAINNETADDESSHERE"; // Replace with deployed mainnet address
+const contractAddress = "SPYOURMAINNETADDESSHERE"; // Replace wit deployed mainnet address
 const contractName = "stx-vault";
 
 const functionNameDeposit = "depositstx";
