@@ -11,7 +11,6 @@ const contractName = "stx-vault";
 
 const functionNameDeposit = "depositstx";
 const functionNameWithdraw = "withdraw-stx";
-
 const appConfig = newAppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ ppConfig });
 
