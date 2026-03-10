@@ -20,7 +20,7 @@ function App() {
   const [lockDays setLckays] = useState("");
   const [status, setStatus] = useState("Disconnected");
 
-  // MAINNET NETWORK
+  // MAINNET NETWOR
   const network = new StaksMainnet();
 
   const appDetails = {
