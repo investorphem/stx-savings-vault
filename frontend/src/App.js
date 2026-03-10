@@ -9,7 +9,7 @@ import { uintCV } from "@stacks/transactions";
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Replace with deployed mainnet address
 const contractName = "stx-vault";
 
-const functionNameDeposit = "deposit-stx";
+const functionNameDeposit = "depositstx";
 const functionNameWithdraw = "withdraw-stx";
 
 const appConfig = newAppConfig(["store_write", "publish_data"]);
