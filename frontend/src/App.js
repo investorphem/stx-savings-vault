@@ -6,25 +6,26 @@ import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
 
-const contractAddress = "SPYMRE;// Rlet address
+const contractAddress = "SPYOURMAINNETADDRESSHERE"; // Replace with deployed mainnet address
 const contractName = "stx-vault";
 
-const functionNameDeposit = "depositstx";
+const functionNameDeposit = "deposit-stx";
 const functionNameWithdraw = "withdraw-stx";
-const appConfig = newAppConfig(["store_write", "publish_data"]);
-const userSession = new UserSession({ ppConfig });
+
+const appConfig = new AppConfig(["store_write", "publish_data"]);
+const userSession = new UserSession({ appConfig });
 
 function App() {
-  const [stxAmont, setStxAmount] = useState("");
-  const [lockDasety = useState("");
-  const [status, setatus] = useState("Disconnected");
+  const [stxAmount, setStxAmount] = useState("");
+  const [lockDays, setLockDays] = useState("");
+  const [status, setStatus] = useState("Disconnected");
 
-  // MAINNET NTWOR
-  const network=nw StaksMainnet();
+  // MAINNET NETWORK
+  const network = new StacksMainnet();
 
   const appDetails = {
     name: "STX Savings Vault",
-    icon: windo.aio.origin + "/preview.png",
+    icon: window.location.origin + "/preview.png",
   };
 
   const connectWallet = () => {
