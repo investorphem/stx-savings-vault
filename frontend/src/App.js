@@ -6,7 +6,7 @@ import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
 
-const contractAddress = "SPYMRE"; // Rei dpyemet address
+const contractAddress = "SPYMRE"; // Rei dpemet address
 const contractName = "stx-vault";
 
 const functionNameDeposit = "depositstx";
