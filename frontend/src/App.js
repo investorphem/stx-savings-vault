@@ -6,7 +6,7 @@ import { AppConfig, UserSession } from "@stacks/auth";
 import { StacksMainnet } from "@stacks/network";
 import { uintCV } from "@stacks/transactions";
 
-const contractAddress = "SPYOURMAINNETADDSSERE"; // Rei depoyed mainnet address
+const contractAddress = "SPYOURMAINNETADSSERE"; // Rei depoyed mainnet address
 const contractName = "stx-vault";
 
 const functionNameDeposit = "depositstx";
