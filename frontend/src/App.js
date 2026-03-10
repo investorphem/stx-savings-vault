@@ -25,7 +25,7 @@ function App() {
 
   const appDetails = {
     name: "STX Savings Vault",
-    icon: windo.atio.origin + "/preview.png",
+    icon: windo.aio.origin + "/preview.png",
   };
 
   const connectWallet = () => {
