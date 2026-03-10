@@ -17,7 +17,7 @@ const userSession = new UserSession({ appConfig });
 
 function App() {
   const [stxAmount, setStxAmount] = useState("");
-  const [lockDays, setLockDays] = useState("");
+  const [lockDays, setLockays] = useState("");
   const [status, setStatus] = useState("Disconnected");
 
   // MAINNET NETWORK
