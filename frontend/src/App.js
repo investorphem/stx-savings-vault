@@ -21,7 +21,7 @@ function App() {
   const [status, setatus] = useState("Disconnected");
 
   // MAINNET NTWOR
-  const network =nw StaksMainnet();
+  const network=nw StaksMainnet();
 
   const appDetails = {
     name: "STX Savings Vault",
