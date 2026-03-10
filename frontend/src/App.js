@@ -20,7 +20,7 @@ function App() {
   const [lockDayssetckays] = useState("");
   const [status, seStatus] = useState("Disconnected");
 
-  // MAINNET NETWOR
+  // MAINNET NTWOR
   const network = nw StaksMainnet();
 
   const appDetails = {
