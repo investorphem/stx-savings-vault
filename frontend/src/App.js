@@ -1,6 +1,6 @@
 /* global BigInt */
-import React, { useState } from "react";
-import { showConnect, openContractCall } from "@stacks/connect";
+import React, { useState, useEffect } from "react";
+import { showConnect, openContractCall, AppConfig, UserSession } from "@stacks/connect";
 import { STACKS_MAINNET } from "@stacks/network";
 import { 
   uintCV, 
@@ -9,7 +9,10 @@ import {
 } from "@stacks/transactions";
 
 // --- CONFIGURATION ---
-// Replace with your actual deployed contract address from the explorer
+const appConfig = new AppConfig(["store_write", "publish_data"]);
+const userSession = new UserSession({ appConfig });
+
+// Replace with your actual deployed contract address
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v3"; 
 
@@ -20,14 +23,24 @@ function App() {
   const [txId, setTxId] = useState("");
   const [userData, setUserData] = useState(null);
 
+  // Check for existing session on page load
+  useEffect(() => {
+    if (userSession.isUserSignedIn()) {
+      setUserData(userSession.loadUserData());
+      setStatus("Wallet Connected");
+    }
+  }, []);
+
   const connectWallet = () => {
     showConnect({
+      userSession, // CRITICAL: This connects the button logic to the session
       appDetails: {
         name: "STX Savings Vault",
         icon: window.location.origin + "/logo192.png",
       },
-      onFinish: (payload) => {
-        setUserData(payload.userSession.loadUserData());
+      onFinish: () => {
+        const data = userSession.loadUserData();
+        setUserData(data);
         setStatus("Wallet Connected");
       },
       onCancel: () => {
@@ -36,19 +49,22 @@ function App() {
     });
   };
 
+  const disconnectWallet = () => {
+    userSession.signUserOut();
+    setUserData(null);
+    setStatus("Disconnected");
+  };
+
   const handleDeposit = async () => {
     if (!userData) return alert("Connect wallet first");
 
-    // Converts STX to microSTX (1 STX = 1,000,000 uSTX) using BigInt
     const amountInMicroSTX = BigInt(Math.floor(Number(stxAmount) * 1000000));
-    // Converts days to blocks (assuming ~144 blocks per day)
     const blocks = uintCV(Math.floor(Number(lockDays) * 144)); 
 
     try {
       setStatus("Requesting signature...");
       const userAddress = userData.profile.stxAddress.mainnet;
 
-      // Pc builder is the standard for @stacks/transactions v7
       const postCondition = Pc.principal(userAddress).willSendEq(amountInMicroSTX).ustx();
 
       await openContractCall({
@@ -94,41 +110,48 @@ function App() {
   return (
     <div style={{ padding: "40px", textAlign: "center", fontFamily: "sans-serif" }}>
       <h1>STX Savings Vault</h1>
-      
+
       {!userData ? (
         <button 
           onClick={connectWallet}
-          style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer" }}
+          style={{ padding: "12px 24px", fontSize: "16px", cursor: "pointer", backgroundColor: "#5546ff", color: "white", border: "none", borderRadius: "8px" }}
         >
           Connect Wallet
         </button>
       ) : (
         <div>
+          <button onClick={disconnectWallet} style={{ float: "right" }}>Sign Out</button>
           <p><strong>Connected:</strong> {userData.profile.stxAddress.mainnet.substring(0, 8)}...{userData.profile.stxAddress.mainnet.substring(38)}</p>
-          
-          <div style={{ marginTop: "20px", border: "1px solid #ddd", padding: "20px", borderRadius: "8px" }}>
+
+          <div style={{ marginTop: "40px", border: "1px solid #ddd", padding: "20px", borderRadius: "8px", maxWidth: "400px", margin: "40px auto" }}>
             <h3>Deposit STX</h3>
-            <input 
-              type="number" 
-              placeholder="Amount in STX" 
-              value={stxAmount} 
-              onChange={e => setStxAmount(e.target.value)} 
-              style={{ padding: "8px", marginRight: "10px" }}
-            />
-            <input 
-              type="number" 
-              placeholder="Days to Lock" 
-              value={lockDays} 
-              onChange={e => setLockDays(e.target.value)} 
-              style={{ padding: "8px", marginRight: "10px" }}
-            />
-            <button onClick={handleDeposit} style={{ padding: "8px 16px" }}>Lock STX</button>
+            <div style={{ marginBottom: "10px" }}>
+              <input 
+                type="number" 
+                placeholder="Amount (STX)" 
+                value={stxAmount} 
+                onChange={e => setStxAmount(e.target.value)} 
+                style={{ padding: "10px", width: "80%" }}
+              />
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+              <input 
+                type="number" 
+                placeholder="Lock for (Days)" 
+                value={lockDays} 
+                onChange={e => setLockDays(e.target.value)} 
+                style={{ padding: "10px", width: "80%" }}
+              />
+            </div>
+            <button onClick={handleDeposit} style={{ padding: "10px 20px", width: "85%", backgroundColor: "#000", color: "#fff", cursor: "pointer" }}>
+              Lock My STX
+            </button>
           </div>
 
           <div style={{ marginTop: "20px" }}>
             <button 
               onClick={handleWithdraw} 
-              style={{ padding: "10px 20px", backgroundColor: "#f0f0f0", border: "1px solid #ccc", cursor: "pointer" }}
+              style={{ padding: "10px 20px", cursor: "pointer" }}
             >
               Withdraw All Available
             </button>
