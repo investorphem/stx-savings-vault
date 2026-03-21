@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { showConnect, openContractCall } from "@stacks/connect";
-// UPDATE: Import STACKS_MAINNET constant instead of the Class
 import { STACKS_MAINNET } from "@stacks/network";
 import { 
   uintCV, 
   PostConditionMode, 
   FungibleConditionCode, 
-  makeStandardSTXPostCondition 
+  Pc // Use the new Post-Condition builder
 } from "@stacks/transactions";
 
 // --- CONFIGURATION ---
@@ -46,14 +45,11 @@ function App() {
       setStatus("Requesting signature...");
       const userAddress = userData.profile.stxAddress.mainnet;
 
-      const postCondition = makeStandardSTXPostCondition(
-        userAddress,
-        FungibleConditionCode.Equal,
-        amountInMicroSTX
-      );
+      // NEW SYNTAX: Use Pc.principalSTX for the post-condition
+      const postCondition = Pc.principalSTX(userAddress)
+        .willSendEq(amountInMicroSTX);
 
       await openContractCall({
-        // UPDATE: Use the constant directly
         network: STACKS_MAINNET,
         contractAddress,
         contractName,
