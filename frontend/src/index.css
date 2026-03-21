@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #f4f7f6;
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+button {
+  cursor: pointer;
+  background: #5546ff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #4435cc;
+}
+
+input {
+  padding: 10px;
+  margin: 10px 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
