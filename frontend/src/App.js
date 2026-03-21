@@ -52,7 +52,10 @@ function App() {
     try {
       setStatus("Requesting signature...");
       const userAddress = userData.profile.stxAddress.mainnet;
+      
+      // Use window.BigInt to ensure it's recognized without an import
       const amountInMicroSTX = window.BigInt(Math.floor(Number(stxAmount) * 1000000));
+      
       const postCondition = Pc.principal(userAddress).willSendEq(amountInMicroSTX).ustx();
 
       await openContractCall({
@@ -60,7 +63,10 @@ function App() {
         contractAddress,
         contractName,
         functionName: "deposit-stx",
-        functionArgs: [uintCV(amountInMicroSTX), uintCV(Math.floor(Number(lockDays) * 144))],
+        functionArgs: [
+          uintCV(amountInMicroSTX), 
+          uintCV(Math.floor(Number(lockDays) * 144))
+        ],
         postConditions: [postCondition],
         postConditionMode: PostConditionMode.Deny,
         onFinish: (data) => {
