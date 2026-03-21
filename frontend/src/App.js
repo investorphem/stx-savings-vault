@@ -1,28 +1,24 @@
 import React, { useState } from "react";
 import { showConnect, openContractCall } from "@stacks/connect";
-import { StacksMainnet } from "@stacks/network";
+// UPDATE: Import STACKS_MAINNET constant instead of the Class
+import { STACKS_MAINNET } from "@stacks/network";
 import { 
   uintCV, 
   PostConditionMode, 
   FungibleConditionCode, 
   makeStandardSTXPostCondition 
 } from "@stacks/transactions";
-import { AppConfig, UserSession } from "@stacks/connect"; // Updated import source
 
 // --- CONFIGURATION ---
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; // UPDATE THIS
-const contractName = "stx-vault-v3"; // Match your latest deployment
-
-const appConfig = new AppConfig(["store_write", "publish_data"]);
-const userSession = new UserSession({ appConfig });
+const contractName = "stx-vault-v3"; 
 
 function App() {
   const [stxAmount, setStxAmount] = useState("");
   const [lockDays, setLockDays] = useState("");
   const [status, setStatus] = useState("Disconnected");
   const [txId, setTxId] = useState("");
-
-  const network = new StacksMainnet();
+  const [userData, setUserData] = useState(null);
 
   const appDetails = {
     name: "STX Savings Vault",
@@ -32,28 +28,23 @@ function App() {
   const connectWallet = () => {
     showConnect({
       appDetails,
-      userSession,
-      onFinish: () => {
-        window.location.reload();
+      onFinish: (payload) => {
+        setUserData(payload.userSession.loadUserData());
+        setStatus("Wallet Connected");
       },
+      onCancel: () => setStatus("Cancelled"),
     });
   };
 
-  const disconnectWallet = () => {
-    userSession.signUserOut(window.location.origin);
-  };
-
   const handleDeposit = async () => {
-    if (!userSession.isUserSignedIn()) return alert("Connect wallet first");
+    if (!userData) return alert("Connect wallet first");
     
     const amountInMicroSTX = Math.floor(Number(stxAmount) * 1000000);
     const blocks = Math.floor(Number(lockDays) * 144); 
 
-    if (amountInMicroSTX <= 0 || blocks <= 0) return alert("Enter valid values");
-
     try {
       setStatus("Requesting signature...");
-      const userAddress = userSession.loadUserData().profile.stxAddress.mainnet;
+      const userAddress = userData.profile.stxAddress.mainnet;
 
       const postCondition = makeStandardSTXPostCondition(
         userAddress,
@@ -62,7 +53,8 @@ function App() {
       );
 
       await openContractCall({
-        network,
+        // UPDATE: Use the constant directly
+        network: STACKS_MAINNET,
         contractAddress,
         contractName,
         functionName: "deposit-stx",
@@ -82,11 +74,11 @@ function App() {
   };
 
   const handleWithdraw = async () => {
-    if (!userSession.isUserSignedIn()) return alert("Connect wallet first");
+    if (!userData) return alert("Connect wallet first");
     try {
-      setStatus("Requesting withdrawal...");
+      setStatus("Withdrawing...");
       await openContractCall({
-        network,
+        network: STACKS_MAINNET,
         contractAddress,
         contractName,
         functionName: "withdraw-stx",
@@ -95,7 +87,6 @@ function App() {
           setTxId(data.txId);
           setStatus("Withdrawal broadcasted!");
         },
-        onCancel: () => setStatus("Cancelled"),
       });
     } catch (error) {
       console.error(error);
@@ -107,11 +98,11 @@ function App() {
     <div style={{ padding: "40px", textAlign: "center", fontFamily: "sans-serif" }}>
       <h1>STX Savings Vault</h1>
       
-      {!userSession.isUserSignedIn() ? (
+      {!userData ? (
         <button onClick={connectWallet}>Connect Wallet</button>
       ) : (
         <div>
-          <button onClick={disconnectWallet}>Disconnect</button>
+          <p>Logged in as: {userData.profile.stxAddress.mainnet.substring(0, 10)}...</p>
           <div style={{ marginTop: "20px" }}>
             <input 
               type="number" 
@@ -133,10 +124,10 @@ function App() {
       )}
 
       <div style={{ marginTop: "20px" }}>
-        <p>Status: {status}</p>
+        <p><strong>Status:</strong> {status}</p>
         {txId && (
           <a href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`} target="_blank" rel="noreferrer">
-            View Transaction ↗
+            View on Explorer ↗
           </a>
         )}
       </div>
