@@ -1,18 +1,11 @@
 /* global BigInt */
 import React, { useState, useEffect } from "react";
-import { showConnect, openContractCall, AppConfig, UserSession } from "@stacks/connect";
+// Import the modern methods
+import { connect, disconnect, isConnected, getLocalStorage, request } from "@stacks/connect";
 import { STACKS_MAINNET } from "@stacks/network";
-import { 
-  uintCV, 
-  PostConditionMode, 
-  Pc 
-} from "@stacks/transactions";
+import { uintCV, PostConditionMode, Pc } from "@stacks/transactions";
 
 // --- CONFIGURATION ---
-const appConfig = new AppConfig(["store_write", "publish_data"]);
-const userSession = new UserSession({ appConfig });
-
-// Replace with your actual deployed contract address
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v3"; 
 
@@ -21,65 +14,65 @@ function App() {
   const [lockDays, setLockDays] = useState("");
   const [status, setStatus] = useState("Disconnected");
   const [txId, setTxId] = useState("");
-  const [userData, setUserData] = useState(null);
+  const [userAddress, setUserAddress] = useState(null);
 
-  // Check for existing session on page load
+  // Check connection on mount using the new isConnected() helper
   useEffect(() => {
-    if (userSession.isUserSignedIn()) {
-      setUserData(userSession.loadUserData());
-      setStatus("Wallet Connected");
+    if (isConnected()) {
+      const data = getLocalStorage();
+      if (data?.addresses?.stx?.[0]?.address) {
+        setUserAddress(data.addresses.stx[0].address);
+        setStatus("Wallet Connected");
+      }
     }
   }, []);
 
-  const connectWallet = () => {
-    showConnect({
-      userSession, // CRITICAL: This connects the button logic to the session
-      appDetails: {
-        name: "STX Savings Vault",
-        icon: window.location.origin + "/logo192.png",
-      },
-      onFinish: () => {
-        const data = userSession.loadUserData();
-        setUserData(data);
+  const handleConnect = async () => {
+    try {
+      setStatus("Connecting...");
+      // The modern, async way to trigger the wallet popup
+      const response = await connect(); 
+      if (response?.addresses?.stx?.[0]?.address) {
+        setUserAddress(response.addresses.stx[0].address);
         setStatus("Wallet Connected");
-      },
-      onCancel: () => {
-        setStatus("Cancelled");
       }
-    });
+    } catch (error) {
+      console.error(error);
+      setStatus("Connection failed");
+    }
   };
 
-  const disconnectWallet = () => {
-    userSession.signUserOut();
-    setUserData(null);
+  const handleDisconnect = () => {
+    disconnect();
+    setUserAddress(null);
     setStatus("Disconnected");
   };
 
   const handleDeposit = async () => {
-    if (!userData) return alert("Connect wallet first");
+    if (!userAddress) return alert("Connect wallet first");
 
     const amountInMicroSTX = BigInt(Math.floor(Number(stxAmount) * 1000000));
-    const blocks = uintCV(Math.floor(Number(lockDays) * 144)); 
+    const blocks = Math.floor(Number(lockDays) * 144); 
 
     try {
       setStatus("Requesting signature...");
-      const userAddress = userData.profile.stxAddress.mainnet;
-
       const postCondition = Pc.principal(userAddress).willSendEq(amountInMicroSTX).ustx();
 
-      await openContractCall({
+      // Using the modern 'request' API for contract calls
+      const response = await request("stx_callContract", {
         network: STACKS_MAINNET,
         contractAddress,
         contractName,
         functionName: "deposit-stx",
-        functionArgs: [uintCV(amountInMicroSTX), blocks],
+        functionArgs: [uintCV(amountInMicroSTX), uintCV(blocks)],
         postConditions: [postCondition],
         postConditionMode: PostConditionMode.Deny,
-        onFinish: (data) => {
-          setTxId(data.txId);
-          setStatus("Deposit broadcasted!");
-        },
       });
+
+      if (response?.txid) {
+        setTxId(response.txid);
+        setStatus("Deposit broadcasted!");
+      }
     } catch (error) {
       console.error(error);
       setStatus("Deposit failed");
@@ -87,20 +80,21 @@ function App() {
   };
 
   const handleWithdraw = async () => {
-    if (!userData) return alert("Connect wallet first");
+    if (!userAddress) return alert("Connect wallet first");
     try {
       setStatus("Requesting withdrawal...");
-      await openContractCall({
+      const response = await request("stx_callContract", {
         network: STACKS_MAINNET,
         contractAddress,
         contractName,
         functionName: "withdraw-stx",
         functionArgs: [],
-        onFinish: (data) => {
-          setTxId(data.txId);
-          setStatus("Withdrawal broadcasted!");
-        },
       });
+
+      if (response?.txid) {
+        setTxId(response.txid);
+        setStatus("Withdrawal broadcasted!");
+      }
     } catch (error) {
       console.error(error);
       setStatus("Withdraw failed");
@@ -111,67 +105,43 @@ function App() {
     <div style={{ padding: "40px", textAlign: "center", fontFamily: "sans-serif" }}>
       <h1>STX Savings Vault</h1>
 
-      {!userData ? (
+      {!userAddress ? (
         <button 
-          onClick={connectWallet}
+          onClick={handleConnect}
           style={{ padding: "12px 24px", fontSize: "16px", cursor: "pointer", backgroundColor: "#5546ff", color: "white", border: "none", borderRadius: "8px" }}
         >
           Connect Wallet
         </button>
       ) : (
         <div>
-          <button onClick={disconnectWallet} style={{ float: "right" }}>Sign Out</button>
-          <p><strong>Connected:</strong> {userData.profile.stxAddress.mainnet.substring(0, 8)}...{userData.profile.stxAddress.mainnet.substring(38)}</p>
+          <button onClick={handleDisconnect} style={{ float: "right" }}>Sign Out</button>
+          <p><strong>Connected:</strong> {userAddress.substring(0, 8)}...{userAddress.substring(34)}</p>
 
           <div style={{ marginTop: "40px", border: "1px solid #ddd", padding: "20px", borderRadius: "8px", maxWidth: "400px", margin: "40px auto" }}>
             <h3>Deposit STX</h3>
-            <div style={{ marginBottom: "10px" }}>
-              <input 
-                type="number" 
-                placeholder="Amount (STX)" 
-                value={stxAmount} 
-                onChange={e => setStxAmount(e.target.value)} 
-                style={{ padding: "10px", width: "80%" }}
-              />
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-              <input 
-                type="number" 
-                placeholder="Lock for (Days)" 
-                value={lockDays} 
-                onChange={e => setLockDays(e.target.value)} 
-                style={{ padding: "10px", width: "80%" }}
-              />
-            </div>
+            <input 
+              type="number" placeholder="Amount (STX)" value={stxAmount} 
+              onChange={e => setStxAmount(e.target.value)} style={{ padding: "10px", width: "80%", marginBottom: "10px" }}
+            />
+            <input 
+              type="number" placeholder="Lock (Days)" value={lockDays} 
+              onChange={e => setLockDays(e.target.value)} style={{ padding: "10px", width: "80%", marginBottom: "10px" }}
+            />
             <button onClick={handleDeposit} style={{ padding: "10px 20px", width: "85%", backgroundColor: "#000", color: "#fff", cursor: "pointer" }}>
               Lock My STX
             </button>
           </div>
 
-          <div style={{ marginTop: "20px" }}>
-            <button 
-              onClick={handleWithdraw} 
-              style={{ padding: "10px 20px", cursor: "pointer" }}
-            >
-              Withdraw All Available
-            </button>
-          </div>
+          <button onClick={handleWithdraw} style={{ padding: "10px 20px", cursor: "pointer" }}>
+            Withdraw Available
+          </button>
         </div>
       )}
 
       <div style={{ marginTop: "30px", borderTop: "1px solid #eee", paddingTop: "20px" }}>
         <p><strong>Status:</strong> {status}</p>
         {txId && (
-          <p>
-            <a 
-              href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`} 
-              target="_blank" 
-              rel="noreferrer"
-              style={{ color: "#5546ff", textDecoration: "none", fontWeight: "bold" }}
-            >
-              View on Explorer ↗
-            </a>
-          </p>
+          <p><a href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`} target="_blank" rel="noreferrer">View on Explorer ↗</a></p>
         )}
       </div>
     </div>
