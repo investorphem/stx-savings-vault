@@ -1,10 +1,15 @@
-import './polyfill'; // This must be the very first line
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import { Buffer } from "buffer";
+// 1. Polyfill must happen BEFORE any other imports
+if (typeof window !== "undefined") {
+  window.Buffer = window.Buffer || Buffer;
+}
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+// 2. Now the rest of your imports
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <App />
