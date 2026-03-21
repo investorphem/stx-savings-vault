@@ -5,7 +5,7 @@ import {
   uintCV, 
   PostConditionMode, 
   FungibleConditionCode, 
-  Pc // Use the new Post-Condition builder
+  stxPc // Use the direct named export instead of the Pc object
 } from "@stacks/transactions";
 
 // --- CONFIGURATION ---
@@ -45,8 +45,8 @@ function App() {
       setStatus("Requesting signature...");
       const userAddress = userData.profile.stxAddress.mainnet;
 
-      // NEW SYNTAX: Use Pc.principalSTX for the post-condition
-      const postCondition = Pc.principalSTX(userAddress)
+      // FIX: Use stxPc directly to avoid "Pc not exported" errors
+      const postCondition = stxPc(userAddress)
         .willSendEq(amountInMicroSTX);
 
       await openContractCall({
@@ -98,7 +98,7 @@ function App() {
         <button onClick={connectWallet}>Connect Wallet</button>
       ) : (
         <div>
-          <p>Logged in as: {userData.profile.stxAddress.mainnet.substring(0, 10)}...</p>
+          <p>Logged in: {userData.profile.stxAddress.mainnet.substring(0, 8)}...</p>
           <div style={{ marginTop: "20px" }}>
             <input 
               type="number" 
