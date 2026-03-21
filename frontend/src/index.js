@@ -1,13 +1,10 @@
-import { Buffer } from "buffer";
-// Standard polyfill for Stacks transactions in the browser
-window.Buffer = window.Buffer || Buffer;
+import './polyfill'; // This must be the very first line
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
 
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css"; // Optional: if you have a CSS file
-import App from "./App";
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <App />
