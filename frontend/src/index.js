@@ -1,10 +1,4 @@
-import { Buffer } from "buffer";
-// 1. Polyfill must happen BEFORE any other imports
-if (typeof window !== "undefined") {
-  window.Buffer = window.Buffer || Buffer;
-}
-
-// 2. Now the rest of your imports
+import "./init"; // This MUST be first
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
