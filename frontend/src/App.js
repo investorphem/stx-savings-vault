@@ -5,7 +5,7 @@ import {
   uintCV, 
   PostConditionMode, 
   FungibleConditionCode, 
-  stxPc // Use the direct named export instead of the Pc object
+  createSTXPostCondition // The most widely compatible export
 } from "@stacks/transactions";
 
 // --- CONFIGURATION ---
@@ -45,9 +45,12 @@ function App() {
       setStatus("Requesting signature...");
       const userAddress = userData.profile.stxAddress.mainnet;
 
-      // FIX: Use stxPc directly to avoid "Pc not exported" errors
-      const postCondition = stxPc(userAddress)
-        .willSendEq(amountInMicroSTX);
+      // FIX: Using the most robust, cross-version compatible post-condition creator
+      const postCondition = createSTXPostCondition(
+        userAddress,
+        FungibleConditionCode.Equal,
+        amountInMicroSTX
+      );
 
       await openContractCall({
         network: STACKS_MAINNET,
