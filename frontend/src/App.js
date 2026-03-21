@@ -9,7 +9,8 @@ import {
 } from "@stacks/transactions";
 
 // --- CONFIGURATION ---
-const contractAddress = "SPYOURMAINNETADDRESSHERE"; // UPDATE THIS
+// Replace with your actual deployed contract address from the explorer
+const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v3"; 
 
 function App() {
@@ -29,14 +30,18 @@ function App() {
         setUserData(payload.userSession.loadUserData());
         setStatus("Wallet Connected");
       },
+      onCancel: () => {
+        setStatus("Cancelled");
+      }
     });
   };
 
   const handleDeposit = async () => {
     if (!userData) return alert("Connect wallet first");
-    
-    // Use BigInt for uSTX (1 STX = 1,000,000 uSTX)
+
+    // Converts STX to microSTX (1 STX = 1,000,000 uSTX) using BigInt
     const amountInMicroSTX = BigInt(Math.floor(Number(stxAmount) * 1000000));
+    // Converts days to blocks (assuming ~144 blocks per day)
     const blocks = uintCV(Math.floor(Number(lockDays) * 144)); 
 
     try {
@@ -68,7 +73,7 @@ function App() {
   const handleWithdraw = async () => {
     if (!userData) return alert("Connect wallet first");
     try {
-      setStatus("Withdrawing...");
+      setStatus("Requesting withdrawal...");
       await openContractCall({
         network: STACKS_MAINNET,
         contractAddress,
@@ -89,36 +94,58 @@ function App() {
   return (
     <div style={{ padding: "40px", textAlign: "center", fontFamily: "sans-serif" }}>
       <h1>STX Savings Vault</h1>
+      
       {!userData ? (
-        <button onClick={connectWallet}>Connect Wallet</button>
+        <button 
+          onClick={connectWallet}
+          style={{ padding: "10px 20px", fontSize: "16px", cursor: "pointer" }}
+        >
+          Connect Wallet
+        </button>
       ) : (
         <div>
-          <p>Logged in: {userData.profile.stxAddress.mainnet.substring(0, 8)}...</p>
-          <div style={{ marginTop: "20px" }}>
+          <p><strong>Connected:</strong> {userData.profile.stxAddress.mainnet.substring(0, 8)}...{userData.profile.stxAddress.mainnet.substring(38)}</p>
+          
+          <div style={{ marginTop: "20px", border: "1px solid #ddd", padding: "20px", borderRadius: "8px" }}>
+            <h3>Deposit STX</h3>
             <input 
               type="number" 
-              placeholder="STX Amount" 
+              placeholder="Amount in STX" 
               value={stxAmount} 
               onChange={e => setStxAmount(e.target.value)} 
+              style={{ padding: "8px", marginRight: "10px" }}
             />
             <input 
               type="number" 
               placeholder="Days to Lock" 
               value={lockDays} 
               onChange={e => setLockDays(e.target.value)} 
+              style={{ padding: "8px", marginRight: "10px" }}
             />
-            <button onClick={handleDeposit} style={{ marginLeft: "10px" }}>Deposit</button>
+            <button onClick={handleDeposit} style={{ padding: "8px 16px" }}>Lock STX</button>
           </div>
+
           <div style={{ marginTop: "20px" }}>
-            <button onClick={handleWithdraw}>Withdraw All Available</button>
+            <button 
+              onClick={handleWithdraw} 
+              style={{ padding: "10px 20px", backgroundColor: "#f0f0f0", border: "1px solid #ccc", cursor: "pointer" }}
+            >
+              Withdraw All Available
+            </button>
           </div>
         </div>
       )}
-      <div style={{ marginTop: "30px", borderTop: "1px solid #ccc", paddingTop: "20px" }}>
+
+      <div style={{ marginTop: "30px", borderTop: "1px solid #eee", paddingTop: "20px" }}>
         <p><strong>Status:</strong> {status}</p>
         {txId && (
           <p>
-            <a href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`} target="_blank" rel="noreferrer">
+            <a 
+              href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`} 
+              target="_blank" 
+              rel="noreferrer"
+              style={{ color: "#5546ff", textDecoration: "none", fontWeight: "bold" }}
+            >
               View on Explorer ↗
             </a>
           </p>
