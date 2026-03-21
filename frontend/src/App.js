@@ -1,8 +1,10 @@
+/* global BigInt */
 import React, { useState, useEffect, useCallback } from "react";
 import { AppConfig, UserSession, showConnect, openContractCall } from "@stacks/connect";
 import { STACKS_MAINNET } from "@stacks/network";
 import { uintCV, PostConditionMode, Pc } from "@stacks/transactions";
 
+// Initializing outside the component prevents re-declaration errors
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
 
@@ -10,11 +12,11 @@ const contractAddress = "SPYOURMAINNETADDRESSHERE";
 const contractName = "stx-vault-v3"; 
 
 function App() {
+  const [userData, setUserData] = useState(null);
   const [stxAmount, setStxAmount] = useState("");
   const [lockDays, setLockDays] = useState("");
   const [status, setStatus] = useState("Disconnected");
   const [txId, setTxId] = useState("");
-  const [userData, setUserData] = useState(null);
 
   const checkUserSession = useCallback(() => {
     if (userSession.isUserSignedIn()) {
@@ -31,20 +33,22 @@ function App() {
     showConnect({
       userSession,
       appDetails: {
-        name: "STX Savings Vault",
+        name: "STX Vault",
         icon: window.location.origin + "/logo192.png",
       },
       onFinish: () => {
-        checkUserSession(); 
+        // Force a small delay to let the wallet popup close before state update
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       },
-      onCancel: () => setStatus("Cancelled"),
+      onCancel: () => setStatus("Cancelled")
     });
   };
 
   const handleDisconnect = () => {
     userSession.signUserOut();
-    setUserData(null);
-    setStatus("Disconnected");
+    window.location.reload();
   };
 
   const handleDeposit = async () => {
@@ -52,9 +56,7 @@ function App() {
     try {
       setStatus("Requesting signature...");
       const userAddress = userData.profile.stxAddress.mainnet;
-      
-      // Use window.BigInt to ensure it's recognized without an import
-      const amountInMicroSTX = window.BigInt(Math.floor(Number(stxAmount) * 1000000));
+      const amountInMicroSTX = BigInt(Math.floor(Number(stxAmount) * 1000000));
       
       const postCondition = Pc.principal(userAddress).willSendEq(amountInMicroSTX).ustx();
 
@@ -63,10 +65,7 @@ function App() {
         contractAddress,
         contractName,
         functionName: "deposit-stx",
-        functionArgs: [
-          uintCV(amountInMicroSTX), 
-          uintCV(Math.floor(Number(lockDays) * 144))
-        ],
+        functionArgs: [uintCV(amountInMicroSTX), uintCV(Math.floor(Number(lockDays) * 144))],
         postConditions: [postCondition],
         postConditionMode: PostConditionMode.Deny,
         onFinish: (data) => {
@@ -74,8 +73,8 @@ function App() {
           setStatus("Deposit broadcasted!");
         },
       });
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       setStatus("Deposit failed");
     }
   };
@@ -95,8 +94,8 @@ function App() {
           setStatus("Withdrawal broadcasted!");
         },
       });
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       setStatus("Withdraw failed");
     }
   };
