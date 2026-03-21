@@ -1,29 +1,28 @@
-/* global BigInt */
 import React, { useState, useEffect, useCallback } from "react";
-// Ensure we include userSession for better state management
 import { AppConfig, UserSession, showConnect, openContractCall } from "@stacks/connect";
 import { STACKS_MAINNET } from "@stacks/network";
 import { uintCV, PostConditionMode, Pc } from "@stacks/transactions";
 
-// 1. Setup session outside to keep it persistent
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
 
-function App() {
-  const [userData, setUserData] = useState(null);
-  const [status, setStatus] = useState("Disconnected");
-  // ... other states (stxAmount, lockDays, txId)
+const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
+const contractName = "stx-vault-v3"; 
 
-  // 2. Use a callback to update state so we can call it from multiple places
+function App() {
+  const [stxAmount, setStxAmount] = useState("");
+  const [lockDays, setLockDays] = useState("");
+  const [status, setStatus] = useState("Disconnected");
+  const [txId, setTxId] = useState("");
+  const [userData, setUserData] = useState(null);
+
   const checkUserSession = useCallback(() => {
     if (userSession.isUserSignedIn()) {
-      const data = userSession.loadUserData();
-      setUserData(data);
+      setUserData(userSession.loadUserData());
       setStatus("Wallet Connected");
     }
   }, []);
 
-  // Check on initial load
   useEffect(() => {
     checkUserSession();
   }, [checkUserSession]);
@@ -36,7 +35,6 @@ function App() {
         icon: window.location.origin + "/logo192.png",
       },
       onFinish: () => {
-        // 3. THIS IS THE FIX: Explicitly trigger the state update here
         checkUserSession(); 
       },
       onCancel: () => setStatus("Cancelled"),
@@ -47,37 +45,79 @@ function App() {
     userSession.signUserOut();
     setUserData(null);
     setStatus("Disconnected");
-    window.location.reload(); // Optional: clean slate
   };
 
-  // Helper to get address easily in the UI
+  const handleDeposit = async () => {
+    if (!userData) return;
+    try {
+      setStatus("Requesting signature...");
+      const userAddress = userData.profile.stxAddress.mainnet;
+      const amountInMicroSTX = window.BigInt(Math.floor(Number(stxAmount) * 1000000));
+      const postCondition = Pc.principal(userAddress).willSendEq(amountInMicroSTX).ustx();
+
+      await openContractCall({
+        network: STACKS_MAINNET,
+        contractAddress,
+        contractName,
+        functionName: "deposit-stx",
+        functionArgs: [uintCV(amountInMicroSTX), uintCV(Math.floor(Number(lockDays) * 144))],
+        postConditions: [postCondition],
+        postConditionMode: PostConditionMode.Deny,
+        onFinish: (data) => {
+          setTxId(data.txId);
+          setStatus("Deposit broadcasted!");
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      setStatus("Deposit failed");
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!userData) return;
+    try {
+      setStatus("Requesting withdrawal...");
+      await openContractCall({
+        network: STACKS_MAINNET,
+        contractAddress,
+        contractName,
+        functionName: "withdraw-stx",
+        functionArgs: [],
+        onFinish: (data) => {
+          setTxId(data.txId);
+          setStatus("Withdrawal broadcasted!");
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      setStatus("Withdraw failed");
+    }
+  };
+
   const userAddress = userData?.profile?.stxAddress?.mainnet;
 
   return (
     <div style={{ padding: "40px", textAlign: "center", fontFamily: "sans-serif" }}>
       <h1>STX Savings Vault</h1>
-
-      {/* 4. UI switches based on userData existing in state */}
       {!userData ? (
-        <button 
-          onClick={handleConnect}
-          style={{ padding: "12px 24px", fontSize: "16px", cursor: "pointer", backgroundColor: "#5546ff", color: "white", border: "none", borderRadius: "8px" }}
-        >
+        <button onClick={handleConnect} style={{ padding: "12px 24px", cursor: "pointer" }}>
           Connect Wallet
         </button>
       ) : (
         <div>
           <button onClick={handleDisconnect} style={{ float: "right" }}>Sign Out</button>
-          <p><strong>Connected:</strong> {userAddress?.substring(0, 8)}...{userAddress?.substring(34)}</p>
-
-          <div style={{ marginTop: "40px", border: "1px solid #ddd", padding: "20px", borderRadius: "8px", maxWidth: "400px", margin: "40px auto" }}>
-            <h3>Deposit STX</h3>
-            {/* ... rest of your deposit inputs ... */}
+          <p>Connected: {userAddress?.substring(0, 8)}...</p>
+          <div style={{ margin: "20px auto", maxWidth: "300px", border: "1px solid #ddd", padding: "20px" }}>
+            <input type="number" placeholder="STX" value={stxAmount} onChange={e => setStxAmount(e.target.value)} style={{ width: "100%", marginBottom: "10px" }} />
+            <input type="number" placeholder="Days" value={lockDays} onChange={e => setLockDays(e.target.value)} style={{ width: "100%", marginBottom: "10px" }} />
+            <button onClick={handleDeposit} style={{ width: "100%" }}>Deposit</button>
           </div>
+          <button onClick={handleWithdraw}>Withdraw Available</button>
         </div>
       )}
-      
-      {/* ... Status and TxId displays ... */}
+      <p>Status: {status}</p>
+      {txId && <p><a href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`} target="_blank" rel="noreferrer">View Tx ↗</a></p>}
     </div>
   );
 }
