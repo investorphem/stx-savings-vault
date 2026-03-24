@@ -1,31 +1,35 @@
 /* global BigInt */
 import React, { useState, useEffect, useCallback } from "react";
-import * as StacksConnect from "@stacks/connect";
-import * as StacksNetwork from "@stacks/network";
-import * as StacksTransactions from "@stacks/transactions";
+import { AppConfig, UserSession, showConnect, openContractCall } from "@stacks/connect";
+import { StacksMainnet } from "@stacks/network";
+// v6.x specific names
+import { 
+  uintCV, 
+  PostConditionMode, 
+  FungibleConditionCode,
+  makeStandardSTXPostCondition,
+  callReadOnlyFunction, 
+  cvToJSON 
+} from "@stacks/transactions";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Wallet, Lock, Unlock, LogOut, ShieldCheck, 
-  ArrowUpRight, Loader2, Coins, Clock, RefreshCw, Zap 
+  LogOut, ShieldCheck, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, Zap 
 } from "lucide-react";
 
-// --- PREMIUM DARK THEME ---
 const theme = {
   primary: "#5546FF",
-  primaryHover: "#4335E6",
-  bg: "#0B0E14", // Deep Dark
-  card: "#161B22", // Slate Gray
+  bg: "#0B0E14",
+  card: "#161B22",
   cardBorder: "#30363D",
   textMain: "#FFFFFF",
   textMuted: "#8B949E",
-  accent: "#79C0FF",
-  success: "#3FB950"
+  accent: "#79C0FF"
 };
 
-const appConfig = new StacksConnect.AppConfig(["store_write", "publish_data"]);
-const userSession = new StacksConnect.UserSession({ appConfig });
+const appConfig = new AppConfig(["store_write", "publish_data"]);
+const userSession = new UserSession({ appConfig });
 
-// --- REPLACE WITH YOUR ADDRESS ---
+// --- REPLACE WITH YOUR CONTRACT ---
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v3"; 
 
@@ -34,30 +38,24 @@ function App() {
   const [vaultData, setVaultData] = useState({ amount: 0, unlock: 0 });
   const [stxAmount, setStxAmount] = useState("");
   const [lockDays, setLockDays] = useState("");
-  const [status, setStatus] = useState("Disconnected");
   const [isPending, setIsPending] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [txId, setTxId] = useState("");
-
-  // Helper to handle the "Not Exported" Vercel headache
-  const callReadOnly = StacksTransactions.fetchCallReadOnlyFunction || 
-                       StacksTransactions.readOnlyFunctionCall || 
-                       StacksTransactions.callReadOnlyFunction;
 
   const fetchVaultStatus = useCallback(async (address) => {
     if (!address) return;
     setIsRefreshing(true);
     try {
-      const result = await callReadOnly({
-        network: new StacksNetwork.StacksMainnet(),
+      const result = await callReadOnlyFunction({
+        network: new StacksMainnet(),
         contractAddress,
         contractName,
         functionName: "get-vault-status",
-        functionArgs: [StacksTransactions.uintCV(address)],
+        functionArgs: [uintCV(address)],
         senderAddress: address,
       });
       
-      const json = StacksTransactions.cvToJSON(result);
+      const json = cvToJSON(result);
       if (json && json.value) {
         setVaultData({
           amount: Number(json.value.amount.value) / 1000000,
@@ -65,38 +63,29 @@ function App() {
         });
       }
     } catch (e) {
-      console.error("Vault fetch error:", e);
+      console.error("Fetch error:", e);
     } finally {
       setIsRefreshing(false);
     }
-  }, [callReadOnly]);
+  }, []);
 
   useEffect(() => {
     if (userSession.isUserSignedIn()) {
       const user = userSession.loadUserData();
       setUserData(user);
-      setStatus("Connected");
       fetchVaultStatus(user.profile.stxAddress.mainnet);
     }
   }, [fetchVaultStatus]);
 
   const handleConnect = () => {
-    console.log("Connect triggered");
-    StacksConnect.showConnect({
+    showConnect({
       userSession,
       appDetails: { 
         name: "STX Vault", 
         icon: window.location.origin + "/logo192.png" 
       },
-      onFinish: () => {
-        window.location.reload();
-      },
+      onFinish: () => { window.location.reload(); },
     });
-  };
-
-  const handleDisconnect = () => {
-    userSession.signUserOut();
-    window.location.reload();
   };
 
   const handleDeposit = async () => {
@@ -104,24 +93,25 @@ function App() {
     setIsPending(true);
     try {
       const userAddress = userData.profile.stxAddress.mainnet;
-      const amountInMicroSTX = BigInt(Math.floor(Number(stxAmount) * 1000000));
+      const amountMicro = BigInt(Math.floor(Number(stxAmount) * 1000000));
       
-      await StacksConnect.openContractCall({
-        network: new StacksNetwork.StacksMainnet(),
+      // v6 Post Condition Style
+      const postCondition = makeStandardSTXPostCondition(
+        userAddress,
+        FungibleConditionCode.Equal,
+        amountMicro
+      );
+
+      await openContractCall({
+        network: new StacksMainnet(),
         contractAddress,
         contractName,
         functionName: "deposit-stx",
-        functionArgs: [
-            StacksTransactions.uintCV(amountInMicroSTX), 
-            StacksTransactions.uintCV(Math.floor(Number(lockDays) * 144))
-        ],
-        postConditions: [
-            StacksTransactions.Pc.principal(userAddress).willSendEq(amountInMicroSTX).ustx()
-        ],
-        postConditionMode: StacksTransactions.PostConditionMode.Deny,
+        functionArgs: [uintCV(amountMicro), uintCV(Math.floor(Number(lockDays) * 144))],
+        postConditions: [postCondition],
+        postConditionMode: PostConditionMode.Deny,
         onFinish: (data) => {
           setTxId(data.txId);
-          setStatus("Broadcasted!");
           setIsPending(false);
         },
       });
@@ -134,83 +124,45 @@ function App() {
 
   return (
     <div style={{ backgroundColor: theme.bg, minHeight: "100vh", color: theme.textMain, fontFamily: "'Inter', sans-serif" }}>
-      
-      {/* --- HEADER --- */}
       <header style={headerStyle}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={logoContainer}><Zap size={20} color="#fff" fill="#fff" /></div>
-          <span style={{ fontWeight: "800", fontSize: "20px", letterSpacing: "-0.5px" }}>STX VAULT</span>
+          <div style={logoBox}><Zap size={20} fill="#fff" /></div>
+          <span style={{ fontWeight: "800", fontSize: "18px", letterSpacing: "-0.5px" }}>STX VAULT</span>
         </div>
         {!userData ? (
           <button onClick={handleConnect} style={connectBtn}>Connect Wallet</button>
         ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <span style={addressPill}>{userAddress?.substring(0, 6)}...{userAddress?.substring(userAddress.length - 4)}</span>
-            <button onClick={handleDisconnect} style={{ color: theme.textMuted, background: "none", border: "none", cursor: "pointer" }}><LogOut size={18} /></button>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={addressPill}>{userAddress?.substring(0, 6)}...</span>
+            <button onClick={() => { userSession.signUserOut(); window.location.reload(); }} style={{ background: "none", border: "none", color: theme.textMuted, cursor: "pointer" }}><LogOut size={18} /></button>
           </div>
         )}
       </header>
 
-      {/* --- CONTENT --- */}
-      <main style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "60px 20px" }}>
-        <AnimatePresence mode="wait">
+      <main style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "80px 20px" }}>
+        <AnimatePresence>
           {!userData ? (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", maxWidth: "600px" }}>
-              <div style={badge}>v8.1 Secure Protocol</div>
-              <h1 style={heroTitle}>The Institution-Grade <span style={{ color: theme.primary }}>STX Vault.</span></h1>
-              <p style={{ color: theme.textMuted, fontSize: "18px", marginBottom: "40px", lineHeight: "1.6" }}>
-                Secure your digital future on the most robust smart contract layer. Non-custodial, open-source, and Bitcoin-settled.
-              </p>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", maxWidth: "500px" }}>
+              <div style={badge}>V8.1 PREMIUM PROTOCOL</div>
+              <h1 style={{ fontSize: "56px", fontWeight: "900", marginBottom: "20px", lineHeight: 1 }}>Protect Your <span style={{ color: theme.primary }}>STX.</span></h1>
+              <p style={{ color: theme.textMuted, fontSize: "18px", marginBottom: "40px" }}>Secure, non-custodial vault for the Stacks ecosystem.</p>
               <button onClick={handleConnect} style={heroBtn}>Launch dApp <ArrowUpRight size={20} /></button>
             </motion.div>
           ) : (
-            <div style={{ width: "100%", maxWidth: "1000px" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "24px" }}>
-                
-                {/* STATUS CARD */}
+            <div style={{ width: "100%", maxWidth: "900px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
                 <div style={cardStyle}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "24px" }}>
-                    <h3 style={{ margin: 0 }}>Portfolio</h3>
-                    <RefreshCw size={16} className={isRefreshing ? "animate-spin" : ""} color={theme.textMuted} />
-                  </div>
-                  <div style={statRow}>
-                    <Coins size={24} color={theme.primary} />
-                    <div>
-                      <div style={statLabel}>Locked Balance</div>
-                      <div style={statValue}>{vaultData.amount.toLocaleString()} STX</div>
-                    </div>
-                  </div>
-                  <div style={statRow}>
-                    <Clock size={24} color={theme.accent} />
-                    <div>
-                      <div style={statLabel}>Unlock Height</div>
-                      <div style={statValue}>#{vaultData.unlock || "0"}</div>
-                    </div>
-                  </div>
+                  <h3 style={{ marginBottom: "20px" }}>Holdings</h3>
+                  <div style={statRow}><Coins color={theme.primary} /> <div><div style={statLabel}>Current</div><div style={statValue}>{vaultData.amount} STX</div></div></div>
+                  <div style={statRow}><Clock color={theme.accent} /> <div><div style={statLabel}>Unlock Block</div><div style={statValue}>#{vaultData.unlock}</div></div></div>
                 </div>
-
-                {/* ACTION CARD */}
                 <div style={cardStyle}>
-                  <h3 style={{ marginBottom: "24px" }}>Vault Control</h3>
-                  <div style={{ marginBottom: "15px" }}>
-                    <label style={inputLabel}>Amount (STX)</label>
-                    <input type="number" placeholder="0.00" value={stxAmount} onChange={e => setStxAmount(e.target.value)} style={inputStyle} />
-                  </div>
-                  <div style={{ marginBottom: "25px" }}>
-                    <label style={inputLabel}>Lock Duration (Days)</label>
-                    <input type="number" placeholder="30" value={lockDays} onChange={e => setLockDays(e.target.value)} style={inputStyle} />
-                  </div>
-                  <button onClick={handleDeposit} disabled={isPending} style={actionBtn}>
-                    {isPending ? <Loader2 className="animate-spin" /> : <><Lock size={18} /> Secure Deposit</>}
-                  </button>
+                  <h3 style={{ marginBottom: "20px" }}>Deposit</h3>
+                  <input type="number" placeholder="Amount (STX)" value={stxAmount} onChange={e => setStxAmount(e.target.value)} style={inputStyle} />
+                  <input type="number" placeholder="Lock Days" value={lockDays} onChange={e => setLockDays(e.target.value)} style={inputStyle} />
+                  <button onClick={handleDeposit} disabled={isPending} style={actionBtn}>{isPending ? <Loader2 className="animate-spin" /> : "Secure Deposit"}</button>
                 </div>
-
               </div>
-              {txId && (
-                <div style={txNotice}>
-                   Broadcasted! <a href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`} target="_blank" rel="noreferrer" style={{ color: theme.primary }}>View Explorer</a>
-                </div>
-              )}
             </div>
           )}
         </AnimatePresence>
@@ -219,21 +171,18 @@ function App() {
   );
 }
 
-// --- PREMIUM STYLES ---
-const headerStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 60px", borderBottom: `1px solid ${theme.cardBorder}`, backgroundColor: "rgba(11, 14, 20, 0.8)", backdropFilter: "blur(12px)", position: "sticky", top: 0, zIndex: 100 };
-const logoContainer = { backgroundColor: theme.primary, padding: "8px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center" };
+// --- STYLES ---
+const headerStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 40px", borderBottom: `1px solid ${theme.cardBorder}` };
+const logoBox = { backgroundColor: theme.primary, padding: "8px", borderRadius: "8px" };
 const connectBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontWeight: "600", cursor: "pointer" };
-const addressPill = { backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, padding: "6px 14px", borderRadius: "10px", fontSize: "14px", color: theme.accent };
-const heroTitle = { fontSize: "64px", fontWeight: "900", lineHeight: "1.1", marginBottom: "20px", letterSpacing: "-2px" };
-const heroBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "18px 42px", borderRadius: "14px", fontSize: "18px", fontWeight: "700", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "10px", boxShadow: `0 10px 30px rgba(85, 70, 255, 0.3)` };
-const badge = { backgroundColor: "rgba(85, 70, 255, 0.15)", color: theme.primary, padding: "6px 16px", borderRadius: "100px", fontSize: "12px", fontWeight: "700", display: "inline-block", marginBottom: "20px", border: `1px solid ${theme.primary}` };
-const cardStyle = { backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, padding: "32px", borderRadius: "24px" };
-const statRow = { display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px", padding: "16px", backgroundColor: "rgba(255,255,255,0.03)", borderRadius: "16px" };
-const statLabel = { fontSize: "12px", color: theme.textMuted, textTransform: "uppercase", letterSpacing: "1px" };
-const statValue = { fontSize: "24px", fontWeight: "700" };
-const inputLabel = { display: "block", fontSize: "12px", color: theme.textMuted, marginBottom: "8px", fontWeight: "600" };
-const inputStyle = { width: "100%", backgroundColor: theme.bg, border: `1px solid ${theme.cardBorder}`, color: "#fff", padding: "14px", borderRadius: "12px", outline: "none", boxSizing: "border-box" };
-const actionBtn = { width: "100%", backgroundColor: theme.primary, color: "#fff", border: "none", padding: "16px", borderRadius: "14px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" };
-const txNotice = { marginTop: "30px", textAlign: "center", padding: "15px", backgroundColor: theme.card, borderRadius: "12px", border: `1px solid ${theme.cardBorder}`, fontSize: "14px" };
+const addressPill = { backgroundColor: theme.card, padding: "6px 12px", borderRadius: "8px", fontSize: "13px", border: `1px solid ${theme.cardBorder}` };
+const badge = { color: theme.primary, fontSize: "12px", fontWeight: "800", letterSpacing: "2px", marginBottom: "15px" };
+const heroBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "16px 36px", borderRadius: "12px", fontSize: "18px", fontWeight: "700", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "10px" };
+const cardStyle = { backgroundColor: theme.card, padding: "30px", borderRadius: "20px", border: `1px solid ${theme.cardBorder}` };
+const statRow = { display: "flex", alignItems: "center", gap: "15px", marginBottom: "15px" };
+const statLabel = { fontSize: "11px", color: theme.textMuted, textTransform: "uppercase" };
+const statValue = { fontSize: "22px", fontWeight: "700" };
+const inputStyle = { width: "100%", backgroundColor: "#000", border: `1px solid ${theme.cardBorder}`, color: "#fff", padding: "12px", borderRadius: "10px", marginBottom: "12px", boxSizing: "border-box" };
+const actionBtn = { width: "100%", backgroundColor: theme.primary, color: "#fff", border: "none", padding: "14px", borderRadius: "10px", fontWeight: "700", cursor: "pointer", display: "flex", justifyContent: "center" };
 
 export default App;
