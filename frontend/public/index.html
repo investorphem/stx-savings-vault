@@ -3,9 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="theme-color" content="#5546FF" />
-    <meta name="description" content="Decentralized STX savings and vault management on Stacks blockchain." />
+    <meta name="description" content="Securely lock and manage your STX assets with our advanced decentralized savings vault. Built on the Stacks blockchain." />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
 
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
 
@@ -14,8 +18,9 @@
       content="08542b5f9899ad9e8cf0fc164ddca0eb360e474cc11006bacc8926481d51e66184d7e2c8ea4373c0d18a4205ac370b7f7438a9cfeef25e3702f9922aeabb4b31"
     />
 
-    <meta property="og:title" content="STX Savings Vault dApp" />
-    <meta property="og:description" content="Decentralized STX savings and vault management on Stacks blockchain." />
+    <meta property="og:site_name" content="STX Savings Vault" />
+    <meta property="og:title" content="STX Savings Vault | Secure Decentralized Finance" />
+    <meta property="og:description" content="Non-custodial savings management on the Stacks blockchain. Lock, earn, and withdraw STX with total transparency." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://stx-savings-vault.vercel.app/" />
     <meta property="og:image" content="https://stx-savings-vault.vercel.app/preview.png" />
@@ -23,11 +28,22 @@
     <meta property="og:image:height" content="630" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="STX Savings Vault dApp" />
-    <meta name="twitter:description" content="Decentralized STX savings and vault management on Stacks blockchain." />
+    <meta name="twitter:site" content="@STX_Vault" />
+    <meta name="twitter:title" content="STX Savings Vault | DeFi on Stacks" />
+    <meta name="twitter:description" content="Manage your digital wealth with the most secure vault dashboard on Stacks." />
     <meta name="twitter:image" content="https://stx-savings-vault.vercel.app/preview.png" />
 
-    <title>STX Savings Vault dApp</title>
+    <title>STX Savings Vault | Decentralized Savings Dashboard</title>
+
+    <style>
+      /* Smooth loading background to prevent white flashes */
+      body {
+        background-color: #f9f9fb;
+        margin: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+    </style>
   </head>
 
   <body>
