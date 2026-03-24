@@ -6,7 +6,7 @@ STX Vault is a decentralized, non-custodial saving vault built on
 **Stacks**, the Bitcoin-secured smart contract layer. Users can deposit
 STX into a smart contract vault, lock their balance for savings, and
 withdraw later --- with all transactions settled on **Bitcoin finality**
-through Stacks' Proof-of-Transfer consensus.
+through Stacks' Proof-of-Transfer consensu.
 
 ## Why This Is a Stacks + Bitcoin Project
 
