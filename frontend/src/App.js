@@ -11,7 +11,7 @@ import {
   cvToJSON 
 } from "@stacks/transactions";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, ShieldAlert } from "lucide-react";
+import { LogOut, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, ShieldAlert, X, AlertTriangle, CheckCircle } from "lucide-react";
 
 // --- THEME ---
 const theme = {
@@ -21,7 +21,8 @@ const theme = {
   cardBorder: "#30363D",
   textMain: "#FFFFFF",
   textMuted: "#8B949E",
-  danger: "#EF4444"
+  danger: "#EF4444",
+  warning: "#F59E0B"
 };
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
@@ -38,6 +39,9 @@ function App() {
   const [isPending, setIsPending] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [txId, setTxId] = useState("");
+  
+  // NEW: State for Custom Modal
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const fetchVaultStatus = useCallback(async (address) => {
     if (!address) return;
@@ -97,15 +101,14 @@ function App() {
         functionArgs: [uintCV(amountMicro), uintCV(Math.floor(Number(lockDays) * 144))],
         postConditions: [postCondition],
         postConditionMode: PostConditionMode.Deny,
-        onFinish: (data) => { setTxId(data.txId); setIsPending(false); },
+        onFinish: (data) => setTxId(data.txId),
+        onCancel: () => console.log("Cancelled")
       });
-    } catch (e) { setIsPending(false); }
+    } catch (e) { console.error(e); } finally { setIsPending(false); }
   };
 
-  const handleWithdraw = async (isEmergency = false) => {
-    if (!userData) return;
-    if (isEmergency && !window.confirm("WARNING: Emergency withdrawal incurs a 10% penalty fee. Proceed?")) return;
-    
+  const executeWithdrawal = async (isEmergency) => {
+    setShowConfirm(false);
     setIsPending(true);
     try {
       await openContractCall({
@@ -114,9 +117,10 @@ function App() {
         contractName,
         functionName: isEmergency ? "emergency-withdraw" : "withdraw-stx",
         functionArgs: [],
-        onFinish: (data) => { setTxId(data.txId); setIsPending(false); },
+        onFinish: (data) => setTxId(data.txId),
+        onCancel: () => console.log("Cancelled")
       });
-    } catch (e) { setIsPending(false); }
+    } catch (e) { console.error(e); } finally { setIsPending(false); }
   };
 
   const userAddress = userData?.profile?.stxAddress?.mainnet;
@@ -124,11 +128,31 @@ function App() {
   return (
     <div style={{ backgroundColor: theme.bg, minHeight: "100vh", color: theme.textMain, fontFamily: "'Inter', sans-serif" }}>
 
-      {/* --- HEADER --- */}
+      {/* --- CUSTOM EMERGENCY MODAL --- */}
+      <AnimatePresence>
+        {showConfirm && (
+          <div style={modalOverlay}>
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} style={modalContent}>
+              <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                <div style={warningIconBox}><AlertTriangle size={32} color={theme.warning} /></div>
+                <h2 style={{ fontSize: "24px", fontWeight: "800", marginBottom: "10px" }}>Emergency Exit?</h2>
+                <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>
+                  This action bypasses your lock timer but will incur a <strong style={{color: theme.danger}}>10% protocol penalty fee</strong>.
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: "12px" }}>
+                <button onClick={() => setShowConfirm(false)} style={cancelModalBtn}>Keep Locked</button>
+                <button onClick={() => executeWithdrawal(true)} style={confirmModalBtn}>Confirm & Pay Fee</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <header style={headerStyle}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <img src="/logo192.png" alt="STX Vault" style={{ width: "32px", height: "32px", borderRadius: "8px" }} />
-          <span style={{ fontWeight: "800", fontSize: "20px", letterSpacing: "-0.5px" }}>STX VAULT</span>
+          <img src="/logo192.png" alt="Logo" style={{ width: "32px", height: "32px", borderRadius: "8px" }} />
+          <span style={{ fontWeight: "800", fontSize: "20px" }}>STX VAULT</span>
         </div>
         {!userData ? (
           <button onClick={handleConnect} style={connectBtn}>Connect Wallet</button>
@@ -140,23 +164,19 @@ function App() {
         )}
       </header>
 
-      {/* --- MAIN CONTENT --- */}
       <main style={{ display: "flex", justifyContent: "center", alignItems: "center", padding: "60px 20px" }}>
         <AnimatePresence>
           {!userData ? (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", maxWidth: "600px" }}>
-              <div style={badge}>V9.0 EMERGENCY PROTOCOL</div>
+              <div style={badge}>V9.1 SECURE PROTOCOL</div>
               <h1 style={heroTitle}>Protect Your <span style={{ color: theme.primary }}>STX.</span></h1>
-              <p style={{ color: theme.textMuted, fontSize: "18px", marginBottom: "40px", lineHeight: "1.6" }}>
-                Institutional-grade non-custodial savings. Bitcoin-secured vaulting with early-exit flexibility.
-              </p>
+              <p style={{ color: theme.textMuted, fontSize: "18px", marginBottom: "40px" }}>Non-custodial savings with institutional safety and emergency exit liquidity.</p>
               <button onClick={handleConnect} style={heroBtn}>Launch dApp <ArrowUpRight size={22} /></button>
             </motion.div>
           ) : (
             <div style={{ width: "100%", maxWidth: "950px" }}>
                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "24px" }}>
                   
-                  {/* HOLDINGS CARD */}
                   <div style={cardStyle}>
                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "24px" }}>
                         <h3 style={{ margin: 0 }}>Vault Status</h3>
@@ -164,26 +184,23 @@ function App() {
                      </div>
                      <div style={statRow}><Coins color={theme.primary} /> <div><div style={statLabel}>Current Balance</div><div style={statValue}>{vaultData.amount} STX</div></div></div>
                      <div style={statRow}><Clock color={theme.primary} /> <div><div style={statLabel}>Unlock Block</div><div style={statValue}>#{vaultData.unlock || "---"}</div></div></div>
-                     {txId && <div style={txNotice}>Tx: <a href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`} target="_blank" rel="noreferrer" style={{ color: theme.primary }}>View in Explorer</a></div>}
                   </div>
 
-                  {/* ACTIONS CARD */}
                   <div style={cardStyle}>
                      <h3 style={{ marginBottom: "20px" }}>Manage Funds</h3>
                      <input type="number" placeholder="Amount (STX)" value={stxAmount} onChange={e => setStxAmount(e.target.value)} style={inputStyle} />
-                     <input type="number" placeholder="Lock Time (Days)" value={lockDays} onChange={e => setLockDays(e.target.value)} style={inputStyle} />
+                     <input type="number" placeholder="Lock Days" value={lockDays} onChange={e => setLockDays(e.target.value)} style={inputStyle} />
                      
                      <button onClick={handleDeposit} disabled={isPending} style={actionBtn}>
                         {isPending ? <Loader2 className="animate-spin" /> : "Secure Deposit"}
                      </button>
                      
                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
-                        <button onClick={() => handleWithdraw(false)} style={secondaryBtn}>Standard Release</button>
-                        <button onClick={() => handleWithdraw(true)} style={dangerBtn}><ShieldAlert size={14} /> Emergency Exit</button>
+                        <button onClick={() => executeWithdrawal(false)} disabled={isPending} style={secondaryBtn}>Standard Release</button>
+                        <button onClick={() => setShowConfirm(true)} disabled={isPending} style={dangerBtn}><ShieldAlert size={14} /> Emergency Exit</button>
                      </div>
-                     <p style={{ fontSize: "10px", color: theme.textMuted, marginTop: "10px", textAlign: "center" }}>* Emergency exit incurs 10% protocol fee.</p>
+                     {txId && <div style={txNotice}><CheckCircle size={14} color="#10B981" /> Tx Broadast! <a href={`https://explorer.hiro.so/txid/${txId}?chain=mainnet`} target="_blank" rel="noreferrer" style={{ color: theme.primary, marginLeft: "5px" }}>Track</a></div>}
                   </div>
-
                </div>
             </div>
           )}
@@ -193,21 +210,28 @@ function App() {
   );
 }
 
-// --- STYLES ---
-const headerStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 60px", borderBottom: `1px solid ${theme.cardBorder}`, backgroundColor: "rgba(11, 14, 20, 0.8)", backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 100 };
+// --- NEW MODAL STYLES ---
+const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000, padding: "20px" };
+const modalContent = { backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, padding: "40px", borderRadius: "28px", maxWidth: "400px", width: "100%", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)" };
+const warningIconBox = { width: "64px", height: "64px", borderRadius: "20px", backgroundColor: "rgba(245, 158, 11, 0.1)", display: "flex", justifyContent: "center", alignItems: "center", margin: "0 auto 20px" };
+const cancelModalBtn = { flex: 1, padding: "14px", borderRadius: "12px", border: `1px solid ${theme.cardBorder}`, backgroundColor: "transparent", color: "#fff", fontWeight: "700", cursor: "pointer" };
+const confirmModalBtn = { flex: 1, padding: "14px", borderRadius: "12px", border: "none", backgroundColor: theme.danger, color: "#fff", fontWeight: "700", cursor: "pointer" };
+
+// --- EXISTING STYLES ---
+const headerStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 60px", borderBottom: `1px solid ${theme.cardBorder}` };
 const connectBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "10px 24px", borderRadius: "10px", fontWeight: "700", cursor: "pointer" };
 const addressPill = { backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, padding: "6px 14px", borderRadius: "10px", fontSize: "14px", color: theme.primary, fontWeight: "600" };
 const badge = { color: theme.primary, fontSize: "12px", fontWeight: "900", letterSpacing: "2px", marginBottom: "20px", border: `1px solid ${theme.primary}`, padding: "4px 12px", borderRadius: "100px", display: "inline-block" };
 const heroTitle = { fontSize: "72px", fontWeight: "900", marginBottom: "24px", lineHeight: "1.1", letterSpacing: "-2px" };
-const heroBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "18px 48px", borderRadius: "14px", fontSize: "20px", fontWeight: "800", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "12px", boxShadow: "0 10px 30px rgba(85, 70, 255, 0.3)" };
+const heroBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "16px 40px", borderRadius: "14px", fontSize: "18px", fontWeight: "800", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "10px" };
 const cardStyle = { backgroundColor: theme.card, padding: "32px", borderRadius: "24px", border: `1px solid ${theme.cardBorder}` };
 const statRow = { display: "flex", alignItems: "center", gap: "16px", marginBottom: "20px" };
-const statLabel = { fontSize: "12px", color: theme.textMuted, textTransform: "uppercase", letterSpacing: "1px" };
+const statLabel = { fontSize: "12px", color: theme.textMuted, textTransform: "uppercase" };
 const statValue = { fontSize: "28px", fontWeight: "800" };
-const inputStyle = { width: "100%", backgroundColor: "#000", border: `1px solid ${theme.cardBorder}`, color: "#fff", padding: "12px", borderRadius: "10px", marginBottom: "12px", outline: "none", boxSizing: "border-box" };
-const actionBtn = { width: "100%", backgroundColor: theme.primary, color: "#fff", border: "none", padding: "14px", borderRadius: "10px", fontWeight: "700", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center" };
+const inputStyle = { width: "100%", backgroundColor: "#000", border: `1px solid ${theme.cardBorder}`, color: "#fff", padding: "12px", borderRadius: "10px", marginBottom: "12px", boxSizing: "border-box" };
+const actionBtn = { width: "100%", backgroundColor: theme.primary, color: "#fff", border: "none", padding: "14px", borderRadius: "10px", fontWeight: "700", cursor: "pointer", display: "flex", justifyContent: "center" };
 const secondaryBtn = { backgroundColor: "#30363D", color: "#fff", border: "none", padding: "10px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", cursor: "pointer" };
 const dangerBtn = { backgroundColor: "transparent", color: theme.danger, border: `1px solid ${theme.danger}`, padding: "10px", borderRadius: "8px", fontSize: "12px", fontWeight: "600", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" };
-const txNotice = { marginTop: "15px", fontSize: "12px", padding: "10px", backgroundColor: "#000", borderRadius: "8px", border: `1px solid ${theme.cardBorder}` };
+const txNotice = { marginTop: "15px", fontSize: "12px", display: "flex", alignItems: "center", gap: "8px", color: "#10B981" };
 
 export default App;
