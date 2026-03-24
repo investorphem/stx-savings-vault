@@ -2,12 +2,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { AppConfig, UserSession, showConnect, openContractCall } from "@stacks/connect";
 import { STACKS_MAINNET } from "@stacks/network";
-// v7.3.1 specific imports - ensuring callReadOnlyFunction is used
+// v7.3.1 Naming: fetchCallReadOnlyFunction
 import { 
   uintCV, 
   PostConditionMode, 
   Pc, 
-  callReadOnlyFunction, 
+  fetchCallReadOnlyFunction, 
   cvToJSON 
 } from "@stacks/transactions";
 import { motion, AnimatePresence } from "framer-motion";
@@ -42,11 +42,11 @@ function App() {
   const [txId, setTxId] = useState("");
 
   const fetchVaultStatus = useCallback(async (address) => {
-    if (!address || address === "") return;
+    if (!address) return;
     setIsRefreshing(true);
     try {
-      // v7.3.1 callReadOnlyFunction implementation
-      const result = await callReadOnlyFunction({
+      // In Stacks v7, callReadOnlyFunction became fetchCallReadOnlyFunction
+      const result = await fetchCallReadOnlyFunction({
         network: STACKS_MAINNET,
         contractAddress,
         contractName,
@@ -149,52 +149,63 @@ function App() {
 
   const userAddress = userData?.profile?.stxAddress?.mainnet;
 
+  // --- Styles remain consistent for UI quality ---
+  const headerStyle = { display: "flex", justifyContent: "space-between", padding: "20px 40px", borderBottom: "1px solid #eee", backgroundColor: "#fff" };
+  const btnBase = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "10px 24px", borderRadius: "10px", fontWeight: "600", cursor: "pointer" };
+  const cardStyle = { backgroundColor: "#fff", padding: "24px", borderRadius: "20px", boxShadow: "0 4px 20px rgba(0,0,0,0.05)" };
+  const statBox = { display: "flex", alignItems: "center", gap: "10px", padding: "12px", backgroundColor: "#f9f9f9", borderRadius: "12px", marginBottom: "12px" };
+  const inputStyle = { width: "100%", padding: "12px", marginBottom: "12px", borderRadius: "10px", border: "1.5px solid #eee", fontSize: "16px", outline: "none" };
+
   return (
-    <div style={{ backgroundColor: theme.bg, minHeight: "100vh", fontFamily: "'Inter', sans-serif", display: "flex", flexDirection: "column" }}>
+    <div style={{ backgroundColor: theme.bg, minHeight: "100vh", fontFamily: "'Inter', sans-serif" }}>
       <header style={headerStyle}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <ShieldCheck size={28} color={theme.primary} />
-          <span style={{ fontWeight: "700", fontSize: "18px" }}>STX Vault</span>
+          <ShieldCheck size={32} color={theme.primary} />
+          <span style={{ fontWeight: "800", fontSize: "20px" }}>STX Vault</span>
         </div>
         {!userData ? (
           <button onClick={handleConnect} style={btnBase}>Connect Wallet</button>
         ) : (
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={pillStyle}>{userAddress?.substring(0, 5)}...{userAddress?.substring(userAddress.length - 4)}</span>
-            <button onClick={handleDisconnect} style={{ background: "none", border: "none", color: theme.danger, cursor: "pointer" }}><LogOut size={18} /></button>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ fontSize: "14px", fontWeight: "600", color: theme.primary }}>{userAddress?.substring(0, 6)}...</span>
+            <button onClick={handleDisconnect} style={{ color: theme.danger, background: "none", border: "none", cursor: "pointer" }}><LogOut size={20} /></button>
           </div>
         )}
       </header>
 
-      <main style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
-        <AnimatePresence mode="wait">
+      <main style={{ padding: "40px", display: "flex", justifyContent: "center" }}>
+        <AnimatePresence>
           {!userData ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: "center" }}>
-              <h1 style={{ fontSize: "40px", marginBottom: "10px" }}>Secure Your STX</h1>
-              <p style={{ color: theme.textMuted, marginBottom: "30px" }}>Non-custodial savings vault on the Stacks blockchain.</p>
-              <button onClick={handleConnect} style={{ ...btnBase, padding: "15px 40px" }}>Get Started</button>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", maxWidth: "400px" }}>
+              <h1 style={{ fontSize: "3rem", marginBottom: "10px" }}>Save Smart.</h1>
+              <p style={{ color: theme.textMuted, marginBottom: "30px" }}>The non-custodial savings vault built on Bitcoin via Stacks.</p>
+              <button onClick={handleConnect} style={{ ...btnBase, padding: "18px 48px", fontSize: "18px" }}>Launch dApp</button>
             </motion.div>
           ) : (
-            <div style={{ maxWidth: "800px", width: "100%" }}>
-              <div style={{ textAlign: "right", marginBottom: "10px" }}>
-                <button onClick={() => fetchVaultStatus(userAddress)} style={{ background: "none", border: "none", fontSize: "12px", cursor: "pointer", display: "flex", alignItems: "center", gap: "5px", marginLeft: "auto" }}>
-                  <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} /> Syncing
-                </button>
-              </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
-                <div style={cardStyle}>
-                  <h3 style={{ marginTop: 0 }}>Holdings</h3>
-                  <div style={statBox}><Coins size={20} /> {vaultData.amount} STX</div>
-                  <div style={statBox}><Clock size={20} /> Block #{vaultData.unlock || "---"}</div>
+            <div style={{ width: "100%", maxWidth: "900px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h2 style={{ margin: 0 }}>Dashboard</h2>
+                <div style={{ fontSize: "12px", color: theme.textMuted, display: "flex", alignItems: "center", gap: "5px" }}>
+                  <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} /> Live
                 </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
                 <div style={cardStyle}>
-                  <h3 style={{ marginTop: 0 }}>Actions</h3>
-                  <input type="number" placeholder="STX Amount" value={stxAmount} onChange={e => setStxAmount(e.target.value)} style={inputStyle} />
-                  <input type="number" placeholder="Lock Days" value={lockDays} onChange={e => setLockDays(e.target.value)} style={inputStyle} />
-                  <button onClick={handleDeposit} disabled={isPending} style={{ ...btnBase, width: "100%", marginBottom: "10px" }}>
-                    {isPending ? "Processing..." : "Deposit"}
+                  <h4 style={{ color: theme.textMuted, marginBottom: "16px", textTransform: "uppercase", fontSize: "12px" }}>Current Holdings</h4>
+                  <div style={statBox}><Coins color={theme.primary} /> <span style={{ fontSize: "24px", fontWeight: "700" }}>{vaultData.amount} STX</span></div>
+                  <div style={statBox}><Clock color={theme.primary} /> <span style={{ fontWeight: "600" }}>Unlock at Block #{vaultData.unlock || "---"}</span></div>
+                  {txId && status === "Broadcasted!" && <div style={{ color: theme.primary, fontSize: "12px", marginTop: "10px" }}>Processing transaction...</div>}
+                </div>
+
+                <div style={cardStyle}>
+                  <h4 style={{ color: theme.textMuted, marginBottom: "16px", textTransform: "uppercase", fontSize: "12px" }}>Manage Funds</h4>
+                  <input type="number" placeholder="Amount (STX)" value={stxAmount} onChange={e => setStxAmount(e.target.value)} style={inputStyle} />
+                  <input type="number" placeholder="Lock Time (Days)" value={lockDays} onChange={e => setLockDays(e.target.value)} style={inputStyle} />
+                  <button onClick={handleDeposit} disabled={isPending} style={{ ...btnBase, width: "100%", marginBottom: "12px" }}>
+                    {isPending ? "Confirming..." : "Deposit STX"}
                   </button>
-                  <button onClick={handleWithdraw} style={{ ...btnBase, width: "100%", backgroundColor: "#eee", color: "#333" }}>Withdraw</button>
+                  <button onClick={handleWithdraw} style={{ ...btnBase, width: "100%", backgroundColor: "#eee", color: "#333" }}>Release Assets</button>
                 </div>
               </div>
             </div>
@@ -204,12 +215,5 @@ function App() {
     </div>
   );
 }
-
-const headerStyle = { display: "flex", justifyContent: "space-between", padding: "20px 40px", borderBottom: "1px solid #eee", backgroundColor: "#fff" };
-const btnBase = { backgroundColor: "#5546FF", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontWeight: "600", cursor: "pointer" };
-const cardStyle = { backgroundColor: "#fff", padding: "20px", borderRadius: "12px", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" };
-const statBox = { display: "flex", alignItems: "center", gap: "10px", padding: "10px", backgroundColor: "#f9f9f9", borderRadius: "8px", marginBottom: "10px" };
-const inputStyle = { width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "8px", border: "1px solid #eee" };
-const pillStyle = { backgroundColor: "#f0f0ff", padding: "5px 12px", borderRadius: "20px", fontSize: "14px", color: "#5546FF" };
 
 export default App;
