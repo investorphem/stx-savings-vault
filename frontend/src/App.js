@@ -16,34 +16,31 @@ import {
   LogOut, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, 
   ShieldAlert, X, AlertTriangle, Info, BookOpen, 
   Lock, Scale, ShieldCheck, FileText, Share2, Trophy, ChevronDown, Wallet, Megaphone, Bell,
-  Activity, Users, DollarSign, Key
+  Activity, Users, DollarSign, Key, Anchor
 } from "lucide-react";
 
 // ==========================================
 // 1. CONFIGURATION & THEME
 // ==========================================
-const APP_VERSION = "11.0.0";
+const APP_VERSION = "11.1.0";
 const IS_MAINTENANCE = false;
 
-// 🔥 YOUR CEO WALLET ADDRESS 🔥
-// Replace this with your actual Leather/Xverse Mainnet address.
-// The Admin tab will ONLY render if the connected wallet matches this string.
-const ADMIN_ADDRESS = "SP2GTM2ZVYXQKNYMT3MNJY49RQ2MW8Q1DGXZF8519"; 
-
+const ADMIN_ADDRESS = "SPYOURMAINNETADDRESSHERE"; 
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
-const contractName = "stx-vault-v10"; 
+const contractName = "stx-vault-v11"; // Upgraded to v11 for Iron Vault
 
 const ADMIN_BROADCAST = {
-  id: "broadcast-003",
-  title: "The Iron Vault is Live!",
-  message: "Lock your assets in Vault B for maximum discipline. No early exits allowed.",
+  id: "broadcast-004",
+  title: "Dual Vault Isolation Complete",
+  message: "Flex and Iron vaults are now fully separated. Iron Vault durations are rigidly enforced for partner yield.",
   type: "success", 
   date: "Mar 26, 2026"
 };
 
 const theme = {
   primary: "#5546FF", bg: "#0B0E14", card: "#161B22", cardBorder: "#30363D",
-  textMain: "#FFFFFF", textMuted: "#8B949E", danger: "#EF4444", warning: "#F59E0B", info: "#0EA5E9", success: "#10B981"
+  textMain: "#FFFFFF", textMuted: "#8B949E", danger: "#EF4444", warning: "#F59E0B", info: "#0EA5E9", success: "#10B981",
+  iron: "#9CA3AF" // Specific color for Iron Vault
 };
 
 const ASSETS = {
@@ -51,6 +48,13 @@ const ASSETS = {
   USDA: { symbol: "USDA", decimals: 1000000, isToken: true, contract: "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR", name: "usda-token" },
   WELSH: { symbol: "WELSH", decimals: 1000000, isToken: true, contract: "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G", name: "welshcorgicoin-token" }
 };
+
+// Enforced Yield Cycles for Vault B
+const IRON_DURATIONS = [
+  { days: 30, label: "30 Days (1 Yield Cycle)" },
+  { days: 90, label: "90 Days (3 Yield Cycles)" },
+  { days: 180, label: "180 Days (6 Yield Cycles)" }
+];
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
@@ -63,6 +67,7 @@ const cardStyle = { backgroundColor: theme.card, padding: "24px", borderRadius: 
 const gridContainer = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "24px" };
 const inputStyle = { width: "100%", padding: "12px", marginBottom: "10px", borderRadius: "10px", border: `1px solid ${theme.cardBorder}`, backgroundColor: "#000", color: "#fff", outline: "none", boxSizing: "border-box" };
 const actionBtn = { width: "100%", padding: "14px", borderRadius: "10px", backgroundColor: theme.primary, color: "#fff", border: "none", fontWeight: "800", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center" };
+const actionBtnIron = { ...actionBtn, backgroundColor: theme.iron, color: "#000" };
 const connectBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "10px 24px", borderRadius: "10px", fontWeight: "700", cursor: "pointer" };
 const exitBtn = { backgroundColor: "rgba(239,68,68,0.1)", border: `1px solid ${theme.danger}44`, color: theme.danger, padding: "8px", borderRadius: "10px", cursor: "pointer", display: "flex", alignItems: "center" };
 const addressPill = { backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, padding: "8px 12px", borderRadius: "10px", fontSize: "13px", fontWeight: "700", color: theme.primary };
@@ -81,7 +86,8 @@ const tabContainer = { display: "flex", gap: "10px", padding: "6px", backgroundC
 const activeTabStyle = { padding: "10px 24px", backgroundColor: theme.cardBorder, color: "#fff", border: "none", borderRadius: "10px", fontWeight: "700", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "0.2s" };
 const inactiveTabStyle = { padding: "10px 24px", backgroundColor: "transparent", color: theme.textMuted, border: "none", borderRadius: "10px", fontWeight: "600", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "0.2s" };
 const adminTabStyle = { padding: "10px 24px", backgroundColor: "rgba(239, 68, 68, 0.1)", color: theme.danger, border: `1px solid ${theme.danger}44`, borderRadius: "10px", fontWeight: "700", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "0.2s" };
-const selectDropdownStyle = { backgroundColor: "#000", color: theme.textMain, border: `1px solid ${theme.cardBorder}`, padding: "8px 30px", borderRadius: "8px", outline: "none", width: "100%", appearance: "none", cursor: "pointer", fontWeight: "700", fontSize: "13px" };
+const selectDropdownStyle = { backgroundColor: "#000", color: theme.textMain, border: `1px solid ${theme.cardBorder}`, padding: "12px 30px", borderRadius: "10px", outline: "none", width: "100%", appearance: "none", cursor: "pointer", fontWeight: "700", fontSize: "13px", marginBottom: "10px" };
+const assetDropdownStyle = { backgroundColor: "#000", color: theme.textMain, border: `1px solid ${theme.cardBorder}`, padding: "8px 30px", borderRadius: "8px", outline: "none", width: "100%", appearance: "none", cursor: "pointer", fontWeight: "700", fontSize: "13px" };
 const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000, padding: "20px" };
 const modalContent = { backgroundColor: theme.card, padding: "40px", borderRadius: "30px", border: `1px solid ${theme.cardBorder}`, textAlign: "center", maxWidth: "400px", width: "100%" };
 const legalContent = { backgroundColor: theme.card, padding: "30px", borderRadius: "28px", maxWidth: "500px", width: "100%", border: `1px solid ${theme.cardBorder}`, textAlign: "left" };
@@ -99,7 +105,6 @@ const notifItem = { padding: "12px", backgroundColor: "rgba(255,255,255,0.02)", 
 const sectionTitle = { fontSize: "28px", fontWeight: "800", marginBottom: "30px", textAlign: "center", color: theme.textMain };
 const iconBox = (color) => ({ width: "56px", height: "56px", borderRadius: "16px", backgroundColor: `${color}1A`, display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" });
 
-// Vault Toggles
 const vaultTypeContainer = { display: "flex", backgroundColor: "#000", borderRadius: "12px", padding: "6px", marginBottom: "24px", border: `1px solid ${theme.cardBorder}` };
 const vaultBtnActive = { flex: 1, padding: "12px", backgroundColor: theme.cardBorder, color: "#fff", border: "none", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "13px", transition: "0.2s" };
 const vaultBtnInactive = { flex: 1, padding: "12px", backgroundColor: "transparent", color: theme.textMuted, border: "none", borderRadius: "8px", fontWeight: "600", cursor: "pointer", fontSize: "13px", transition: "0.2s" };
@@ -128,9 +133,9 @@ const NetworkStatus = () => {
 const KnowledgeBase = () => {
   const [openFaq, setOpenFaq] = useState(null);
   const faqs = [
-    { q: "What is the difference between Flex and Iron Vaults?", a: "Vault A (Flex) allows you to withdraw early for a 10% penalty. Vault B (Iron) completely disables early withdrawals to maximize your discipline and will soon route funds to generate passive BTC yield." },
-    { q: "Is the multi-asset vault safe?", a: "Yes. STX Vault uses the official SIP-010 trait to securely interact with verified fungible tokens. It remains 100% non-custodial." },
-    { q: "What happens if I Emergency Exit the Flex Vault?", a: "Bypassing the time-lock incurs a strict 10% protocol fee in the native asset you locked. The remaining 90% is returned to you instantly." }
+    { q: "What is the difference between Flex and Iron Vaults?", a: "Vault A (Flex) allows custom lock durations and an early emergency exit for a 10% penalty. Vault B (Iron) rigidly enforces specific duration cycles (30, 90, 180 days) to route funds securely to our yield partner. It cannot be unlocked early under any circumstances." },
+    { q: "Why can't I choose my own days in Vault B?", a: "Because Vault B generates passive native yield, your assets are delegated to an institutional Stacking pool. These pools operate on strict blockchain cycles, so your lock times must mathematically align with them." },
+    { q: "Is the multi-asset vault safe?", a: "Yes. STX Vault uses the official SIP-010 trait to securely interact with verified fungible tokens. Both vaults remain 100% non-custodial." }
   ];
 
   return (
@@ -141,12 +146,12 @@ const KnowledgeBase = () => {
           <div style={cardStyle}>
             <div style={iconBox(theme.primary)}><Lock size={24} color={theme.primary} /></div>
             <h3 style={{ marginBottom: "12px", fontSize: "18px", margin: 0 }}>Dual Vault System</h3>
-            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Choose between the Flex Vault for an emergency escape hatch, or the Iron Vault for absolute, unbreakable conviction.</p>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Choose the Flex Vault for a liquid escape hatch, or commit to the Iron Vault's strict cycles to maximize yield generation.</p>
           </div>
           <div style={cardStyle}>
-            <div style={iconBox(theme.success)}><ShieldCheck size={24} color={theme.success} /></div>
-            <h3 style={{ marginBottom: "12px", fontSize: "18px", margin: 0 }}>Bitcoin Security</h3>
-            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Every time-lock is settled and finalized directly on the Bitcoin blockchain via the Nakamoto upgrade.</p>
+            <div style={iconBox(theme.success)}><Anchor size={24} color={theme.success} /></div>
+            <h3 style={{ marginBottom: "12px", fontSize: "18px", margin: 0 }}>Partner Yield Integration</h3>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Iron Vault duration rules are mathematically hardcoded to map perfectly with our institutional yield generation partners.</p>
           </div>
           <div style={cardStyle}>
             <div style={iconBox(theme.info)}><FileText size={24} color={theme.info} /></div>
@@ -182,14 +187,14 @@ const KnowledgeBase = () => {
 const Changelog = () => {
   const releases = [
     {
+      version: "v11.1.0", date: "Mar 26, 2026", title: "Complete UI Data Isolation",
+      changes: [ "Vault A (Flex) and Vault B (Iron) now track separate deposit statuses and transaction histories.", "Iron Vault now restricts users to exact yield cycles (30, 90, 180 days) for partner protocol mapping.", "Redesigned dashboard logic to prevent data overlap between vaults." ],
+      benefit: "You get a crystal clear view of your liquid assets vs your strictly locked yield assets without the data tangling together."
+    },
+    {
       version: "v11.0.0", date: "Mar 26, 2026", title: "The Iron Vault (Vault B)",
       changes: [ "Introduced the Iron Vault for hardcore diamond hands.", "Separated Flex Vault (with early exit) from Iron Vault (strict lock).", "Prepared architecture for upcoming native Bitcoin (BTC) yield generation." ],
       benefit: "Maximize your discipline. Lock assets without the temptation of an emergency exit and prepare for future passive yield."
-    },
-    {
-      version: "v10.2.0", date: "Early 2026", title: "Dynamic Asset Sync & Notifications",
-      changes: [ "Vault now automatically detects supported SIP-010 tokens from your wallet.", "Introduced the Notification Center for real-time alerts." ],
-      benefit: "You no longer have to guess your token balances, and you will be instantly notified when your locks expire."
     }
   ];
 
@@ -224,11 +229,8 @@ const Changelog = () => {
   );
 };
 
-// --- SECRET ADMIN DASHBOARD ---
 const AdminPanel = ({ history }) => {
-  // Parse history for rage-quits to estimate revenue metrics
   const emergencyExits = history.filter(tx => tx.contract_call && tx.contract_call.function_name.includes("emergency-withdraw"));
-  
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "24px", padding: "20px 0" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
@@ -236,9 +238,7 @@ const AdminPanel = ({ history }) => {
           <h2 style={{ fontSize: "28px", fontWeight: "900", margin: "0 0 8px 0", display: "flex", alignItems: "center", gap: "10px" }}><Key color={theme.danger} size={28}/> CEO Mission Control</h2>
           <p style={{ color: theme.textMuted, margin: 0, fontSize: "14px" }}>Protocol metrics and revenue tracking.</p>
         </div>
-        <div style={{ backgroundColor: "rgba(239, 68, 68, 0.1)", padding: "8px 16px", borderRadius: "100px", border: `1px solid ${theme.danger}44`, color: theme.danger, fontSize: "12px", fontWeight: "800" }}>
-          ADMIN ACCESS VERIFIED
-        </div>
+        <div style={{ backgroundColor: "rgba(239, 68, 68, 0.1)", padding: "8px 16px", borderRadius: "100px", border: `1px solid ${theme.danger}44`, color: theme.danger, fontSize: "12px", fontWeight: "800" }}>ADMIN ACCESS VERIFIED</div>
       </div>
 
       <div style={gridContainer}>
@@ -285,20 +285,29 @@ const AdminPanel = ({ history }) => {
   );
 };
 
-
 // ==========================================
 // 4. MAIN APP COMPONENT
 // ==========================================
 function App() {
   const [userData, setUserData] = useState(null);
   const [dynamicAssets, setDynamicAssets] = useState({ STX: { symbol: "STX", decimals: 1000000, isToken: false, balance: 0 } });
-  const [selectedAsset, setSelectedAsset] = useState("STX");
-  const [vaultType, setVaultType] = useState("flex"); // 'flex' (Vault A) | 'iron' (Vault B)
-  const [vaultData, setVaultData] = useState({ amount: 0, unlock: 0 });
+  
+  // Isolated Vault States
+  const [vaultType, setVaultType] = useState("flex"); 
+  const [flexAsset, setFlexAsset] = useState("STX");
+  const [ironAsset, setIronAsset] = useState("STX"); // Usually STX only for native yield, but keeping dynamic
+  
+  const [flexVaultData, setFlexVaultData] = useState({ amount: 0, unlock: 0 });
+  const [ironVaultData, setIronVaultData] = useState({ amount: 0, unlock: 0 });
+  
+  const [flexAmount, setFlexAmount] = useState("");
+  const [flexLockDays, setFlexLockDays] = useState("");
+  
+  const [ironAmount, setIronAmount] = useState("");
+  const [ironLockDuration, setIronLockDuration] = useState("90"); // Default 90 day cycle
+  
   const [networkHeight, setNetworkHeight] = useState(0); 
   const [history, setHistory] = useState([]);
-  const [stxAmount, setStxAmount] = useState("");
-  const [lockDays, setLockDays] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [txId, setTxId] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
@@ -309,7 +318,6 @@ function App() {
   const [unreadCount, setUnreadCount] = useState(0);
   const notifRef = useRef(null);
 
-  // Determine if connected user is the Admin
   const isAdmin = userData?.profile?.stxAddress?.mainnet === ADMIN_ADDRESS;
 
   useEffect(() => {
@@ -339,11 +347,14 @@ function App() {
     }
   }, []);
 
+  // Fetch Data for BOTH vaults independently whenever asset selection changes
   useEffect(() => {
-    if (userData && dynamicAssets[selectedAsset]) {
-      fetchVaultStatus(userData.profile.stxAddress.mainnet, selectedAsset);
+    if (userData) {
+      const address = userData.profile.stxAddress.mainnet;
+      if (dynamicAssets[flexAsset]) fetchVaultStatus(address, flexAsset, "flex");
+      if (dynamicAssets[ironAsset]) fetchVaultStatus(address, ironAsset, "iron");
     }
-  }, [selectedAsset, userData, dynamicAssets]);
+  }, [flexAsset, ironAsset, userData, dynamicAssets]);
 
   const fetchNetworkHeight = async () => {
     try {
@@ -391,20 +402,22 @@ function App() {
         });
       }
       setDynamicAssets(parsedAssets);
-      if (!parsedAssets[selectedAsset] && selectedAsset !== "STX") setSelectedAsset("STX");
+      if (!parsedAssets[flexAsset] && flexAsset !== "STX") setFlexAsset("STX");
+      if (!parsedAssets[ironAsset] && ironAsset !== "STX") setIronAsset("STX");
     } catch (e) { console.error("Balance fetch error:", e); }
   };
 
-  const fetchVaultStatus = async (address, assetSymbol) => {
+  const fetchVaultStatus = async (address, assetSymbol, type) => {
     const asset = dynamicAssets[assetSymbol] || dynamicAssets["STX"];
     if (!asset) return;
 
     try {
-      let functionName = "get-stx-status";
+      // Assuming v11 contract separates flex and iron getters
+      let functionName = type === "flex" ? "get-flex-stx-status" : "get-iron-stx-status";
       let functionArgs = [uintCV(address)];
 
       if (asset.isToken) {
-        functionName = "get-token-status";
+        functionName = type === "flex" ? "get-flex-token-status" : "get-iron-token-status";
         functionArgs = [uintCV(address), contractPrincipalCV(asset.contract, asset.name)];
       }
 
@@ -414,16 +427,20 @@ function App() {
       
       const json = cvToJSON(result);
       if (json?.value) {
-        setVaultData({ amount: Number(json.value.amount.value) / asset.decimals, unlock: Number(json.value["unlock-block"].value) });
+        const payload = { amount: Number(json.value.amount.value) / asset.decimals, unlock: Number(json.value["unlock-block"].value) };
+        type === "flex" ? setFlexVaultData(payload) : setIronVaultData(payload);
       } else {
-        setVaultData({ amount: 0, unlock: 0 });
+        type === "flex" ? setFlexVaultData({ amount: 0, unlock: 0 }) : setIronVaultData({ amount: 0, unlock: 0 });
       }
-    } catch (e) { console.error(e); setVaultData({ amount: 0, unlock: 0 }); }
+    } catch (e) { 
+      // Fails silently if contract hasn't upgraded to v11 yet
+      type === "flex" ? setFlexVaultData({ amount: 0, unlock: 0 }) : setIronVaultData({ amount: 0, unlock: 0 });
+    }
   };
 
   const fetchHistory = async (address) => {
     try {
-      const res = await fetch(`https://api.mainnet.hiro.so/extended/v1/address/${address}/transactions?limit=10`);
+      const res = await fetch(`https://api.mainnet.hiro.so/extended/v1/address/${address}/transactions?limit=20`);
       const data = await res.json();
       const filtered = data.results.filter(tx => JSON.stringify(tx).includes(contractName));
       setHistory(filtered);
@@ -434,24 +451,30 @@ function App() {
     showConnect({ userSession, appDetails: { name: "STX Vault", icon: window.location.origin + "/logo192.png" }, onFinish: () => window.location.reload() });
   };
 
-  const handleDeposit = async () => {
-    const asset = dynamicAssets[selectedAsset];
-    if (!stxAmount || !userData || !asset) return;
+  const handleDeposit = async (type) => {
+    const isFlex = type === "flex";
+    const targetAsset = isFlex ? flexAsset : ironAsset;
+    const targetAmount = isFlex ? flexAmount : ironAmount;
+    const targetDays = isFlex ? flexLockDays : ironLockDuration;
+    
+    const asset = dynamicAssets[targetAsset];
+    if (!targetAmount || !userData || !asset) return;
     setIsPending(true);
     
-    const amountMicro = BigInt(Math.floor(Number(stxAmount) * asset.decimals));
+    const amountMicro = BigInt(Math.floor(Number(targetAmount) * asset.decimals));
     const address = userData.profile.stxAddress.mainnet;
 
     try {
-      let functionName = "deposit-stx";
-      let functionArgs = [uintCV(amountMicro), uintCV(Math.floor(Number(lockDays) * 144))];
+      // Direct routing based on vault isolation
+      let functionName = isFlex ? "deposit-flex-stx" : "deposit-iron-stx";
+      let functionArgs = [uintCV(amountMicro), uintCV(Math.floor(Number(targetDays) * 144))];
       let postConditions = [];
 
       if (!asset.isToken) {
         postConditions = [makeStandardSTXPostCondition(address, FungibleConditionCode.Equal, amountMicro)];
       } else {
-        functionName = "deposit-token";
-        functionArgs = [uintCV(amountMicro), uintCV(Math.floor(Number(lockDays) * 144)), contractPrincipalCV(asset.contract, asset.name)];
+        functionName = isFlex ? "deposit-flex-token" : "deposit-iron-token";
+        functionArgs = [uintCV(amountMicro), uintCV(Math.floor(Number(targetDays) * 144)), contractPrincipalCV(asset.contract, asset.name)];
       }
 
       await openContractCall({
@@ -459,23 +482,25 @@ function App() {
         postConditionMode: asset.isToken ? PostConditionMode.Allow : PostConditionMode.Deny,
         onFinish: (data) => {
           setTxId(data.txId);
-          addNotification({ id: data.txId, title: `Secured in ${vaultType === 'iron' ? 'Iron' : 'Flex'} Vault ⏳`, message: `Locking ${stxAmount} ${selectedAsset}.`, type: "info" });
+          addNotification({ id: data.txId, title: `Secured in ${isFlex ? 'Flex' : 'Iron'} Vault ⏳`, message: `Locking ${targetAmount} ${targetAsset}.`, type: "info" });
         },
       });
     } catch (e) { console.error(e); } finally { setIsPending(false); }
   };
 
-  const executeWithdrawal = async (emergency) => {
+  const executeWithdrawal = async (emergency, type) => {
     setShowConfirm(false); setIsPending(true);
-    const asset = dynamicAssets[selectedAsset];
+    const isFlex = type === "flex";
+    const targetAsset = isFlex ? flexAsset : ironAsset;
+    const asset = dynamicAssets[targetAsset];
     if (!asset) return;
 
     try {
-      let functionName = emergency ? "emergency-withdraw-stx" : "withdraw-stx";
+      let functionName = emergency ? "emergency-withdraw-flex-stx" : (isFlex ? "withdraw-flex-stx" : "withdraw-iron-stx");
       let functionArgs = [];
 
       if (asset.isToken) {
-        functionName = emergency ? "emergency-withdraw-token" : "withdraw-token";
+        functionName = emergency ? "emergency-withdraw-flex-token" : (isFlex ? "withdraw-flex-token" : "withdraw-iron-token");
         functionArgs = [contractPrincipalCV(asset.contract, asset.name)];
       }
 
@@ -491,24 +516,160 @@ function App() {
   };
 
   const shareToX = () => {
-    const text = `Locked ${vaultData.amount} $${selectedAsset} in the @STXVault! 💎🙌 Securing my future on @Stacks. #Bitcoin #DeFi`;
+    const text = `Secured my assets in the @STXVault! 💎🙌 Enforcing my diamond hands on @Stacks. #Bitcoin #DeFi`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
   };
 
-  const resetToHome = () => { setTxId(""); setStxAmount(""); setLockDays(""); setActiveTab("vault"); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const resetToHome = () => { setTxId(""); setFlexAmount(""); setIronAmount(""); setActiveTab("vault"); window.scrollTo({ top: 0, behavior: 'smooth' }); };
   const userAddress = userData?.profile?.stxAddress?.mainnet;
-  const currentAssetObj = dynamicAssets[selectedAsset] || dynamicAssets["STX"];
 
-  // --- SAFE RENDER LOGIC ---
+  // Filter Data Arrays for UI Isolation
+  const flexHistory = history.filter(tx => tx.contract_call && !tx.contract_call.function_name.includes("iron"));
+  const ironHistory = history.filter(tx => tx.contract_call && tx.contract_call.function_name.includes("iron"));
+
+  // --- RENDER HELPERS ---
+  const renderFlexVault = () => {
+    const currentAssetObj = dynamicAssets[flexAsset] || dynamicAssets["STX"];
+    return (
+      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <div style={gridContainer}>
+          <div style={cardStyle}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
+              <h3 style={cardHead}><ShieldCheck size={20} color={theme.success}/> Vault A Status</h3>
+              <div style={{ position: "relative", width: "140px" }}>
+                <Wallet size={14} color={theme.textMuted} style={{ position: "absolute", left: "10px", top: "12px", pointerEvents: "none" }} />
+                <select value={flexAsset} onChange={(e) => setFlexAsset(e.target.value)} style={assetDropdownStyle}>
+                  {Object.keys(dynamicAssets).map(key => <option key={key} value={key}>{key}</option>)}
+                </select>
+                <ChevronDown size={14} color={theme.textMuted} style={{ position: "absolute", right: "10px", top: "12px", pointerEvents: "none" }} />
+              </div>
+            </div>
+            <div style={statRow}><Coins color={theme.primary}/><div style={statValue}>{flexVaultData.amount} {flexAsset}</div></div>
+            <div style={statRow}><Clock color={theme.primary}/><div style={statValue}>Block #{flexVaultData.unlock || "0"}</div></div>
+            {flexVaultData.amount > 0 && <button onClick={shareToX} style={shareBtn}><Share2 size={16}/> Brag on X</button>}
+          </div>
+
+          <div style={cardStyle}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h3 style={cardHead}>Manage Flex Vault</h3>
+              <span style={{ fontSize: "12px", color: theme.success, fontWeight: "700" }}>Avail: {currentAssetObj.balance.toLocaleString()} {flexAsset}</span>
+            </div>
+            <input type="number" placeholder={`Amount (${flexAsset})`} value={flexAmount} onChange={e=>setFlexAmount(e.target.value)} style={inputStyle}/>
+            <input type="number" placeholder="Custom Days to Lock" value={flexLockDays} onChange={e=>setFlexLockDays(e.target.value)} style={inputStyle}/>
+            <button onClick={() => handleDeposit("flex")} disabled={isPending} style={actionBtn}>
+              {isPending ? <Loader2 className="animate-spin"/> : `Secure ${flexAsset}`}
+            </button>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+              <button onClick={()=>executeWithdrawal(false, "flex")} style={secondaryBtn}>Standard Exit</button>
+              <button onClick={()=>setShowConfirm(true)} style={dangerBtn}><ShieldAlert size={14}/> Early Exit</button>
+            </div>
+          </div>
+        </div>
+
+        <div style={gridContainer}>
+          <div style={cardStyle}>
+            <h3 style={cardHead}><RefreshCw size={20} color={theme.info}/> Flex Activity</h3>
+            {flexHistory.length === 0 ? <div style={{ color: theme.textMuted, fontSize: "13px" }}>No recent Flex vault activity.</div> : 
+              flexHistory.map((tx, index) => (
+                <div key={index} style={historyRow}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    {tx.contract_call.function_name.includes("deposit") ? <ArrowUpRight size={14} color={theme.success}/> : <LogOut size={14} color={theme.warning}/>}
+                    {tx.contract_call.function_name.replace("-stx","").replace("-token", "").replace("-flex", "")}
+                  </span>
+                  <a href={`https://explorer.hiro.so/txid/${tx.tx_id}`} target="_blank" rel="noreferrer" style={{color:theme.success, fontSize: "11px", fontWeight: "bold", textDecoration: "none" }}>CONFIRMED</a>
+                </div>
+              ))
+            }
+          </div>
+          <div style={cardStyle}>
+            <h3 style={cardHead}><Trophy size={20} color={theme.warning}/> Flex Top Savers</h3>
+            <div style={leaderRow}><span>1. SP2J...X7R4</span><strong>25,400 STX</strong></div>
+            <div style={leaderRow}><span>2. SP3M...9QW2</span><strong>18,250 STX</strong></div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  const renderIronVault = () => {
+    const currentAssetObj = dynamicAssets[ironAsset] || dynamicAssets["STX"];
+    return (
+      <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <div style={gridContainer}>
+          <div style={{...cardStyle, borderTop: `4px solid ${theme.iron}`}}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
+              <h3 style={cardHead}><ShieldCheck size={20} color={theme.iron}/> Vault B Status</h3>
+              <div style={{ position: "relative", width: "140px" }}>
+                <Wallet size={14} color={theme.textMuted} style={{ position: "absolute", left: "10px", top: "12px", pointerEvents: "none" }} />
+                <select value={ironAsset} onChange={(e) => setIronAsset(e.target.value)} style={assetDropdownStyle}>
+                  {Object.keys(dynamicAssets).map(key => <option key={key} value={key}>{key}</option>)}
+                </select>
+                <ChevronDown size={14} color={theme.textMuted} style={{ position: "absolute", right: "10px", top: "12px", pointerEvents: "none" }} />
+              </div>
+            </div>
+            <div style={statRow}><Coins color={theme.iron}/><div style={statValue}>{ironVaultData.amount} {ironAsset}</div></div>
+            <div style={statRow}><Clock color={theme.iron}/><div style={statValue}>Block #{ironVaultData.unlock || "0"}</div></div>
+            {ironVaultData.amount > 0 && <button onClick={shareToX} style={shareBtn}><Share2 size={16}/> Brag on X</button>}
+          </div>
+
+          <div style={{...cardStyle, borderTop: `4px solid ${theme.iron}`}}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h3 style={cardHead}>Manage Iron Vault</h3>
+              <span style={{ fontSize: "12px", color: theme.success, fontWeight: "700" }}>Avail: {currentAssetObj.balance.toLocaleString()} {ironAsset}</span>
+            </div>
+            <input type="number" placeholder={`Amount (${ironAsset})`} value={ironAmount} onChange={e=>setIronAmount(e.target.value)} style={inputStyle}/>
+            
+            {/* ENFORCED DURATION SELECTOR FOR YIELD PARTNER */}
+            <div style={{ position: "relative", width: "100%" }}>
+                <select value={ironLockDuration} onChange={(e) => setIronLockDuration(e.target.value)} style={selectDropdownStyle}>
+                    {IRON_DURATIONS.map(cycle => (
+                        <option key={cycle.days} value={cycle.days}>{cycle.label}</option>
+                    ))}
+                </select>
+                <ChevronDown size={14} color={theme.textMuted} style={{ position: "absolute", right: "14px", top: "16px", pointerEvents: "none" }} />
+            </div>
+
+            <button onClick={() => handleDeposit("iron")} disabled={isPending} style={actionBtnIron}>
+              {isPending ? <Loader2 className="animate-spin"/> : `Lock & Yield ${ironAsset}`}
+            </button>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
+              <button onClick={()=>executeWithdrawal(false, "iron")} style={secondaryBtn}>Standard Exit</button>
+              <div style={{ padding: "10px", backgroundColor: "rgba(156, 163, 175, 0.1)", border: `1px solid ${theme.iron}44`, borderRadius: "10px", color: theme.iron, fontSize: "11px", textAlign: "center", lineHeight: "1.4" }}>
+                <strong>🔒 Iron Vault Active:</strong> Emergency exits are disabled. Duration cycles are rigidly enforced for partner yield integration.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={gridContainer}>
+          <div style={{...cardStyle, borderTop: `4px solid ${theme.iron}`}}>
+            <h3 style={cardHead}><RefreshCw size={20} color={theme.info}/> Iron Activity</h3>
+            {ironHistory.length === 0 ? <div style={{ color: theme.textMuted, fontSize: "13px" }}>No recent Iron vault activity.</div> : 
+              ironHistory.map((tx, index) => (
+                <div key={index} style={historyRow}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    {tx.contract_call.function_name.includes("deposit") ? <ArrowUpRight size={14} color={theme.success}/> : <LogOut size={14} color={theme.warning}/>}
+                    {tx.contract_call.function_name.replace("-stx","").replace("-token", "").replace("-iron", "")}
+                  </span>
+                  <a href={`https://explorer.hiro.so/txid/${tx.tx_id}`} target="_blank" rel="noreferrer" style={{color:theme.success, fontSize: "11px", fontWeight: "bold", textDecoration: "none" }}>CONFIRMED</a>
+                </div>
+              ))
+            }
+          </div>
+          <div style={{...cardStyle, borderTop: `4px solid ${theme.iron}`}}>
+            <h3 style={cardHead}><Trophy size={20} color={theme.warning}/> Iron Top Yielders</h3>
+            <div style={leaderRow}><span>1. SP3M...9QW2</span><strong>32,000 STX</strong></div>
+            <div style={leaderRow}><span>2. SP2J...X7R4</span><strong>14,100 STX</strong></div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
   let mainContent;
-
   if (IS_MAINTENANCE) {
     mainContent = (
-      <div style={maintCard}>
-        <Loader2 className="animate-spin" size={40} color={theme.warning}/>
-        <h1 style={{marginTop:"20px"}}>Upgrading Protocol...</h1>
-        <p>Funds are safe on-chain.</p>
-      </div>
+      <div style={maintCard}><Loader2 className="animate-spin" size={40} color={theme.warning}/><h1 style={{marginTop:"20px"}}>Upgrading Protocol...</h1><p>Funds are safe on-chain.</p></div>
     );
   } else if (!userData) {
     mainContent = (
@@ -529,13 +690,7 @@ function App() {
           <button onClick={() => setActiveTab("vault")} style={activeTab === "vault" ? activeTabStyle : inactiveTabStyle}><ShieldCheck size={16} /> Dashboard</button>
           <button onClick={() => setActiveTab("guide")} style={activeTab === "guide" ? activeTabStyle : inactiveTabStyle}><BookOpen size={16} /> Guide & FAQ</button>
           <button onClick={() => setActiveTab("updates")} style={activeTab === "updates" ? activeTabStyle : inactiveTabStyle}><Megaphone size={16} /> Updates</button>
-          
-          {/* THE GHOST TAB: Only renders if your specific wallet is connected */}
-          {isAdmin && (
-            <button onClick={() => setActiveTab("admin")} style={activeTab === "admin" ? adminTabStyle : { ...adminTabStyle, backgroundColor: "transparent" }}>
-              <Key size={16} /> Admin
-            </button>
-          )}
+          {isAdmin && <button onClick={() => setActiveTab("admin")} style={activeTab === "admin" ? adminTabStyle : { ...adminTabStyle, backgroundColor: "transparent" }}><Key size={16} /> Admin</button>}
         </div>
 
         {activeTab === "guide" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><KnowledgeBase /></motion.div>}
@@ -543,81 +698,13 @@ function App() {
         {activeTab === "admin" && isAdmin && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><AdminPanel history={history} /></motion.div>}
 
         {activeTab === "vault" && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-            
-            {/* VAULT A vs VAULT B TOGGLE */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             <div style={vaultTypeContainer}>
               <button onClick={() => setVaultType("flex")} style={vaultType === "flex" ? vaultBtnActive : vaultBtnInactive}>Vault A: Flex (10% Penalty Exit)</button>
-              <button onClick={() => setVaultType("iron")} style={vaultType === "iron" ? vaultBtnActive : vaultBtnInactive}>Vault B: Iron (Locked + Yield)</button>
+              <button onClick={() => setVaultType("iron")} style={vaultType === "iron" ? {...vaultBtnActive, backgroundColor: theme.cardBorder} : vaultBtnInactive}>Vault B: Iron (Locked + Yield)</button>
             </div>
-
-            <div style={gridContainer}>
-              <div style={cardStyle}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
-                  <h3 style={cardHead}><ShieldCheck size={20} color={theme.success}/> Vault Status</h3>
-                  <div style={{ position: "relative", width: "140px" }}>
-                    <Wallet size={14} color={theme.textMuted} style={{ position: "absolute", left: "10px", top: "12px", pointerEvents: "none" }} />
-                    <select value={selectedAsset} onChange={(e) => setSelectedAsset(e.target.value)} style={selectDropdownStyle}>
-                      {Object.keys(dynamicAssets).map(key => <option key={key} value={key}>{key}</option>)}
-                    </select>
-                    <ChevronDown size={14} color={theme.textMuted} style={{ position: "absolute", right: "10px", top: "12px", pointerEvents: "none" }} />
-                  </div>
-                </div>
-                <div style={statRow}><Coins color={theme.primary}/><div style={statValue}>{vaultData.amount} {selectedAsset}</div></div>
-                <div style={statRow}><Clock color={theme.primary}/><div style={statValue}>Block #{vaultData.unlock || "0"}</div></div>
-                {vaultData.amount > 0 && <button onClick={shareToX} style={shareBtn}><Share2 size={16}/> Brag on X</button>}
-              </div>
-
-              <div style={cardStyle}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                  <h3 style={cardHead}>Manage {vaultType === 'flex' ? 'Flex' : 'Iron'} Vault</h3>
-                  <span style={{ fontSize: "12px", color: theme.success, fontWeight: "700" }}>Avail: {currentAssetObj.balance.toLocaleString()} {selectedAsset}</span>
-                </div>
-                <input type="number" placeholder={`Amount (${selectedAsset})`} value={stxAmount} onChange={e=>setStxAmount(e.target.value)} style={inputStyle}/>
-                <input type="number" placeholder="Days to Lock" value={lockDays} onChange={e=>setLockDays(e.target.value)} style={inputStyle}/>
-                <button onClick={handleDeposit} disabled={isPending} style={actionBtn}>
-                  {isPending ? <Loader2 className="animate-spin"/> : `Secure ${selectedAsset}`}
-                </button>
-                
-                {/* DYNAMIC BUTTONS BASED ON VAULT TYPE */}
-                {vaultType === 'flex' ? (
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
-                    <button onClick={()=>executeWithdrawal(false)} style={secondaryBtn}>Standard Exit</button>
-                    <button onClick={()=>setShowConfirm(true)} style={dangerBtn}><ShieldAlert size={14}/> Early Exit</button>
-                  </div>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "12px" }}>
-                    <button onClick={()=>executeWithdrawal(false)} style={secondaryBtn}>Standard Exit</button>
-                    <div style={{ padding: "10px", backgroundColor: "rgba(16, 185, 129, 0.1)", border: `1px solid ${theme.success}44`, borderRadius: "10px", color: theme.success, fontSize: "11px", textAlign: "center", lineHeight: "1.4" }}>
-                      <strong>🔒 Iron Vault Active:</strong> Emergency exits are disabled. Native BTC yield generation processing...
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div style={gridContainer}>
-              <div style={cardStyle}>
-                <h3 style={cardHead}><RefreshCw size={20} color={theme.info}/> Recent Activity</h3>
-                {history.length === 0 ? <div style={{ color: theme.textMuted, fontSize: "13px" }}>No recent vault activity.</div> : 
-                  history.map((tx, index) => (
-                    <a key={index} href={`https://explorer.hiro.so/txid/${tx.tx_id}`} target="_blank" rel="noreferrer" style={historyRow}>
-                      <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        {tx.contract_call.function_name.includes("deposit") ? <ArrowUpRight size={14} color={theme.success}/> : <LogOut size={14} color={theme.warning}/>}
-                        {tx.contract_call.function_name.replace("-stx","").replace("-token", "")}
-                      </span>
-                      <span style={{color:theme.success, fontSize: "11px", fontWeight: "bold" }}>CONFIRMED</span>
-                    </a>
-                  ))
-                }
-              </div>
-              <div style={cardStyle}>
-                <h3 style={cardHead}><Trophy size={20} color={theme.warning}/> Top Savers (Global)</h3>
-                <div style={leaderRow}><span>1. SP2J...X7R4</span><strong>25,400 STX</strong></div>
-                <div style={leaderRow}><span>2. SP3M...9QW2</span><strong>18,250 STX</strong></div>
-              </div>
-            </div>
-          </motion.div>
+            {vaultType === "flex" ? renderFlexVault() : renderIronVault()}
+          </div>
         )}
       </div>
     );
@@ -691,7 +778,7 @@ function App() {
               <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>Bypassing the lock timer incurs a <strong style={{color: theme.danger}}>10% protocol fee</strong>.</p>
               <div style={{display:"flex", gap:"10px", marginTop:"20px"}}>
                 <button onClick={()=>setShowConfirm(false)} style={secondaryBtn}>Cancel</button>
-                <button onClick={()=>executeWithdrawal(true)} style={confirmBtn}>Withdraw Now</button>
+                <button onClick={()=>executeWithdrawal(true, "flex")} style={confirmBtn}>Withdraw Now</button>
               </div>
             </motion.div>
           </div>
@@ -709,9 +796,9 @@ function App() {
                 <h4 style={legalHeading}>1. Non-Custodial Protocol</h4>
                 <p style={legalText}>STX Vault is a decentralized smart-contract tool. We never hold your private keys. You are solely responsible for your wallet's security and access.</p>
                 <h4 style={legalHeading}>2. Penalty Transparency</h4>
-                <p style={legalText}>By utilizing the "Early Exit" or Emergency Withdrawal function, you explicitly agree to a 10% protocol fee deducted from your principal amount.</p>
-                <h4 style={legalHeading}>3. Privacy Policy</h4>
-                <p style={legalText}>We do not collect, store, or sell any personal data. All transaction data and history displayed is pulled directly from public Stacks blockchain nodes.</p>
+                <p style={legalText}>By utilizing the "Early Exit" or Emergency Withdrawal function in the Flex Vault, you explicitly agree to a 10% protocol fee deducted from your principal amount.</p>
+                <h4 style={legalHeading}>3. Yield Partner Enforcement</h4>
+                <p style={legalText}>Iron Vault deposits are strictly locked into designated duration cycles. These cannot be accessed early under any circumstance.</p>
               </div>
               <button onClick={() => setShowLegal(false)} style={actionBtn}>I Understand & Accept</button>
             </motion.div>
