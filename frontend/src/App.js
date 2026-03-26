@@ -4,6 +4,7 @@ import { AppConfig, UserSession, showConnect, openContractCall } from "@stacks/c
 import { StacksMainnet } from "@stacks/network";
 import { 
   uintCV, 
+  contractPrincipalCV,
   PostConditionMode, 
   FungibleConditionCode,
   makeStandardSTXPostCondition,
@@ -14,14 +15,33 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   LogOut, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, 
   ShieldAlert, X, AlertTriangle, CheckCircle, Info, BookOpen, 
-  Lock, Scale, ShieldCheck, FileText, Share2, Trophy, ChevronDown
+  Lock, Scale, ShieldCheck, FileText, Share2, Trophy, ChevronDown, Wallet
 } from "lucide-react";
 
 // --- CONFIGURATION ---
-const APP_VERSION = "9.5.0";
+const APP_VERSION = "10.0.0";
 const IS_MAINTENANCE = false;
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
-const contractName = "stx-vault-v3"; 
+const contractName = "stx-vault-v10"; 
+
+// Supported Assets Config
+const ASSETS = {
+  STX: { symbol: "STX", decimals: 1000000, isToken: false },
+  USDA: { 
+    symbol: "USDA", 
+    decimals: 1000000, 
+    isToken: true, 
+    contract: "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR", 
+    name: "usda-token" 
+  },
+  WELSH: { 
+    symbol: "WELSH", 
+    decimals: 1000000, 
+    isToken: true, 
+    contract: "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G", 
+    name: "welshcorgicoin-token" 
+  }
+};
 
 const theme = {
   primary: "#5546FF",
@@ -63,75 +83,35 @@ const NetworkStatus = () => {
 // --- SUB-COMPONENT: KNOWLEDGE BASE ---
 const KnowledgeBase = () => {
   const [openFaq, setOpenFaq] = useState(null);
-
   const faqs = [
-    { q: "How does the time-lock work?", a: "Your STX is secured by a Stacks smart contract. It prevents standard withdrawals until the Stacks network reaches the specific block height you chose (1 block ≈ 10 minutes)." },
-    { q: "Is STX Vault safe to use?", a: "Yes. STX Vault is completely non-custodial. We do not hold your private keys or your funds. Your assets are locked directly into a decentralized smart contract." },
-    { q: "What is the Emergency Exit?", a: "If you desperately need liquidity before your lock timer expires, you can use the Emergency Exit. This bypasses the time-lock but incurs a strict 10% protocol penalty fee." },
-    { q: "Can I add more STX to an existing lock?", a: "Yes. If you make a new deposit, it will add to your existing balance. If your new lock duration is longer than the previous one, the overall timer will be extended." }
+    { q: "How does the time-lock work?", a: "Your assets are secured by a Stacks smart contract. It prevents withdrawals until the Bitcoin network reaches the specific block height you chose." },
+    { q: "Is the multi-asset vault safe?", a: "Yes. STX Vault v10 uses the official SIP-010 trait, meaning it can only interact with verified fungible tokens on the Stacks network. It remains 100% non-custodial." },
+    { q: "What is the Emergency Exit?", a: "If you desperately need liquidity before your lock timer expires, you can use the Emergency Exit. This bypasses the time-lock but incurs a strict 10% protocol fee in the native asset." },
   ];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "60px", padding: "20px 0" }}>
-      
-      {/* BENEFITS */}
       <div>
-        <h2 style={sectionTitle}>Why Use STX Vault?</h2>
+        <h2 style={sectionTitle}>Multi-Asset Diamond Hands</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
           <div style={cardStyle}>
             <div style={iconBox(theme.primary)}><Lock size={24} color={theme.primary} /></div>
-            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>Forced Diamond Hands</h3>
-            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Remove the temptation to panic-sell during market dips. Lock your wealth and stick to your long-term thesis.</p>
+            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>Forced Conviction</h3>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Lock your STX, USDA, or WELSH to remove the temptation of panic-selling during market volatility.</p>
           </div>
           <div style={cardStyle}>
             <div style={iconBox(theme.success)}><ShieldCheck size={24} color={theme.success} /></div>
-            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>Bitcoin-Grade Security</h3>
-            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Every transaction and time-lock is settled and finalized directly on the Bitcoin blockchain via Stacks.</p>
+            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>Bitcoin Security</h3>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Every time-lock is settled and finalized directly on the Bitcoin blockchain via the Nakamoto upgrade.</p>
           </div>
           <div style={cardStyle}>
             <div style={iconBox(theme.info)}><FileText size={24} color={theme.info} /></div>
             <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>100% Non-Custodial</h3>
-            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>You retain total ownership. The protocol simply enforces the rules you set for yourself. No middlemen.</p>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>You retain total ownership. The protocol simply enforces the mathematical rules you set for yourself.</p>
           </div>
         </div>
       </div>
-
-      {/* HOW IT WORKS */}
-      <div>
-        <h2 style={sectionTitle}>How It Works</h2>
-        <div style={{ ...cardStyle, padding: "40px" }}>
-          <div style={stepRow}>
-            <div style={stepNumber}>1</div>
-            <div>
-              <h4 style={{ fontSize: "16px", marginBottom: "6px" }}>Connect Your Wallet</h4>
-              <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>Link your Leather or Xverse Stacks wallet to the protocol securely.</p>
-            </div>
-          </div>
-          <div style={stepRow}>
-            <div style={stepNumber}>2</div>
-            <div>
-              <h4 style={{ fontSize: "16px", marginBottom: "6px" }}>Set Your Parameters</h4>
-              <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>Input the amount of STX to save and the duration (in days) you want them locked.</p>
-            </div>
-          </div>
-          <div style={stepRow}>
-            <div style={stepNumber}>3</div>
-            <div>
-              <h4 style={{ fontSize: "16px", marginBottom: "6px" }}>Smart Contract Execution</h4>
-              <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>The Stacks blockchain calculates the future block height and secures your funds on-chain.</p>
-            </div>
-          </div>
-          <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
-            <div style={stepNumber}>4</div>
-            <div>
-              <h4 style={{ fontSize: "16px", marginBottom: "6px" }}>Release or Emergency Exit</h4>
-              <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>Withdraw for free once the block height is reached, or exit early for a 10% protocol fee.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* FAQ */}
+      
       <div>
         <h2 style={sectionTitle}>Frequently Asked Questions</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -158,7 +138,12 @@ const KnowledgeBase = () => {
 
 function App() {
   const [userData, setUserData] = useState(null);
+  
+  // New: Asset & Balance State
+  const [selectedAsset, setSelectedAsset] = useState("STX");
+  const [walletBalances, setWalletBalances] = useState({ STX: 0, USDA: 0, WELSH: 0 });
   const [vaultData, setVaultData] = useState({ amount: 0, unlock: 0 });
+  
   const [history, setHistory] = useState([]);
   const [stxAmount, setStxAmount] = useState("");
   const [lockDays, setLockDays] = useState("");
@@ -166,42 +151,73 @@ function App() {
   const [txId, setTxId] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [showLegal, setShowLegal] = useState(false);
-  
-  // NEW: Tab State
   const [activeTab, setActiveTab] = useState("vault");
 
-  // --- JANITOR & AUTH ---
+  // --- INITIAL LOAD & BALANCES ---
   useEffect(() => {
-    const saved = localStorage.getItem("vault_version");
-    if (saved !== APP_VERSION) {
-      localStorage.removeItem("blockstack-session");
-      localStorage.setItem("vault_version", APP_VERSION);
-    }
     if (userSession.isUserSignedIn()) {
       const user = userSession.loadUserData();
       setUserData(user);
-      fetchVaultStatus(user.profile.stxAddress.mainnet);
-      fetchHistory(user.profile.stxAddress.mainnet);
+      const address = user.profile.stxAddress.mainnet;
+      fetchWalletBalances(address);
+      fetchVaultStatus(address, "STX"); // Default fetch
+      fetchHistory(address);
     }
   }, []);
 
-  const fetchVaultStatus = async (address) => {
+  // Update Vault Status when user switches asset tab
+  useEffect(() => {
+    if (userData) {
+      fetchVaultStatus(userData.profile.stxAddress.mainnet, selectedAsset);
+    }
+  }, [selectedAsset, userData]);
+
+  const fetchWalletBalances = async (address) => {
     try {
+      const res = await fetch(`https://api.mainnet.hiro.so/extended/v1/address/${address}/balances`);
+      const data = await res.json();
+      
+      const stxBal = Number(data.stx.balance) / ASSETS.STX.decimals;
+      
+      // Parse SIP-010 balances
+      const usdaKey = Object.keys(data.fungible_tokens || {}).find(k => k.includes(ASSETS.USDA.name));
+      const usdaBal = usdaKey ? Number(data.fungible_tokens[usdaKey].balance) / ASSETS.USDA.decimals : 0;
+      
+      const welshKey = Object.keys(data.fungible_tokens || {}).find(k => k.includes(ASSETS.WELSH.name));
+      const welshBal = welshKey ? Number(data.fungible_tokens[welshKey].balance) / ASSETS.WELSH.decimals : 0;
+
+      setWalletBalances({ STX: stxBal, USDA: usdaBal, WELSH: welshBal });
+    } catch (e) { console.error("Balance fetch error:", e); }
+  };
+
+  const fetchVaultStatus = async (address, assetSymbol) => {
+    const asset = ASSETS[assetSymbol];
+    try {
+      let functionName = "get-stx-status";
+      let functionArgs = [uintCV(address)];
+
+      if (asset.isToken) {
+        functionName = "get-token-status";
+        functionArgs = [uintCV(address), contractPrincipalCV(asset.contract, asset.name)];
+      }
+
       const result = await callReadOnlyFunction({
         network: new StacksMainnet(),
         contractAddress, contractName,
-        functionName: "get-vault-status",
-        functionArgs: [uintCV(address)],
+        functionName, functionArgs,
         senderAddress: address,
       });
+      
       const json = cvToJSON(result);
       if (json?.value) {
         setVaultData({
-          amount: Number(json.value.amount.value) / 1000000,
+          amount: Number(json.value.amount.value) / asset.decimals,
           unlock: Number(json.value["unlock-block"].value)
         });
+      } else {
+        setVaultData({ amount: 0, unlock: 0 }); // Reset if none
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error(e); setVaultData({ amount: 0, unlock: 0 }); }
   };
 
   const fetchHistory = async (address) => {
@@ -213,22 +229,32 @@ function App() {
     } catch (e) { console.error(e); }
   };
 
-  const handleForceUpdate = () => {
-    localStorage.clear();
-    window.location.reload();
-  };
-
+  // --- CONTRACT CALLS ---
   const handleDeposit = async () => {
-    if (!stxAmount) return;
+    if (!stxAmount || !userData) return;
     setIsPending(true);
+    const asset = ASSETS[selectedAsset];
+    const amountMicro = BigInt(Math.floor(Number(stxAmount) * asset.decimals));
+    const address = userData.profile.stxAddress.mainnet;
+
     try {
-      const amountMicro = BigInt(Math.floor(Number(stxAmount) * 1000000));
+      let functionName = "deposit-stx";
+      let functionArgs = [uintCV(amountMicro), uintCV(Math.floor(Number(lockDays) * 144))];
+      let postConditions = [];
+
+      if (!asset.isToken) {
+        postConditions = [makeStandardSTXPostCondition(address, FungibleConditionCode.Equal, amountMicro)];
+      } else {
+        functionName = "deposit-token";
+        functionArgs = [uintCV(amountMicro), uintCV(Math.floor(Number(lockDays) * 144)), contractPrincipalCV(asset.contract, asset.name)];
+        // Using Allow mode for SIP-010 to simplify frontend integration for now
+      }
+
       await openContractCall({
         network: new StacksMainnet(),
         contractAddress, contractName,
-        functionName: "deposit-stx",
-        functionArgs: [uintCV(amountMicro), uintCV(Math.floor(Number(lockDays) * 144))],
-        postConditions: [makeStandardSTXPostCondition(userData.profile.stxAddress.mainnet, FungibleConditionCode.Equal, amountMicro)],
+        functionName, functionArgs, postConditions,
+        postConditionMode: asset.isToken ? PostConditionMode.Allow : PostConditionMode.Deny,
         onFinish: (data) => setTxId(data.txId),
       });
     } catch (e) { console.error(e); } finally { setIsPending(false); }
@@ -236,19 +262,29 @@ function App() {
 
   const executeWithdrawal = async (emergency) => {
     setShowConfirm(false); setIsPending(true);
+    const asset = ASSETS[selectedAsset];
+
     try {
+      let functionName = emergency ? "emergency-withdraw-stx" : "withdraw-stx";
+      let functionArgs = [];
+
+      if (asset.isToken) {
+        functionName = emergency ? "emergency-withdraw-token" : "withdraw-token";
+        functionArgs = [contractPrincipalCV(asset.contract, asset.name)];
+      }
+
       await openContractCall({
         network: new StacksMainnet(),
         contractAddress, contractName,
-        functionName: emergency ? "emergency-withdraw" : "withdraw-stx",
-        functionArgs: [],
+        functionName, functionArgs,
+        postConditionMode: PostConditionMode.Allow, // Allow mode for generic multi-asset withdrawals
         onFinish: (data) => setTxId(data.txId),
       });
     } catch (e) { console.error(e); } finally { setIsPending(false); }
   };
 
   const shareToX = () => {
-    const text = `Locked ${vaultData.amount} $STX in the @STXVault! 💎🙌 Securing my future on @Stacks. #Bitcoin #DeFi`;
+    const text = `Locked ${vaultData.amount} $${selectedAsset} in the @STXVault! 💎🙌 Securing my future on @Stacks. #Bitcoin #DeFi`;
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -293,16 +329,15 @@ function App() {
                 <div style={{ textAlign: "center", paddingTop: "60px", paddingBottom: "40px" }}>
                   <div style={badge}>TRUST-FIRST DEFI</div>
                   <h1 style={{ fontSize: "64px", fontWeight: "900", lineHeight: "1.1", marginBottom: "20px" }}>
-                    Save STX with <br/><span style={{ color: theme.primary }}>Institutional Security.</span>
+                    Save Assets with <br/><span style={{ color: theme.primary }}>Institutional Security.</span>
                   </h1>
                   <p style={{ color: theme.textMuted, marginBottom: "40px", fontSize: "18px", maxWidth: "600px", margin: "0 auto 40px", lineHeight: "1.6" }}>
-                    Secure your wealth using time-locked smart contracts. Non-custodial, transparent, and built for Diamond Hands.
+                    Secure your STX, USDA, and WELSH using time-locked smart contracts. Non-custodial, transparent, and built for Diamond Hands.
                   </p>
                   <button onClick={() => showConnect({ userSession, appDetails: { name: "STX Vault" }, onFinish: () => window.location.reload() })} style={heroBtn}>
                     Enter the Vault <ArrowUpRight size={22} style={{ marginLeft: "8px" }} />
                   </button>
                 </div>
-                {/* Show Knowledge Base to unregistered users */}
                 <KnowledgeBase />
               </div>
             ) : (
@@ -325,21 +360,45 @@ function App() {
                   </motion.div>
                 ) : (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={gridContainer}>
+                    
                     {/* LEFT: STATUS & ACTION */}
                     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                      
+                      {/* ASSET SELECTOR */}
                       <div style={cardStyle}>
-                        <h3 style={cardHead}><ShieldCheck size={20} color={theme.success}/> Vault Status</h3>
-                        <div style={statRow}><Coins color={theme.primary}/><div style={statValue}>{vaultData.amount} STX</div></div>
+                        <h3 style={cardHead}><Wallet size={20} color={theme.info}/> Select Asset</h3>
+                        <div style={{ display: "flex", gap: "10px" }}>
+                          {["STX", "USDA", "WELSH"].map(asset => (
+                            <button 
+                              key={asset} 
+                              onClick={() => setSelectedAsset(asset)}
+                              style={selectedAsset === asset ? activeAssetBtn : inactiveAssetBtn}
+                            >
+                              {asset}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div style={cardStyle}>
+                        <h3 style={cardHead}><ShieldCheck size={20} color={theme.success}/> {selectedAsset} Vault Status</h3>
+                        <div style={statRow}><Coins color={theme.primary}/><div style={statValue}>{vaultData.amount} {selectedAsset}</div></div>
                         <div style={statRow}><Clock color={theme.primary}/><div style={statValue}>Block #{vaultData.unlock || "0"}</div></div>
                         {vaultData.amount > 0 && <button onClick={shareToX} style={shareBtn}><Share2 size={16}/> Brag on X</button>}
                       </div>
 
                       <div style={cardStyle}>
-                        <h3 style={cardHead}>Manage Vault</h3>
-                        <input type="number" placeholder="STX Amount" value={stxAmount} onChange={e=>setStxAmount(e.target.value)} style={inputStyle}/>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                          <h3 style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "10px" }}>Manage Vault</h3>
+                          {/* THE NEW AVAILABLE BALANCE DISPLAY */}
+                          <span style={{ fontSize: "12px", color: theme.success, fontWeight: "700" }}>
+                            Avail: {walletBalances[selectedAsset]?.toLocaleString()} {selectedAsset}
+                          </span>
+                        </div>
+                        <input type="number" placeholder={`Amount (${selectedAsset})`} value={stxAmount} onChange={e=>setStxAmount(e.target.value)} style={inputStyle}/>
                         <input type="number" placeholder="Days to Lock" value={lockDays} onChange={e=>setLockDays(e.target.value)} style={inputStyle}/>
                         <button onClick={handleDeposit} disabled={isPending} style={actionBtn}>
-                          {isPending ? <Loader2 className="animate-spin"/> : "Secure Deposit"}
+                          {isPending ? <Loader2 className="animate-spin"/> : `Secure ${selectedAsset}`}
                         </button>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
                           <button onClick={()=>executeWithdrawal(false)} style={secondaryBtn}>Standard Exit</button>
@@ -359,7 +418,7 @@ function App() {
                             <a key={index} href={`https://explorer.hiro.so/txid/${tx.tx_id}`} target="_blank" rel="noreferrer" style={historyRow}>
                               <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                 {tx.contract_call.function_name.includes("deposit") ? <ArrowUpRight size={14} color={theme.success}/> : <LogOut size={14} color={theme.warning}/>}
-                                {tx.contract_call.function_name.replace("-stx","")}
+                                {tx.contract_call.function_name.replace("-stx","").replace("-token", "")}
                               </span>
                               <span style={{color:theme.success, fontSize: "11px", fontWeight: "bold" }}>CONFIRMED</span>
                             </a>
@@ -367,7 +426,7 @@ function App() {
                         )}
                       </div>
                       <div style={cardStyle}>
-                        <h3 style={cardHead}><Trophy size={20} color={theme.warning}/> Top Savers</h3>
+                        <h3 style={cardHead}><Trophy size={20} color={theme.warning}/> Top Savers (STX)</h3>
                         <div style={leaderRow}><span>1. SP2J...X7R4</span><strong>25,400 STX</strong></div>
                         <div style={leaderRow}><span>2. SP3M...9QW2</span><strong>18,250 STX</strong></div>
                       </div>
@@ -384,8 +443,7 @@ function App() {
       <footer style={footerStyle}>
         <div style={{ display: "flex", gap: "30px", color: theme.textMuted, fontSize: "13px", alignItems: "center" }}>
           <span onClick={()=>setShowLegal(true)} style={{cursor:"pointer", display: "flex", alignItems: "center", gap: "6px"}}><Scale size={14}/> Terms & Privacy</span>
-          <span>© 2026 STX Vault</span>
-          <span onClick={handleForceUpdate} style={{cursor:"pointer", color:theme.primary}}>Refresh App v{APP_VERSION}</span>
+          <span>© 2026 STX Vault v{APP_VERSION}</span>
         </div>
       </footer>
 
@@ -440,7 +498,7 @@ const inputStyle = { width: "100%", padding: "12px", marginBottom: "10px", borde
 const actionBtn = { width: "100%", padding: "14px", borderRadius: "10px", backgroundColor: theme.primary, color: "#fff", border: "none", fontWeight: "800", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center" };
 const connectBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "10px 24px", borderRadius: "10px", fontWeight: "700", cursor: "pointer" };
 const exitBtn = { backgroundColor: "rgba(239,68,68,0.1)", border: `1px solid ${theme.danger}44`, color: theme.danger, padding: "8px", borderRadius: "10px", cursor: "pointer", display: "flex", alignItems: "center" };
-const addressPill = { backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, padding: "8px 12px", borderRadius: "10px", fontSize: "12px", fontWeight: "700", color: theme.primary };
+const addressPill = { backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, padding: "8px 12px", borderRadius: "10px", fontSize: "13px", fontWeight: "700", color: theme.primary };
 const badge = { color: theme.primary, border: `1px solid ${theme.primary}`, padding: "6px 16px", borderRadius: "100px", fontSize: "12px", fontWeight: "900", marginBottom: "20px", display: "inline-block", letterSpacing: "1.5px" };
 const heroBtn = { backgroundColor: theme.primary, color: "#fff", padding: "18px 48px", borderRadius: "14px", fontSize: "18px", fontWeight: "800", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center" };
 const shareBtn = { width: "100%", padding: "12px", marginTop: "15px", borderRadius: "10px", backgroundColor: "#000", border: `1px solid ${theme.cardBorder}`, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "13px", fontWeight: "700", cursor: "pointer" };
@@ -453,10 +511,12 @@ const historyRow = { display: "flex", justifyContent: "space-between", alignItem
 const leaderRow = { display: "flex", justifyContent: "space-between", padding: "12px", borderBottom: `1px solid ${theme.cardBorder}`, fontSize: "13px" };
 const footerStyle = { padding: "40px", borderTop: `1px solid ${theme.cardBorder}`, marginTop: "60px", display: "flex", justifyContent: "center" };
 
-// Tab Styles
+// Tab & Asset Select Styles
 const tabContainer = { display: "flex", gap: "10px", padding: "6px", backgroundColor: "rgba(255,255,255,0.03)", borderRadius: "14px", width: "fit-content", margin: "0 auto", border: `1px solid ${theme.cardBorder}` };
 const activeTabStyle = { padding: "10px 24px", backgroundColor: theme.cardBorder, color: "#fff", border: "none", borderRadius: "10px", fontWeight: "700", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "0.2s" };
 const inactiveTabStyle = { padding: "10px 24px", backgroundColor: "transparent", color: theme.textMuted, border: "none", borderRadius: "10px", fontWeight: "600", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "0.2s" };
+const activeAssetBtn = { flex: 1, padding: "8px", backgroundColor: theme.primary, color: "#fff", border: "none", borderRadius: "8px", fontWeight: "700", cursor: "pointer", transition: "0.2s" };
+const inactiveAssetBtn = { flex: 1, padding: "8px", backgroundColor: "transparent", color: theme.textMuted, border: `1px solid ${theme.cardBorder}`, borderRadius: "8px", fontWeight: "600", cursor: "pointer", transition: "0.2s" };
 
 // Knowledge Base Styles
 const sectionTitle = { fontSize: "28px", fontWeight: "800", marginBottom: "30px", textAlign: "center", color: theme.textMain };
