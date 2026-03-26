@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 // --- CONFIGURATION ---
-const APP_VERSION = "10.0.0";
+const APP_VERSION = "10.0.1";
 const IS_MAINTENANCE = false;
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v10"; 
@@ -111,7 +111,7 @@ const KnowledgeBase = () => {
           </div>
         </div>
       </div>
-      
+
       <div>
         <h2 style={sectionTitle}>Frequently Asked Questions</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -138,12 +138,12 @@ const KnowledgeBase = () => {
 
 function App() {
   const [userData, setUserData] = useState(null);
-  
+
   // New: Asset & Balance State
   const [selectedAsset, setSelectedAsset] = useState("STX");
   const [walletBalances, setWalletBalances] = useState({ STX: 0, USDA: 0, WELSH: 0 });
   const [vaultData, setVaultData] = useState({ amount: 0, unlock: 0 });
-  
+
   const [history, setHistory] = useState([]);
   const [stxAmount, setStxAmount] = useState("");
   const [lockDays, setLockDays] = useState("");
@@ -176,13 +176,13 @@ function App() {
     try {
       const res = await fetch(`https://api.mainnet.hiro.so/extended/v1/address/${address}/balances`);
       const data = await res.json();
-      
+
       const stxBal = Number(data.stx.balance) / ASSETS.STX.decimals;
-      
+
       // Parse SIP-010 balances
       const usdaKey = Object.keys(data.fungible_tokens || {}).find(k => k.includes(ASSETS.USDA.name));
       const usdaBal = usdaKey ? Number(data.fungible_tokens[usdaKey].balance) / ASSETS.USDA.decimals : 0;
-      
+
       const welshKey = Object.keys(data.fungible_tokens || {}).find(k => k.includes(ASSETS.WELSH.name));
       const welshBal = welshKey ? Number(data.fungible_tokens[welshKey].balance) / ASSETS.WELSH.decimals : 0;
 
@@ -207,7 +207,7 @@ function App() {
         functionName, functionArgs,
         senderAddress: address,
       });
-      
+
       const json = cvToJSON(result);
       if (json?.value) {
         setVaultData({
@@ -227,6 +227,20 @@ function App() {
       const filtered = data.results.filter(tx => JSON.stringify(tx).includes(contractName));
       setHistory(filtered);
     } catch (e) { console.error(e); }
+  };
+
+  // --- NEW: WALLET CONNECTION LOGIC ---
+  const handleConnect = () => {
+    showConnect({
+      userSession,
+      appDetails: {
+        name: "STX Vault",
+        icon: window.location.origin + "/logo192.png", // REQUIRED for Leather Wallet
+      },
+      onFinish: () => {
+        window.location.reload();
+      },
+    });
   };
 
   // --- CONTRACT CALLS ---
@@ -309,7 +323,7 @@ function App() {
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <NetworkStatus />
           {!userData ? (
-            <button onClick={() => showConnect({ userSession, appDetails: { name: "STX Vault" }, onFinish: () => window.location.reload() })} style={connectBtn}>Connect</button>
+            <button onClick={handleConnect} style={connectBtn}>Connect</button>
           ) : (
             <div style={{ display: "flex", gap: "10px" }}>
               <div style={addressPill}>{userAddress.substring(0,5)}...{userAddress.slice(-4)}</div>
@@ -334,7 +348,7 @@ function App() {
                   <p style={{ color: theme.textMuted, marginBottom: "40px", fontSize: "18px", maxWidth: "600px", margin: "0 auto 40px", lineHeight: "1.6" }}>
                     Secure your STX, USDA, and WELSH using time-locked smart contracts. Non-custodial, transparent, and built for Diamond Hands.
                   </p>
-                  <button onClick={() => showConnect({ userSession, appDetails: { name: "STX Vault" }, onFinish: () => window.location.reload() })} style={heroBtn}>
+                  <button onClick={handleConnect} style={heroBtn}>
                     Enter the Vault <ArrowUpRight size={22} style={{ marginLeft: "8px" }} />
                   </button>
                 </div>
@@ -342,7 +356,7 @@ function App() {
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-                
+
                 {/* --- TAB SWITCHER --- */}
                 <div style={tabContainer}>
                   <button onClick={() => setActiveTab("vault")} style={activeTab === "vault" ? activeTabStyle : inactiveTabStyle}>
@@ -360,10 +374,10 @@ function App() {
                   </motion.div>
                 ) : (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={gridContainer}>
-                    
+
                     {/* LEFT: STATUS & ACTION */}
                     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                      
+
                       {/* ASSET SELECTOR */}
                       <div style={cardStyle}>
                         <h3 style={cardHead}><Wallet size={20} color={theme.info}/> Select Asset</h3>
