@@ -15,11 +15,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   LogOut, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, 
   ShieldAlert, X, AlertTriangle, CheckCircle, Info, BookOpen, 
-  Lock, Scale, ShieldCheck, FileText, Share2, Trophy, ChevronDown, Wallet
+  Lock, Scale, ShieldCheck, FileText, Share2, Trophy, ChevronDown, Wallet, Megaphone
 } from "lucide-react";
 
 // --- CONFIGURATION ---
-const APP_VERSION = "10.0.1";
+const APP_VERSION = "10.0.2";
 const IS_MAINTENANCE = false;
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v10"; 
@@ -136,10 +136,102 @@ const KnowledgeBase = () => {
   );
 };
 
+// --- SUB-COMPONENT: CHANGELOG ---
+const Changelog = () => {
+  const releases = [
+    {
+      version: "v10.0.1",
+      date: "Current Release",
+      title: "Wallet Authentication Patch",
+      changes: ["Integrated strict 'appIcon' security requirement for Leather Wallet."],
+      benefit: "Ensures uninterrupted, secure wallet connections while protecting users against phishing attempts."
+    },
+    {
+      version: "v10.0.0",
+      date: "March 2026",
+      title: "Multi-Asset Architecture (SIP-010)",
+      changes: [
+        "Added SIP-010 smart contract support for USDA and WELSH.",
+        "Added real-time liquid wallet balances to the dashboard.",
+        "Introduced the Asset Selection toggle system."
+      ],
+      benefit: "You can now diversify your long-term holds and secure stablecoins or memecoins alongside your STX, right from one interface."
+    },
+    {
+      version: "v9.5.0",
+      date: "March 2026",
+      title: "Educational Knowledge Base",
+      changes: [
+        "Added the 'Guide & FAQ' tab.",
+        "Implemented the 'Why Use STX Vault' feature breakdown."
+      ],
+      benefit: "Helps both new and veteran users understand the exact mechanism of the blockchain time-locks, building protocol trust."
+    },
+    {
+      version: "v9.0.0",
+      date: "Early 2026",
+      title: "Emergency Exit & Nakamoto Upgrade",
+      changes: [
+        "Upgraded smart contracts to Clarity 4 standard.",
+        "Migrated to 'burn-block-height' to align with Stacks Nakamoto upgrade.",
+        "Added the 10% penalty 'Emergency Withdraw' function."
+      ],
+      benefit: "Your locks now run on reliable Bitcoin block times, and you have an escape hatch if you desperately need liquidity."
+    }
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px", padding: "20px 0", maxWidth: "800px", margin: "0 auto" }}>
+      <h2 style={{ ...sectionTitle, marginBottom: "10px" }}>Protocol Updates</h2>
+      <p style={{ color: theme.textMuted, textAlign: "center", marginBottom: "30px", fontSize: "15px" }}>
+        We constantly improve STX Vault. Here is a transparent look at what we are building for you.
+      </p>
+
+      {releases.map((release, index) => (
+        <div key={index} style={{ ...cardStyle, padding: "30px", borderLeft: index === 0 ? `4px solid ${theme.primary}` : `1px solid ${theme.cardBorder}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "14px", fontWeight: "900", color: index === 0 ? theme.primary : theme.textMain }}>{release.version}</span>
+                <span style={{ fontSize: "12px", color: theme.textMuted, backgroundColor: "rgba(255,255,255,0.05)", padding: "4px 8px", borderRadius: "6px" }}>{release.date}</span>
+              </div>
+              <h3 style={{ fontSize: "20px", margin: 0 }}>{release.title}</h3>
+            </div>
+          </div>
+          
+          <div style={{ marginBottom: "20px" }}>
+            <h4 style={{ fontSize: "12px", textTransform: "uppercase", color: theme.textMuted, letterSpacing: "1px", marginBottom: "10px" }}>What Changed</h4>
+            <ul style={{ margin: 0, paddingLeft: "20px", color: theme.textMain, fontSize: "14px", lineHeight: "1.6" }}>
+              {release.changes.map((change, i) => <li key={i} style={{ marginBottom: "6px" }}>{change}</li>)}
+            </ul>
+          </div>
+
+          <div style={{ backgroundColor: "rgba(16, 185, 129, 0.05)", padding: "16px", borderRadius: "12px", border: `1px solid ${theme.success}33` }}>
+            <h4 style={{ fontSize: "12px", textTransform: "uppercase", color: theme.success, letterSpacing: "1px", marginBottom: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
+              <Star size={14} /> User Benefit
+            </h4>
+            <p style={{ margin: 0, color: theme.textMuted, fontSize: "13px", lineHeight: "1.5" }}>{release.benefit}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// --- ICON HELPER FOR CHANGELOG ---
+// Need to add Star to our custom lucide imports or implement inline SVG.
+// Assuming Megaphone is imported, let's use a simple SVG for Star here to prevent missing import issues.
+const Star = ({ size }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+  </svg>
+);
+
+
 function App() {
   const [userData, setUserData] = useState(null);
 
-  // New: Asset & Balance State
+  // Asset & Balance State
   const [selectedAsset, setSelectedAsset] = useState("STX");
   const [walletBalances, setWalletBalances] = useState({ STX: 0, USDA: 0, WELSH: 0 });
   const [vaultData, setVaultData] = useState({ amount: 0, unlock: 0 });
@@ -151,6 +243,8 @@ function App() {
   const [txId, setTxId] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [showLegal, setShowLegal] = useState(false);
+  
+  // DEFAULT TAB
   const [activeTab, setActiveTab] = useState("vault");
 
   // --- INITIAL LOAD & BALANCES ---
@@ -179,7 +273,6 @@ function App() {
 
       const stxBal = Number(data.stx.balance) / ASSETS.STX.decimals;
 
-      // Parse SIP-010 balances
       const usdaKey = Object.keys(data.fungible_tokens || {}).find(k => k.includes(ASSETS.USDA.name));
       const usdaBal = usdaKey ? Number(data.fungible_tokens[usdaKey].balance) / ASSETS.USDA.decimals : 0;
 
@@ -215,7 +308,7 @@ function App() {
           unlock: Number(json.value["unlock-block"].value)
         });
       } else {
-        setVaultData({ amount: 0, unlock: 0 }); // Reset if none
+        setVaultData({ amount: 0, unlock: 0 }); 
       }
     } catch (e) { console.error(e); setVaultData({ amount: 0, unlock: 0 }); }
   };
@@ -229,13 +322,12 @@ function App() {
     } catch (e) { console.error(e); }
   };
 
-  // --- NEW: WALLET CONNECTION LOGIC ---
   const handleConnect = () => {
     showConnect({
       userSession,
       appDetails: {
         name: "STX Vault",
-        icon: window.location.origin + "/logo192.png", // REQUIRED for Leather Wallet
+        icon: window.location.origin + "/logo192.png",
       },
       onFinish: () => {
         window.location.reload();
@@ -243,7 +335,6 @@ function App() {
     });
   };
 
-  // --- CONTRACT CALLS ---
   const handleDeposit = async () => {
     if (!stxAmount || !userData) return;
     setIsPending(true);
@@ -261,7 +352,6 @@ function App() {
       } else {
         functionName = "deposit-token";
         functionArgs = [uintCV(amountMicro), uintCV(Math.floor(Number(lockDays) * 144)), contractPrincipalCV(asset.contract, asset.name)];
-        // Using Allow mode for SIP-010 to simplify frontend integration for now
       }
 
       await openContractCall({
@@ -291,7 +381,7 @@ function App() {
         network: new StacksMainnet(),
         contractAddress, contractName,
         functionName, functionArgs,
-        postConditionMode: PostConditionMode.Allow, // Allow mode for generic multi-asset withdrawals
+        postConditionMode: PostConditionMode.Allow, 
         onFinish: (data) => setTxId(data.txId),
       });
     } catch (e) { console.error(e); } finally { setIsPending(false); }
@@ -357,7 +447,7 @@ function App() {
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
 
-                {/* --- TAB SWITCHER --- */}
+                {/* --- TAB SWITCHER (NOW HAS 3 TABS) --- */}
                 <div style={tabContainer}>
                   <button onClick={() => setActiveTab("vault")} style={activeTab === "vault" ? activeTabStyle : inactiveTabStyle}>
                     <ShieldCheck size={16} /> Dashboard
@@ -365,14 +455,25 @@ function App() {
                   <button onClick={() => setActiveTab("guide")} style={activeTab === "guide" ? activeTabStyle : inactiveTabStyle}>
                     <BookOpen size={16} /> Guide & FAQ
                   </button>
+                  <button onClick={() => setActiveTab("updates")} style={activeTab === "updates" ? activeTabStyle : inactiveTabStyle}>
+                    <Megaphone size={16} /> Updates
+                  </button>
                 </div>
 
-                {/* --- TAB CONTENT --- */}
-                {activeTab === "guide" ? (
+                {/* --- TAB CONTENT ROUTING --- */}
+                {activeTab === "guide" && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                     <KnowledgeBase />
                   </motion.div>
-                ) : (
+                )}
+
+                {activeTab === "updates" && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <Changelog />
+                  </motion.div>
+                )}
+
+                {activeTab === "vault" && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={gridContainer}>
 
                     {/* LEFT: STATUS & ACTION */}
@@ -404,7 +505,6 @@ function App() {
                       <div style={cardStyle}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
                           <h3 style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "10px" }}>Manage Vault</h3>
-                          {/* THE NEW AVAILABLE BALANCE DISPLAY */}
                           <span style={{ fontSize: "12px", color: theme.success, fontWeight: "700" }}>
                             Avail: {walletBalances[selectedAsset]?.toLocaleString()} {selectedAsset}
                           </span>
