@@ -21,7 +21,7 @@ import {
 // ==========================================
 // 1. CONFIGURATION & THEME
 // ==========================================
-const APP_VERSION = "10.2.0";
+const APP_VERSION = "10.2.1";
 const IS_MAINTENANCE = false;
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v10"; 
@@ -49,7 +49,7 @@ const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
 
 // ==========================================
-// 2. STYLES (Moved to top for Vercel Compiler)
+// 2. STYLES (Moved to top for safe parsing)
 // ==========================================
 const headerStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 40px", borderBottom: `1px solid ${theme.cardBorder}`, backgroundColor: "rgba(11,14,20,0.8)", backdropFilter: "blur(10px)", position: "sticky", top: 0, zIndex: 100 };
 const cardStyle = { backgroundColor: theme.card, padding: "24px", borderRadius: "20px", border: `1px solid ${theme.cardBorder}` };
@@ -116,8 +116,8 @@ const KnowledgeBase = () => {
   const [openFaq, setOpenFaq] = useState(null);
   const faqs = [
     { q: "How does the time-lock work?", a: "Your assets are secured by a Stacks smart contract. It prevents withdrawals until the Bitcoin network reaches the specific block height you chose." },
-    { q: "Is the multi-asset vault safe?", a: "Yes. STX Vault v10 uses the official SIP-010 trait, meaning it can only interact with verified fungible tokens on the Stacks network. It remains 100% non-custodial." },
-    { q: "What is the Emergency Exit?", a: "If you desperately need liquidity before your lock timer expires, you can use the Emergency Exit. This bypasses the time-lock but incurs a strict 10% protocol fee in the native asset." }
+    { q: "Is the multi-asset vault safe?", a: "Yes. STX Vault uses the official SIP-010 trait to securely interact with verified fungible tokens. It remains 100% non-custodial." },
+    { q: "What is the Emergency Exit?", a: "If you desperately need liquidity before your lock timer expires, you can use the Emergency Exit. This bypasses the time-lock but incurs a strict 10% protocol fee." }
   ];
 
   return (
@@ -170,13 +170,8 @@ const Changelog = () => {
   const releases = [
     {
       version: "v10.2.0", date: "Mar 26, 2026", title: "Dynamic Asset Sync & Notifications",
-      changes: [ "Vault now automatically detects and imports supported SIP-010 tokens from your wallet.", "Introduced the Notification Center for real-time transaction and unlock alerts.", "Restructured dashboard for better data visibility." ],
+      changes: [ "Vault now automatically detects supported SIP-010 tokens from your wallet.", "Introduced the Notification Center for real-time transaction and unlock alerts.", "Restructured dashboard for better data visibility." ],
       benefit: "You no longer have to guess your token balances, and you will be instantly notified when your locks expire."
-    },
-    {
-      version: "v10.0.1", date: "Early 2026", title: "Multi-Asset Architecture",
-      changes: [ "Added SIP-010 smart contract support for USDA and WELSH.", "Integrated strict 'appIcon' security requirement for Leather Wallet." ],
-      benefit: "You can now diversify your long-term holds and secure stablecoins or memecoins alongside your STX."
     }
   ];
 
@@ -202,7 +197,7 @@ const Changelog = () => {
             </ul>
           </div>
           <div style={{ backgroundColor: "rgba(16, 185, 129, 0.05)", padding: "16px", borderRadius: "12px", border: `1px solid ${theme.success}33` }}>
-            <h4 style={{ fontSize: "12px", textTransform: "uppercase", color: theme.success, letterSpacing: "1px", marginBottom: "6px", display: "flex", alignItems: "center", gap: "6px", margin: "0 0 6px 0" }}>User Benefit</h4>
+            <h4 style={{ fontSize: "12px", textTransform: "uppercase", color: theme.success, letterSpacing: "1px", display: "flex", alignItems: "center", gap: "6px", margin: "0 0 6px 0" }}>User Benefit</h4>
             <p style={{ margin: 0, color: theme.textMuted, fontSize: "13px", lineHeight: "1.5" }}>{release.benefit}</p>
           </div>
         </div>
@@ -307,14 +302,10 @@ function App() {
             const [contract, name] = contractStr.split('.');
             let symbol = tokenName.toUpperCase();
             if (symbol.length > 8) symbol = symbol.substring(0, 8); 
-            
-            parsedAssets[symbol] = {
-              symbol, decimals: 1000000, isToken: true, contract, name, balance: balanceMicro / 1000000
-            };
+            parsedAssets[symbol] = { symbol, decimals: 1000000, isToken: true, contract, name, balance: balanceMicro / 1000000 };
           }
         });
       }
-      
       setDynamicAssets(parsedAssets);
       if (!parsedAssets[selectedAsset] && selectedAsset !== "STX") setSelectedAsset("STX");
     } catch (e) { console.error("Balance fetch error:", e); }
@@ -424,6 +415,105 @@ function App() {
   const userAddress = userData?.profile?.stxAddress?.mainnet;
   const currentAssetObj = dynamicAssets[selectedAsset] || dynamicAssets["STX"];
 
+  // --- SAFE RENDER LOGIC ---
+  let mainContent;
+
+  if (IS_MAINTENANCE) {
+    mainContent = (
+      <div style={maintCard}>
+        <Loader2 className="animate-spin" size={40} color={theme.warning}/>
+        <h1 style={{marginTop:"20px"}}>Upgrading Protocol...</h1>
+        <p>Funds are safe on-chain.</p>
+      </div>
+    );
+  } else if (!userData) {
+    mainContent = (
+      <div style={{ display: "flex", flexDirection: "column", gap: "60px" }}>
+        <div style={{ textAlign: "center", paddingTop: "60px", paddingBottom: "40px" }}>
+          <div style={badge}>TRUST-FIRST DEFI</div>
+          <h1 style={{ fontSize: "64px", fontWeight: "900", lineHeight: "1.1", marginBottom: "20px", margin: "0 0 20px 0" }}>Save Assets with <br/><span style={{ color: theme.primary }}>Institutional Security.</span></h1>
+          <p style={{ color: theme.textMuted, marginBottom: "40px", fontSize: "18px", maxWidth: "600px", margin: "0 auto 40px", lineHeight: "1.6" }}>Secure your STX and SIP-010 tokens using time-locked smart contracts.</p>
+          <button onClick={handleConnect} style={heroBtn}>Enter the Vault <ArrowUpRight size={22} style={{ marginLeft: "8px" }} /></button>
+        </div>
+        <KnowledgeBase />
+      </div>
+    );
+  } else {
+    mainContent = (
+      <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+        <div style={tabContainer}>
+          <button onClick={() => setActiveTab("vault")} style={activeTab === "vault" ? activeTabStyle : inactiveTabStyle}><ShieldCheck size={16} /> Dashboard</button>
+          <button onClick={() => setActiveTab("guide")} style={activeTab === "guide" ? activeTabStyle : inactiveTabStyle}><BookOpen size={16} /> Guide & FAQ</button>
+          <button onClick={() => setActiveTab("updates")} style={activeTab === "updates" ? activeTabStyle : inactiveTabStyle}><Megaphone size={16} /> Updates</button>
+        </div>
+
+        {activeTab === "guide" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><KnowledgeBase /></motion.div>}
+        {activeTab === "updates" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><Changelog /></motion.div>}
+
+        {activeTab === "vault" && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+            
+            <div style={gridContainer}>
+              <div style={cardStyle}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
+                  <h3 style={cardHead}><ShieldCheck size={20} color={theme.success}/> Vault Status</h3>
+                  <div style={{ position: "relative", width: "140px" }}>
+                    <Wallet size={14} color={theme.textMuted} style={{ position: "absolute", left: "10px", top: "12px", pointerEvents: "none" }} />
+                    <select value={selectedAsset} onChange={(e) => setSelectedAsset(e.target.value)} style={selectDropdownStyle}>
+                      {Object.keys(dynamicAssets).map(key => <option key={key} value={key}>{key}</option>)}
+                    </select>
+                    <ChevronDown size={14} color={theme.textMuted} style={{ position: "absolute", right: "10px", top: "12px", pointerEvents: "none" }} />
+                  </div>
+                </div>
+                <div style={statRow}><Coins color={theme.primary}/><div style={statValue}>{vaultData.amount} {selectedAsset}</div></div>
+                <div style={statRow}><Clock color={theme.primary}/><div style={statValue}>Block #{vaultData.unlock || "0"}</div></div>
+                {vaultData.amount > 0 && <button onClick={shareToX} style={shareBtn}><Share2 size={16}/> Brag on X</button>}
+              </div>
+
+              <div style={cardStyle}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                  <h3 style={cardHead}>Manage Vault</h3>
+                  <span style={{ fontSize: "12px", color: theme.success, fontWeight: "700" }}>Avail: {currentAssetObj.balance.toLocaleString()} {selectedAsset}</span>
+                </div>
+                <input type="number" placeholder={`Amount (${selectedAsset})`} value={stxAmount} onChange={e=>setStxAmount(e.target.value)} style={inputStyle}/>
+                <input type="number" placeholder="Days to Lock" value={lockDays} onChange={e=>setLockDays(e.target.value)} style={inputStyle}/>
+                <button onClick={handleDeposit} disabled={isPending} style={actionBtn}>
+                  {isPending ? <Loader2 className="animate-spin"/> : `Secure ${selectedAsset}`}
+                </button>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+                  <button onClick={()=>executeWithdrawal(false)} style={secondaryBtn}>Standard Exit</button>
+                  <button onClick={()=>setShowConfirm(true)} style={dangerBtn}><ShieldAlert size={14}/> Early Exit</button>
+                </div>
+              </div>
+            </div>
+
+            <div style={gridContainer}>
+              <div style={cardStyle}>
+                <h3 style={cardHead}><RefreshCw size={20} color={theme.info}/> Recent Activity</h3>
+                {history.length === 0 ? <div style={{ color: theme.textMuted, fontSize: "13px" }}>No recent vault activity.</div> : 
+                  history.map((tx, index) => (
+                    <a key={index} href={`https://explorer.hiro.so/txid/${tx.tx_id}`} target="_blank" rel="noreferrer" style={historyRow}>
+                      <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        {tx.contract_call.function_name.includes("deposit") ? <ArrowUpRight size={14} color={theme.success}/> : <LogOut size={14} color={theme.warning}/>}
+                        {tx.contract_call.function_name.replace("-stx","").replace("-token", "")}
+                      </span>
+                      <span style={{color:theme.success, fontSize: "11px", fontWeight: "bold" }}>CONFIRMED</span>
+                    </a>
+                  ))
+                }
+              </div>
+              <div style={cardStyle}>
+                <h3 style={cardHead}><Trophy size={20} color={theme.warning}/> Top Savers (Global)</h3>
+                <div style={leaderRow}><span>1. SP2J...X7R4</span><strong>25,400 STX</strong></div>
+                <div style={leaderRow}><span>2. SP3M...9QW2</span><strong>18,250 STX</strong></div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div style={{ backgroundColor: theme.bg, minHeight: "100vh", color: theme.textMain, fontFamily: "'Inter', sans-serif" }}>
       <header style={headerStyle}>
@@ -473,93 +563,7 @@ function App() {
       </header>
 
       <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 20px" }}>
-        {IS_MAINTENANCE ? <div style={maintCard}><Loader2 className="animate-spin" size={40} color={theme.warning}/><h1 style={{marginTop:"20px"}}>Upgrading Protocol...</h1><p>Funds are safe on-chain.</p></div> : 
-          <>
-            {!userData ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "60px" }}>
-                <div style={{ textAlign: "center", paddingTop: "60px", paddingBottom: "40px" }}>
-                  <div style={badge}>TRUST-FIRST DEFI</div>
-                  <h1 style={{ fontSize: "64px", fontWeight: "900", lineHeight: "1.1", marginBottom: "20px", margin: "0 0 20px 0" }}>Save Assets with <br/><span style={{ color: theme.primary }}>Institutional Security.</span></h1>
-                  <p style={{ color: theme.textMuted, marginBottom: "40px", fontSize: "18px", maxWidth: "600px", margin: "0 auto 40px", lineHeight: "1.6" }}>Secure your STX and SIP-010 tokens using time-locked smart contracts.</p>
-                  <button onClick={handleConnect} style={heroBtn}>Enter the Vault <ArrowUpRight size={22} style={{ marginLeft: "8px" }} /></button>
-                </div>
-                <KnowledgeBase />
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-                <div style={tabContainer}>
-                  <button onClick={() => setActiveTab("vault")} style={activeTab === "vault" ? activeTabStyle : inactiveTabStyle}><ShieldCheck size={16} /> Dashboard</button>
-                  <button onClick={() => setActiveTab("guide")} style={activeTab === "guide" ? activeTabStyle : inactiveTabStyle}><BookOpen size={16} /> Guide & FAQ</button>
-                  <button onClick={() => setActiveTab("updates")} style={activeTab === "updates" ? activeTabStyle : inactiveTabStyle}><Megaphone size={16} /> Updates</button>
-                </div>
-
-                {activeTab === "guide" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><KnowledgeBase /></motion.div>}
-                {activeTab === "updates" && <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><Changelog /></motion.div>}
-
-                {activeTab === "vault" && (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                    
-                    <div style={gridContainer}>
-                      <div style={cardStyle}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
-                          <h3 style={cardHead}><ShieldCheck size={20} color={theme.success}/> Vault Status</h3>
-                          <div style={{ position: "relative", width: "140px" }}>
-                            <Wallet size={14} color={theme.textMuted} style={{ position: "absolute", left: "10px", top: "12px", pointerEvents: "none" }} />
-                            <select value={selectedAsset} onChange={(e) => setSelectedAsset(e.target.value)} style={selectDropdownStyle}>
-                              {Object.keys(dynamicAssets).map(key => <option key={key} value={key}>{key}</option>)}
-                            </select>
-                            <ChevronDown size={14} color={theme.textMuted} style={{ position: "absolute", right: "10px", top: "12px", pointerEvents: "none" }} />
-                          </div>
-                        </div>
-                        <div style={statRow}><Coins color={theme.primary}/><div style={statValue}>{vaultData.amount} {selectedAsset}</div></div>
-                        <div style={statRow}><Clock color={theme.primary}/><div style={statValue}>Block #{vaultData.unlock || "0"}</div></div>
-                        {vaultData.amount > 0 && <button onClick={shareToX} style={shareBtn}><Share2 size={16}/> Brag on X</button>}
-                      </div>
-
-                      <div style={cardStyle}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                          <h3 style={cardHead}>Manage Vault</h3>
-                          <span style={{ fontSize: "12px", color: theme.success, fontWeight: "700" }}>Avail: {currentAssetObj.balance.toLocaleString()} {selectedAsset}</span>
-                        </div>
-                        <input type="number" placeholder={`Amount (${selectedAsset})`} value={stxAmount} onChange={e=>setStxAmount(e.target.value)} style={inputStyle}/>
-                        <input type="number" placeholder="Days to Lock" value={lockDays} onChange={e=>setLockDays(e.target.value)} style={inputStyle}/>
-                        <button onClick={handleDeposit} disabled={isPending} style={actionBtn}>
-                          {isPending ? <Loader2 className="animate-spin"/> : `Secure ${selectedAsset}`}
-                        </button>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
-                          <button onClick={()=>executeWithdrawal(false)} style={secondaryBtn}>Standard Exit</button>
-                          <button onClick={()=>setShowConfirm(true)} style={dangerBtn}><ShieldAlert size={14}/> Early Exit</button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={gridContainer}>
-                      <div style={cardStyle}>
-                        <h3 style={cardHead}><RefreshCw size={20} color={theme.info}/> Recent Activity</h3>
-                        {history.length === 0 ? <div style={{ color: theme.textMuted, fontSize: "13px" }}>No recent vault activity.</div> : 
-                          history.map((tx, index) => (
-                            <a key={index} href={`https://explorer.hiro.so/txid/${tx.tx_id}`} target="_blank" rel="noreferrer" style={historyRow}>
-                              <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                                {tx.contract_call.function_name.includes("deposit") ? <ArrowUpRight size={14} color={theme.success}/> : <LogOut size={14} color={theme.warning}/>}
-                                {tx.contract_call.function_name.replace("-stx","").replace("-token", "")}
-                              </span>
-                              <span style={{color:theme.success, fontSize: "11px", fontWeight: "bold" }}>CONFIRMED</span>
-                            </a>
-                          ))
-                        }
-                      </div>
-                      <div style={cardStyle}>
-                        <h3 style={cardHead}><Trophy size={20} color={theme.warning}/> Top Savers (Global)</h3>
-                        <div style={leaderRow}><span>1. SP2J...X7R4</span><strong>25,400 STX</strong></div>
-                        <div style={leaderRow}><span>2. SP3M...9QW2</span><strong>18,250 STX</strong></div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </div>
-            )}
-          </>
-        )}
+        {mainContent}
       </main>
 
       <footer style={footerStyle}>
