@@ -40,7 +40,7 @@ const theme = {
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 const userSession = new UserSession({ appConfig });
 
-// --- SUB-COMPONENTS (NetworkStatus, KnowledgeBase, Changelog) ---
+// --- SUB-COMPONENTS ---
 const NetworkStatus = () => {
   const [net, setNet] = useState({ online: false, height: 0 });
   const check = useCallback(async () => {
@@ -59,32 +59,139 @@ const NetworkStatus = () => {
   );
 };
 
-const KnowledgeBase = () => { /* ... Omitted for brevity, same as previous ... */ return <div style={{ color: theme.textMuted, textAlign: "center", padding: "40px" }}>Knowledge Base Active.</div>; };
-const Changelog = () => { /* ... Omitted for brevity, same as previous ... */ return <div style={{ color: theme.textMuted, textAlign: "center", padding: "40px" }}>Changelog Active.</div>; };
+const KnowledgeBase = () => {
+  const [openFaq, setOpenFaq] = useState(null);
+  const faqs = [
+    { q: "How does the time-lock work?", a: "Your assets are secured by a Stacks smart contract. It prevents withdrawals until the Bitcoin network reaches the specific block height you chose." },
+    { q: "Is the multi-asset vault safe?", a: "Yes. STX Vault v10 uses the official SIP-010 trait, meaning it can only interact with verified fungible tokens on the Stacks network. It remains 100% non-custodial." },
+    { q: "What is the Emergency Exit?", a: "If you desperately need liquidity before your lock timer expires, you can use the Emergency Exit. This bypasses the time-lock but incurs a strict 10% protocol fee in the native asset." },
+  ];
 
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "60px", padding: "20px 0" }}>
+      <div>
+        <h2 style={sectionTitle}>Multi-Asset Diamond Hands</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+          <div style={cardStyle}>
+            <div style={iconBox(theme.primary)}><Lock size={24} color={theme.primary} /></div>
+            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>Forced Conviction</h3>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Lock your STX, USDA, or WELSH to remove the temptation of panic-selling during market volatility.</p>
+          </div>
+          <div style={cardStyle}>
+            <div style={iconBox(theme.success)}><ShieldCheck size={24} color={theme.success} /></div>
+            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>Bitcoin Security</h3>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Every time-lock is settled and finalized directly on the Bitcoin blockchain via the Nakamoto upgrade.</p>
+          </div>
+          <div style={cardStyle}>
+            <div style={iconBox(theme.info)}><FileText size={24} color={theme.info} /></div>
+            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>100% Non-Custodial</h3>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>You retain total ownership. The protocol simply enforces the mathematical rules you set for yourself.</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 style={sectionTitle}>Frequently Asked Questions</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {faqs.map((faq, index) => (
+            <div key={index} style={{ ...cardStyle, padding: "24px", cursor: "pointer" }} onClick={() => setOpenFaq(openFaq === index ? null : index)}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h4 style={{ fontSize: "16px", margin: 0 }}>{faq.q}</h4>
+                <ChevronDown size={20} style={{ transform: openFaq === index ? "rotate(180deg)" : "rotate(0deg)", transition: "0.2s" }} color={theme.textMuted} />
+              </div>
+              <AnimatePresence>
+                {openFaq === index && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}>
+                    <p style={{ color: theme.textMuted, fontSize: "14px", marginTop: "16px", lineHeight: "1.6" }}>{faq.a}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Changelog = () => {
+  const releases = [
+    {
+      version: "v10.2.0",
+      date: "Mar 26, 2026",
+      title: "Dynamic Asset Sync & Notifications",
+      changes: [
+        "Vault now automatically detects and imports supported SIP-010 tokens from your wallet.",
+        "Introduced the Notification Center for real-time transaction and unlock alerts.",
+        "Restructured dashboard for better data visibility."
+      ],
+      benefit: "You no longer have to guess your token balances, and you will be instantly notified when your locks expire."
+    },
+    {
+      version: "v10.0.1",
+      date: "Early 2026",
+      title: "Multi-Asset Architecture",
+      changes: [
+        "Added SIP-010 smart contract support for USDA and WELSH.",
+        "Integrated strict 'appIcon' security requirement for Leather Wallet."
+      ],
+      benefit: "You can now diversify your long-term holds and secure stablecoins or memecoins alongside your STX."
+    }
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px", padding: "20px 0", maxWidth: "800px", margin: "0 auto" }}>
+      <h2 style={{ ...sectionTitle, marginBottom: "10px" }}>Protocol Updates</h2>
+      <p style={{ color: theme.textMuted, textAlign: "center", marginBottom: "30px", fontSize: "15px" }}>
+        We constantly improve STX Vault. Here is a transparent look at what we are building for you.
+      </p>
+
+      {releases.map((release, index) => (
+        <div key={index} style={{ ...cardStyle, padding: "30px", borderLeft: index === 0 ? `4px solid ${theme.primary}` : `1px solid ${theme.cardBorder}` }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                <span style={{ fontSize: "14px", fontWeight: "900", color: index === 0 ? theme.primary : theme.textMain }}>{release.version}</span>
+                <span style={{ fontSize: "12px", color: theme.textMuted, backgroundColor: "rgba(255,255,255,0.05)", padding: "4px 8px", borderRadius: "6px" }}>{release.date}</span>
+              </div>
+              <h3 style={{ fontSize: "20px", margin: 0 }}>{release.title}</h3>
+            </div>
+          </div>
+          
+          <div style={{ marginBottom: "20px" }}>
+            <h4 style={{ fontSize: "12px", textTransform: "uppercase", color: theme.textMuted, letterSpacing: "1px", marginBottom: "10px" }}>What Changed</h4>
+            <ul style={{ margin: 0, paddingLeft: "20px", color: theme.textMain, fontSize: "14px", lineHeight: "1.6" }}>
+              {release.changes.map((change, i) => <li key={i} style={{ marginBottom: "6px" }}>{change}</li>)}
+            </ul>
+          </div>
+
+          <div style={{ backgroundColor: "rgba(16, 185, 129, 0.05)", padding: "16px", borderRadius: "12px", border: `1px solid ${theme.success}33` }}>
+            <h4 style={{ fontSize: "12px", textTransform: "uppercase", color: theme.success, letterSpacing: "1px", marginBottom: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
+              User Benefit
+            </h4>
+            <p style={{ margin: 0, color: theme.textMuted, fontSize: "13px", lineHeight: "1.5" }}>{release.benefit}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// --- MAIN APP COMPONENT ---
 function App() {
   const [userData, setUserData] = useState(null);
-  
-  // --- NEW: DYNAMIC ASSET STATE ---
-  // STX is always the default anchor.
-  const [dynamicAssets, setDynamicAssets] = useState({
-    STX: { symbol: "STX", decimals: 1000000, isToken: false, balance: 0 }
-  });
+  const [dynamicAssets, setDynamicAssets] = useState({ STX: { symbol: "STX", decimals: 1000000, isToken: false, balance: 0 } });
   const [selectedAsset, setSelectedAsset] = useState("STX");
-  
   const [vaultData, setVaultData] = useState({ amount: 0, unlock: 0 });
   const [networkHeight, setNetworkHeight] = useState(0); 
-
   const [history, setHistory] = useState([]);
   const [stxAmount, setStxAmount] = useState("");
   const [lockDays, setLockDays] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [txId, setTxId] = useState("");
-  
   const [showConfirm, setShowConfirm] = useState(false);
   const [showLegal, setShowLegal] = useState(false);
   const [activeTab, setActiveTab] = useState("vault");
-
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -117,7 +224,6 @@ function App() {
     }
   }, []);
 
-  // Sync Vault Status whenever the selected asset or wallet updates
   useEffect(() => {
     if (userData && dynamicAssets[selectedAsset]) {
       fetchVaultStatus(userData.profile.stxAddress.mainnet, selectedAsset);
@@ -149,7 +255,6 @@ function App() {
     localStorage.setItem("vault_notifs", JSON.stringify(updated));
   };
 
-  // --- THE DYNAMIC WALLET SCANNER ---
   const fetchWalletBalances = async (address) => {
     try {
       const res = await fetch(`https://api.mainnet.hiro.so/extended/v1/address/${address}/balances`);
@@ -165,26 +270,17 @@ function App() {
             const [contractStr, tokenName] = key.split('::');
             const [contract, name] = contractStr.split('.');
             let symbol = tokenName.toUpperCase();
-            if (symbol.length > 8) symbol = symbol.substring(0, 8); // Keep UI clean
+            if (symbol.length > 8) symbol = symbol.substring(0, 8); 
             
             parsedAssets[symbol] = {
-              symbol,
-              decimals: 1000000, // Standard SIP-010 assumption
-              isToken: true,
-              contract,
-              name,
-              balance: balanceMicro / 1000000
+              symbol, decimals: 1000000, isToken: true, contract, name, balance: balanceMicro / 1000000
             };
           }
         });
       }
       
       setDynamicAssets(parsedAssets);
-      
-      // Safety catch: If they had a token selected that they no longer own, revert to STX
-      if (!parsedAssets[selectedAsset] && selectedAsset !== "STX") {
-        setSelectedAsset("STX");
-      }
+      if (!parsedAssets[selectedAsset] && selectedAsset !== "STX") setSelectedAsset("STX");
     } catch (e) { console.error("Balance fetch error:", e); }
   };
 
@@ -202,10 +298,7 @@ function App() {
       }
 
       const result = await callReadOnlyFunction({
-        network: new StacksMainnet(),
-        contractAddress, contractName,
-        functionName, functionArgs,
-        senderAddress: address,
+        network: new StacksMainnet(), contractAddress, contractName, functionName, functionArgs, senderAddress: address,
       });
       
       const json = cvToJSON(result);
@@ -363,6 +456,13 @@ function App() {
                   <button onClick={() => setActiveTab("updates")} style={activeTab === "updates" ? activeTabStyle : inactiveTabStyle}><Megaphone size={16} /> Updates</button>
                 </div>
 
+                {activeTab === "guide" && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><KnowledgeBase /></motion.div>
+                )}
+                {activeTab === "updates" && (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><Changelog /></motion.div>
+                )}
+
                 {activeTab === "vault" && (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                     
@@ -371,17 +471,10 @@ function App() {
                       <div style={cardStyle}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
                           <h3 style={cardHead}><ShieldCheck size={20} color={theme.success}/> Vault Status</h3>
-                          {/* THE DYNAMIC DROPDOWN */}
                           <div style={{ position: "relative", width: "140px" }}>
                             <Wallet size={14} color={theme.textMuted} style={{ position: "absolute", left: "10px", top: "12px", pointerEvents: "none" }} />
-                            <select 
-                              value={selectedAsset} 
-                              onChange={(e) => setSelectedAsset(e.target.value)} 
-                              style={selectDropdownStyle}
-                            >
-                              {Object.keys(dynamicAssets).map(key => (
-                                <option key={key} value={key}>{key}</option>
-                              ))}
+                            <select value={selectedAsset} onChange={(e) => setSelectedAsset(e.target.value)} style={selectDropdownStyle}>
+                              {Object.keys(dynamicAssets).map(key => <option key={key} value={key}>{key}</option>)}
                             </select>
                             <ChevronDown size={14} color={theme.textMuted} style={{ position: "absolute", right: "10px", top: "12px", pointerEvents: "none" }} />
                           </div>
@@ -469,6 +562,14 @@ function App() {
                 <h2 style={{ fontSize: "20px", fontWeight: "800", margin: 0 }}>Terms & Privacy</h2>
                 <X size={20} style={{ cursor: "pointer", color: theme.textMuted }} onClick={() => setShowLegal(false)} />
               </div>
+              <div style={legalScrollArea}>
+                <h4 style={legalHeading}>1. Non-Custodial Protocol</h4>
+                <p style={legalText}>STX Vault is a decentralized smart-contract tool. We never hold your private keys. You are solely responsible for your wallet's security and access.</p>
+                <h4 style={legalHeading}>2. Penalty Transparency</h4>
+                <p style={legalText}>By utilizing the "Early Exit" or Emergency Withdrawal function, you explicitly agree to a 10% protocol fee deducted from your principal amount.</p>
+                <h4 style={legalHeading}>3. Privacy Policy</h4>
+                <p style={legalText}>We do not collect, store, or sell any personal data. All transaction data and history displayed is pulled directly from public Stacks blockchain nodes.</p>
+              </div>
               <button onClick={() => setShowLegal(false)} style={actionBtn}>I Understand & Accept</button>
             </motion.div>
           </div>
@@ -501,17 +602,13 @@ const footerStyle = { padding: "40px", borderTop: `1px solid ${theme.cardBorder}
 const tabContainer = { display: "flex", gap: "10px", padding: "6px", backgroundColor: "rgba(255,255,255,0.03)", borderRadius: "14px", width: "fit-content", margin: "0 auto", border: `1px solid ${theme.cardBorder}` };
 const activeTabStyle = { padding: "10px 24px", backgroundColor: theme.cardBorder, color: "#fff", border: "none", borderRadius: "10px", fontWeight: "700", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "0.2s" };
 const inactiveTabStyle = { padding: "10px 24px", backgroundColor: "transparent", color: theme.textMuted, border: "none", borderRadius: "10px", fontWeight: "600", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "0.2s" };
-
-// New Dropdown Style
-const selectDropdownStyle = {
-  backgroundColor: "#000", color: theme.textMain, border: `1px solid ${theme.cardBorder}`, 
-  padding: "8px 30px", borderRadius: "8px", outline: "none", width: "100%", 
-  appearance: "none", cursor: "pointer", fontWeight: "700", fontSize: "13px"
-};
-
+const selectDropdownStyle = { backgroundColor: "#000", color: theme.textMain, border: `1px solid ${theme.cardBorder}`, padding: "8px 30px", borderRadius: "8px", outline: "none", width: "100%", appearance: "none", cursor: "pointer", fontWeight: "700", fontSize: "13px" };
 const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000, padding: "20px" };
 const modalContent = { backgroundColor: theme.card, padding: "40px", borderRadius: "30px", border: `1px solid ${theme.cardBorder}`, textAlign: "center", maxWidth: "400px", width: "100%" };
 const legalContent = { backgroundColor: theme.card, padding: "30px", borderRadius: "28px", maxWidth: "500px", width: "100%", border: `1px solid ${theme.cardBorder}`, textAlign: "left" };
+const legalScrollArea = { height: "220px", overflowY: "auto", padding: "20px", backgroundColor: "#000", borderRadius: "12px", marginBottom: "20px", border: `1px solid ${theme.cardBorder}` };
+const legalHeading = { fontSize: "14px", color: theme.primary, marginBottom: "8px", margin: 0 };
+const legalText = { fontSize: "13px", color: theme.textMuted, marginBottom: "20px", lineHeight: "1.6" };
 const confirmBtn = { flex: 1, padding: "14px", backgroundColor: theme.danger, color: "#fff", border: "none", borderRadius: "12px", fontWeight: "700", cursor: "pointer" };
 const secondaryBtn = { flex: 1, padding: "14px", backgroundColor: "#30363D", color: "#fff", border: "none", borderRadius: "12px", fontWeight: "700", cursor: "pointer" };
 const dangerBtn = { backgroundColor: "transparent", color: theme.danger, border: `1px solid ${theme.danger}`, padding: "10px", borderRadius: "10px", fontSize: "12px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" };
@@ -520,5 +617,7 @@ const bellBtn = { background: "transparent", border: "none", cursor: "pointer", 
 const badgeStyle = { position: "absolute", top: "0px", right: "2px", backgroundColor: theme.danger, color: "#fff", fontSize: "10px", fontWeight: "900", height: "16px", width: "16px", borderRadius: "50%", display: "flex", justifyContent: "center", alignItems: "center", border: `2px solid ${theme.bg}` };
 const notifDropdown = { position: "absolute", top: "45px", right: "-10px", width: "320px", backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, borderRadius: "16px", boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000, overflow: "hidden" };
 const notifItem = { padding: "12px", backgroundColor: "rgba(255,255,255,0.02)", borderRadius: "8px", marginBottom: "8px" };
+const sectionTitle = { fontSize: "28px", fontWeight: "800", marginBottom: "30px", textAlign: "center", color: theme.textMain };
+const iconBox = (color) => ({ width: "56px", height: "56px", borderRadius: "16px", backgroundColor: `${color}1A`, display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" });
 
 export default App;
