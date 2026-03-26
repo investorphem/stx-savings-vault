@@ -28,7 +28,7 @@ const IS_MAINTENANCE = false;
 // 🔥 YOUR CEO WALLET ADDRESS 🔥
 // Replace this with your actual Leather/Xverse Mainnet address.
 // The Admin tab will ONLY render if the connected wallet matches this string.
-const ADMIN_ADDRESS = "SPYOURMAINNETADDRESSHERE"; 
+const ADMIN_ADDRESS = "SP2GTM2ZVYXQKNYMT3MNJY49RQ2MW8Q1DGXZF8519"; 
 
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v10"; 
