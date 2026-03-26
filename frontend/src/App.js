@@ -14,11 +14,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   LogOut, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, 
   ShieldAlert, X, AlertTriangle, CheckCircle, Info, BookOpen, 
-  Lock, Scale, ShieldCheck, FileText, Share2, Trophy
+  Lock, Scale, ShieldCheck, FileText, Share2, Trophy, ChevronDown
 } from "lucide-react";
 
 // --- CONFIGURATION ---
-const APP_VERSION = "9.4.1";
+const APP_VERSION = "9.5.0";
 const IS_MAINTENANCE = false;
 const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v3"; 
@@ -60,6 +60,102 @@ const NetworkStatus = () => {
   );
 };
 
+// --- SUB-COMPONENT: KNOWLEDGE BASE ---
+const KnowledgeBase = () => {
+  const [openFaq, setOpenFaq] = useState(null);
+
+  const faqs = [
+    { q: "How does the time-lock work?", a: "Your STX is secured by a Stacks smart contract. It prevents standard withdrawals until the Stacks network reaches the specific block height you chose (1 block ≈ 10 minutes)." },
+    { q: "Is STX Vault safe to use?", a: "Yes. STX Vault is completely non-custodial. We do not hold your private keys or your funds. Your assets are locked directly into a decentralized smart contract." },
+    { q: "What is the Emergency Exit?", a: "If you desperately need liquidity before your lock timer expires, you can use the Emergency Exit. This bypasses the time-lock but incurs a strict 10% protocol penalty fee." },
+    { q: "Can I add more STX to an existing lock?", a: "Yes. If you make a new deposit, it will add to your existing balance. If your new lock duration is longer than the previous one, the overall timer will be extended." }
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "60px", padding: "20px 0" }}>
+      
+      {/* BENEFITS */}
+      <div>
+        <h2 style={sectionTitle}>Why Use STX Vault?</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+          <div style={cardStyle}>
+            <div style={iconBox(theme.primary)}><Lock size={24} color={theme.primary} /></div>
+            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>Forced Diamond Hands</h3>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Remove the temptation to panic-sell during market dips. Lock your wealth and stick to your long-term thesis.</p>
+          </div>
+          <div style={cardStyle}>
+            <div style={iconBox(theme.success)}><ShieldCheck size={24} color={theme.success} /></div>
+            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>Bitcoin-Grade Security</h3>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Every transaction and time-lock is settled and finalized directly on the Bitcoin blockchain via Stacks.</p>
+          </div>
+          <div style={cardStyle}>
+            <div style={iconBox(theme.info)}><FileText size={24} color={theme.info} /></div>
+            <h3 style={{ marginBottom: "12px", fontSize: "18px" }}>100% Non-Custodial</h3>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>You retain total ownership. The protocol simply enforces the rules you set for yourself. No middlemen.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* HOW IT WORKS */}
+      <div>
+        <h2 style={sectionTitle}>How It Works</h2>
+        <div style={{ ...cardStyle, padding: "40px" }}>
+          <div style={stepRow}>
+            <div style={stepNumber}>1</div>
+            <div>
+              <h4 style={{ fontSize: "16px", marginBottom: "6px" }}>Connect Your Wallet</h4>
+              <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>Link your Leather or Xverse Stacks wallet to the protocol securely.</p>
+            </div>
+          </div>
+          <div style={stepRow}>
+            <div style={stepNumber}>2</div>
+            <div>
+              <h4 style={{ fontSize: "16px", marginBottom: "6px" }}>Set Your Parameters</h4>
+              <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>Input the amount of STX to save and the duration (in days) you want them locked.</p>
+            </div>
+          </div>
+          <div style={stepRow}>
+            <div style={stepNumber}>3</div>
+            <div>
+              <h4 style={{ fontSize: "16px", marginBottom: "6px" }}>Smart Contract Execution</h4>
+              <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>The Stacks blockchain calculates the future block height and secures your funds on-chain.</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
+            <div style={stepNumber}>4</div>
+            <div>
+              <h4 style={{ fontSize: "16px", marginBottom: "6px" }}>Release or Emergency Exit</h4>
+              <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.5" }}>Withdraw for free once the block height is reached, or exit early for a 10% protocol fee.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ */}
+      <div>
+        <h2 style={sectionTitle}>Frequently Asked Questions</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          {faqs.map((faq, index) => (
+            <div key={index} style={{ ...cardStyle, padding: "24px", cursor: "pointer" }} onClick={() => setOpenFaq(openFaq === index ? null : index)}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h4 style={{ fontSize: "16px", margin: 0 }}>{faq.q}</h4>
+                <ChevronDown size={20} style={{ transform: openFaq === index ? "rotate(180deg)" : "rotate(0deg)", transition: "0.2s" }} color={theme.textMuted} />
+              </div>
+              <AnimatePresence>
+                {openFaq === index && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}>
+                    <p style={{ color: theme.textMuted, fontSize: "14px", marginTop: "16px", lineHeight: "1.6" }}>{faq.a}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const [userData, setUserData] = useState(null);
   const [vaultData, setVaultData] = useState({ amount: 0, unlock: 0 });
@@ -70,6 +166,9 @@ function App() {
   const [txId, setTxId] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [showLegal, setShowLegal] = useState(false);
+  
+  // NEW: Tab State
+  const [activeTab, setActiveTab] = useState("vault");
 
   // --- JANITOR & AUTH ---
   useEffect(() => {
@@ -153,6 +252,11 @@ function App() {
     window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const resetToHome = () => {
+    setTxId(""); setStxAmount(""); setLockDays(""); setActiveTab("vault");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const userAddress = userData?.profile?.stxAddress?.mainnet;
 
   return (
@@ -161,11 +265,11 @@ function App() {
 
       {/* --- HEADER --- */}
       <header style={headerStyle}>
-        <div onClick={() => window.scrollTo({top:0, behavior:'smooth'})} style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
+        <div onClick={resetToHome} style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}>
           <img src="/logo192.png" alt="L" style={{ width: "32px", borderRadius: "8px" }} />
           <span style={{ fontWeight: "900", fontSize: "20px" }}>STX VAULT</span>
         </div>
-        
+
         <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <NetworkStatus />
           {!userData ? (
@@ -185,67 +289,91 @@ function App() {
         ) : (
           <>
             {!userData ? (
-              <div style={{ textAlign: "center", paddingTop: "80px", paddingBottom: "80px" }}>
-                <div style={badge}>TRUST-FIRST DEFI</div>
-                <h1 style={{ fontSize: "64px", fontWeight: "900", lineHeight: "1.1", marginBottom: "20px" }}>
-                  Save STX with <br/><span style={{ color: theme.primary }}>Institutional Security.</span>
-                </h1>
-                <p style={{ color: theme.textMuted, marginBottom: "40px", fontSize: "18px", maxWidth: "600px", margin: "0 auto 40px", lineHeight: "1.6" }}>
-                  Secure your wealth using time-locked smart contracts. Non-custodial, transparent, and built for Diamond Hands.
-                </p>
-                <button onClick={() => showConnect({ userSession, appDetails: { name: "STX Vault" }, onFinish: () => window.location.reload() })} style={heroBtn}>
-                  Enter the Vault <ArrowUpRight size={22} style={{ marginLeft: "8px" }} />
-                </button>
+              <div style={{ display: "flex", flexDirection: "column", gap: "60px" }}>
+                <div style={{ textAlign: "center", paddingTop: "60px", paddingBottom: "40px" }}>
+                  <div style={badge}>TRUST-FIRST DEFI</div>
+                  <h1 style={{ fontSize: "64px", fontWeight: "900", lineHeight: "1.1", marginBottom: "20px" }}>
+                    Save STX with <br/><span style={{ color: theme.primary }}>Institutional Security.</span>
+                  </h1>
+                  <p style={{ color: theme.textMuted, marginBottom: "40px", fontSize: "18px", maxWidth: "600px", margin: "0 auto 40px", lineHeight: "1.6" }}>
+                    Secure your wealth using time-locked smart contracts. Non-custodial, transparent, and built for Diamond Hands.
+                  </p>
+                  <button onClick={() => showConnect({ userSession, appDetails: { name: "STX Vault" }, onFinish: () => window.location.reload() })} style={heroBtn}>
+                    Enter the Vault <ArrowUpRight size={22} style={{ marginLeft: "8px" }} />
+                  </button>
+                </div>
+                {/* Show Knowledge Base to unregistered users */}
+                <KnowledgeBase />
               </div>
             ) : (
-              <div style={gridContainer}>
-                {/* LEFT: STATUS & ACTION */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                  <div style={cardStyle}>
-                    <h3 style={cardHead}><ShieldCheck size={20} color={theme.success}/> Vault Status</h3>
-                    <div style={statRow}><Coins color={theme.primary}/><div style={statValue}>{vaultData.amount} STX</div></div>
-                    <div style={statRow}><Clock color={theme.primary}/><div style={statValue}>Block #{vaultData.unlock || "0"}</div></div>
-                    {vaultData.amount > 0 && <button onClick={shareToX} style={shareBtn}><Share2 size={16}/> Brag on X</button>}
-                  </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+                
+                {/* --- TAB SWITCHER --- */}
+                <div style={tabContainer}>
+                  <button onClick={() => setActiveTab("vault")} style={activeTab === "vault" ? activeTabStyle : inactiveTabStyle}>
+                    <ShieldCheck size={16} /> Dashboard
+                  </button>
+                  <button onClick={() => setActiveTab("guide")} style={activeTab === "guide" ? activeTabStyle : inactiveTabStyle}>
+                    <BookOpen size={16} /> Guide & FAQ
+                  </button>
+                </div>
 
-                  <div style={cardStyle}>
-                    <h3 style={cardHead}>Manage Vault</h3>
-                    <input type="number" placeholder="STX Amount" value={stxAmount} onChange={e=>setStxAmount(e.target.value)} style={inputStyle}/>
-                    <input type="number" placeholder="Days to Lock" value={lockDays} onChange={e=>setLockDays(e.target.value)} style={inputStyle}/>
-                    <button onClick={handleDeposit} disabled={isPending} style={actionBtn}>
-                      {isPending ? <Loader2 className="animate-spin"/> : "Secure Deposit"}
-                    </button>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
-                      <button onClick={()=>executeWithdrawal(false)} style={secondaryBtn}>Standard Exit</button>
-                      <button onClick={()=>setShowConfirm(true)} style={dangerBtn}><ShieldAlert size={14}/> Early Exit</button>
+                {/* --- TAB CONTENT --- */}
+                {activeTab === "guide" ? (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <KnowledgeBase />
+                  </motion.div>
+                ) : (
+                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={gridContainer}>
+                    {/* LEFT: STATUS & ACTION */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                      <div style={cardStyle}>
+                        <h3 style={cardHead}><ShieldCheck size={20} color={theme.success}/> Vault Status</h3>
+                        <div style={statRow}><Coins color={theme.primary}/><div style={statValue}>{vaultData.amount} STX</div></div>
+                        <div style={statRow}><Clock color={theme.primary}/><div style={statValue}>Block #{vaultData.unlock || "0"}</div></div>
+                        {vaultData.amount > 0 && <button onClick={shareToX} style={shareBtn}><Share2 size={16}/> Brag on X</button>}
+                      </div>
+
+                      <div style={cardStyle}>
+                        <h3 style={cardHead}>Manage Vault</h3>
+                        <input type="number" placeholder="STX Amount" value={stxAmount} onChange={e=>setStxAmount(e.target.value)} style={inputStyle}/>
+                        <input type="number" placeholder="Days to Lock" value={lockDays} onChange={e=>setLockDays(e.target.value)} style={inputStyle}/>
+                        <button onClick={handleDeposit} disabled={isPending} style={actionBtn}>
+                          {isPending ? <Loader2 className="animate-spin"/> : "Secure Deposit"}
+                        </button>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "12px" }}>
+                          <button onClick={()=>executeWithdrawal(false)} style={secondaryBtn}>Standard Exit</button>
+                          <button onClick={()=>setShowConfirm(true)} style={dangerBtn}><ShieldAlert size={14}/> Early Exit</button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                {/* RIGHT: HISTORY & LEADERBOARD */}
-                <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                  <div style={cardStyle}>
-                    <h3 style={cardHead}><RefreshCw size={20} color={theme.info}/> Recent Activity</h3>
-                    {history.length === 0 ? (
-                      <div style={{ color: theme.textMuted, fontSize: "13px" }}>No recent vault activity.</div>
-                    ) : (
-                      history.map((tx, index) => (
-                        <a key={index} href={`https://explorer.hiro.so/txid/${tx.tx_id}`} target="_blank" rel="noreferrer" style={historyRow}>
-                          <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            {tx.contract_call.function_name.includes("deposit") ? <ArrowUpRight size={14} color={theme.success}/> : <LogOut size={14} color={theme.warning}/>}
-                            {tx.contract_call.function_name.replace("-stx","")}
-                          </span>
-                          <span style={{color:theme.success, fontSize: "11px", fontWeight: "bold" }}>CONFIRMED</span>
-                        </a>
-                      ))
-                    )}
-                  </div>
-                  <div style={cardStyle}>
-                    <h3 style={cardHead}><Trophy size={20} color={theme.warning}/> Top Savers</h3>
-                    <div style={leaderRow}><span>1. SP2J...X7R4</span><strong>25,400 STX</strong></div>
-                    <div style={leaderRow}><span>2. SP3M...9QW2</span><strong>18,250 STX</strong></div>
-                  </div>
-                </div>
+                    {/* RIGHT: HISTORY & LEADERBOARD */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                      <div style={cardStyle}>
+                        <h3 style={cardHead}><RefreshCw size={20} color={theme.info}/> Recent Activity</h3>
+                        {history.length === 0 ? (
+                          <div style={{ color: theme.textMuted, fontSize: "13px" }}>No recent vault activity.</div>
+                        ) : (
+                          history.map((tx, index) => (
+                            <a key={index} href={`https://explorer.hiro.so/txid/${tx.tx_id}`} target="_blank" rel="noreferrer" style={historyRow}>
+                              <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                {tx.contract_call.function_name.includes("deposit") ? <ArrowUpRight size={14} color={theme.success}/> : <LogOut size={14} color={theme.warning}/>}
+                                {tx.contract_call.function_name.replace("-stx","")}
+                              </span>
+                              <span style={{color:theme.success, fontSize: "11px", fontWeight: "bold" }}>CONFIRMED</span>
+                            </a>
+                          ))
+                        )}
+                      </div>
+                      <div style={cardStyle}>
+                        <h3 style={cardHead}><Trophy size={20} color={theme.warning}/> Top Savers</h3>
+                        <div style={leaderRow}><span>1. SP2J...X7R4</span><strong>25,400 STX</strong></div>
+                        <div style={leaderRow}><span>2. SP3M...9QW2</span><strong>18,250 STX</strong></div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             )}
           </>
@@ -310,7 +438,7 @@ const cardStyle = { backgroundColor: theme.card, padding: "24px", borderRadius: 
 const gridContainer = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "24px" };
 const inputStyle = { width: "100%", padding: "12px", marginBottom: "10px", borderRadius: "10px", border: `1px solid ${theme.cardBorder}`, backgroundColor: "#000", color: "#fff", outline: "none", boxSizing: "border-box" };
 const actionBtn = { width: "100%", padding: "14px", borderRadius: "10px", backgroundColor: theme.primary, color: "#fff", border: "none", fontWeight: "800", cursor: "pointer", display: "flex", justifyContent: "center", alignItems: "center" };
-const connectBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "10px 20px", borderRadius: "10px", fontWeight: "700", cursor: "pointer" };
+const connectBtn = { backgroundColor: theme.primary, color: "#fff", border: "none", padding: "10px 24px", borderRadius: "10px", fontWeight: "700", cursor: "pointer" };
 const exitBtn = { backgroundColor: "rgba(239,68,68,0.1)", border: `1px solid ${theme.danger}44`, color: theme.danger, padding: "8px", borderRadius: "10px", cursor: "pointer", display: "flex", alignItems: "center" };
 const addressPill = { backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, padding: "8px 12px", borderRadius: "10px", fontSize: "12px", fontWeight: "700", color: theme.primary };
 const badge = { color: theme.primary, border: `1px solid ${theme.primary}`, padding: "6px 16px", borderRadius: "100px", fontSize: "12px", fontWeight: "900", marginBottom: "20px", display: "inline-block", letterSpacing: "1.5px" };
@@ -325,7 +453,18 @@ const historyRow = { display: "flex", justifyContent: "space-between", alignItem
 const leaderRow = { display: "flex", justifyContent: "space-between", padding: "12px", borderBottom: `1px solid ${theme.cardBorder}`, fontSize: "13px" };
 const footerStyle = { padding: "40px", borderTop: `1px solid ${theme.cardBorder}`, marginTop: "60px", display: "flex", justifyContent: "center" };
 
-// Legal & Confirmation Modal Styles
+// Tab Styles
+const tabContainer = { display: "flex", gap: "10px", padding: "6px", backgroundColor: "rgba(255,255,255,0.03)", borderRadius: "14px", width: "fit-content", margin: "0 auto", border: `1px solid ${theme.cardBorder}` };
+const activeTabStyle = { padding: "10px 24px", backgroundColor: theme.cardBorder, color: "#fff", border: "none", borderRadius: "10px", fontWeight: "700", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "0.2s" };
+const inactiveTabStyle = { padding: "10px 24px", backgroundColor: "transparent", color: theme.textMuted, border: "none", borderRadius: "10px", fontWeight: "600", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", transition: "0.2s" };
+
+// Knowledge Base Styles
+const sectionTitle = { fontSize: "28px", fontWeight: "800", marginBottom: "30px", textAlign: "center", color: theme.textMain };
+const iconBox = (color) => ({ width: "56px", height: "56px", borderRadius: "16px", backgroundColor: `${color}1A`, display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" });
+const stepRow = { display: "flex", gap: "20px", marginBottom: "30px", alignItems: "flex-start" };
+const stepNumber = { width: "36px", height: "36px", borderRadius: "50%", backgroundColor: theme.primary, color: "#fff", display: "flex", justifyContent: "center", alignItems: "center", fontWeight: "800", flexShrink: 0, fontSize: "16px" };
+
+// Modal Styles
 const modalOverlay = { position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000, padding: "20px" };
 const modalContent = { backgroundColor: theme.card, padding: "40px", borderRadius: "30px", border: `1px solid ${theme.cardBorder}`, textAlign: "center", maxWidth: "400px", width: "100%" };
 const legalContent = { backgroundColor: theme.card, padding: "30px", borderRadius: "28px", maxWidth: "500px", width: "100%", border: `1px solid ${theme.cardBorder}`, textAlign: "left" };
