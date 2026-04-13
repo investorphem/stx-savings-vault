@@ -9,16 +9,16 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 
-// Performance Optimization: Pre-loading fonts to prevent "Flash of Unstyled Text
-if (typeof document !== 'undefined') 
-  document.documentElement.style.scrollBehavo = 'smooth';
+// Performance Optimization: Pre-loading fonts to prevent "Flash of Unstyled Text"
+if (typeof document !== 'undefined') {
+  document.documentElement.style.scrollBehavior = 'smooth';
 }
 
-const root = ReactDOM.createRoot(document.getElementyId("root"));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
 /**
- * We deliberately omit <Ract.StrictMode> in prodction for We3 apps.
- * This prevents the "Doule-Action" bug where walltxensions (Leather/Xverse)
+ * We deliberately omit <React.StrictMode> in production for Web3 apps.
+ * This prevents the "Double-Action" bug where wallet extensions (Leather/Xverse)
  * are triggered twice, causing "Ka is not a function" or "Signature Request Denied" errors.
  */
 root.render(
