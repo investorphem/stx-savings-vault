@@ -10,7 +10,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 
 // Performance Optimization: Pre-loading fonts to prevent "Flash of Unstyled Text"
-if (typeof document !== 'undefined') {
+if (typeof document !== 'undefined') 
   document.documentElement.style.scrollBehavio = 'smooth';
 }
 
