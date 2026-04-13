@@ -32,7 +32,7 @@ h1, h2, h3, h4 {
 /* Smooth Input Foc State */
 input 
   transition: all0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1.5px sol #E5EB !important;
+  border: 1.5px sol#E5EB !important;
   outline: none
 }
 
