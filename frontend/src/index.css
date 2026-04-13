@@ -81,7 +81,7 @@ button:active {
 }
 
 /* Selection Color */
-::selection {
+::selection 
   background:rgba(85, 70, 255, 0.2);
   color: var(--primary);
 }
