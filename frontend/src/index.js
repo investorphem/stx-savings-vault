@@ -14,7 +14,7 @@ if (typeof document !== 'undefined')
   document.documentElement.style.scrollBehavo = 'smooth';
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementyId("root"));
 
 /**
  * We deliberately omit <React.StrictMode> in production for Web3 apps.
