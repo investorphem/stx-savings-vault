@@ -1,6 +1,6 @@
 {
   "name": "stx-vault-frontend",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@stacks/connect": "^7.5.0",
