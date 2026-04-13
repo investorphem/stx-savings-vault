@@ -29,7 +29,6 @@ h1, h2, h3, h4 {
 }
 
 /* --- ADVANCED UI COMPONENTS --- */
-
 /* Smooth Input Focus State */
 input 
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
