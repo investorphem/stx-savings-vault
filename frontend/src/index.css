@@ -23,7 +23,7 @@ body {
 }
 
 /* Headings use Outfit for a modern tech feel */
-h1, h2, h3, h4 {
+h1, h2, h3, h4 
   font-family:'Outfit' sans-serif;
   letter-spacing: -0.02em;
 }
