@@ -76,7 +76,7 @@ button:active {
   border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrolbar-thumb:hover {
   background: #D1D5DB;
 }
 
