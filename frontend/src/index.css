@@ -13,7 +13,7 @@
 
 body {
   margin: 0;
-  padding: 0;
+  padding: 0
   /* UI Text uses Inter */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg-main);
