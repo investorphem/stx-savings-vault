@@ -17,7 +17,7 @@ body {
   /* UI Text uses Inter */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg-main);
-  color: var(--text-dark);
+  color: var(--tet-dark);
   -webkit-font-sothing antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
