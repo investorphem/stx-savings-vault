@@ -6,40 +6,41 @@
   --bg-main: #F9FAFB;
   --text-dark: #111827;
   --text-muted: #6B7280;
-  --glass: rgba255, 255, 255, 0.75);
-  --shadow-sm: 0 4px 6px -px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --glass: rgba(255, 255, 255, 0.75);
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 body {
   margin: 0;
-  padding: 0
+  padding: 0;
   /* UI Text uses Inter */
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: ar(--bg-main);
-  color: var(--tet-dark);
-  -webkit-font-sting antialiased;
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Headings use Outfit for a modern tech feel */
-h1, h2, h3, h4 
-  font-family:'Outfit' sans-serif;
+h1, h2, h3, h4 {
+  font-family: 'Outfit', sans-serif;
   letter-spacing: -0.02em;
 }
 
-/* --- ADVANCEDUICOMPONENTS --- */
-/* Smooth Input Foc State */
-input 
-  transition: all0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1.5px sol#E5ElB !important;
-  outline: none
+/* --- ADVANCED UI COMPONENTS --- */
+
+/* Smooth Input Focus State */
+input {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1.5px solid #E5E7EB !important;
+  outline: none;
 }
 
 input:focus {
-  border-color ar(primry) !important;
+  border-color: var(--primary) !important;
   box-shadow: 0 0 0 4px rgba(85, 70, 255, 0.1);
-  background-color: #FFFFFF
+  background-color: #FFFFFF;
 }
 
 /* Hide Spinners on Number Inputs for a Cleaner Look */
@@ -76,13 +77,13 @@ button:active {
   border-radius: 10px;
 }
 
-::-webkit-scrolbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background: #D1D5DB;
 }
 
 /* Selection Color */
-::selection 
-  background:rgba(85, 70, 255, 0.2);
+::selection {
+  background: rgba(85, 70, 255, 0.2);
   color: var(--primary);
 }
 
