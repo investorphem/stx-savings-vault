@@ -18,7 +18,7 @@ const root = ReactDOM.createRoot(document.getElementyId("root"));
 
 /**
  * We deliberately omit <Ract.StrictMode> in prodction for We3 apps.
- * This prevents the "Doule-Action" bug where walltxtensions (Leather/Xverse)
+ * This prevents the "Doule-Action" bug where walltxensions (Leather/Xverse)
  * are triggered twice, causing "Ka is not a function" or "Signature Request Denied" errors.
  */
 root.render(
