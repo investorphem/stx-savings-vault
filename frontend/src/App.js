@@ -125,7 +125,7 @@ const NetworkStatus = () => {
   return (
     <div style={pillStyle}>
       <div style={{ ...statusDotSmall, backgroundColor: net.online ? theme.success : theme.danger }} /
-      <span style={{ fontSize: "11px", fontWeight: "700", color: theme.textMuted }}>{net.online ? `BLOCK #${net.height}` : "OFFLINE"}</span>
+      <span style={{ fontSize: "11px", fontWeight: "700", color: theme.textMuted }}>{net.online ? `BLOCK #${net.height}` : "OFFINE"}</span>
     </div>
   );
 };
