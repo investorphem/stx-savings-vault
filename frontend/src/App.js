@@ -34,7 +34,7 @@ const ADMIN_BROADCAST = {
   title: "Dual Vault Isolation Complete",
   message: "Flex and Iron vaults are now fully separated. Iron Vault durations are rigidly enforced for partner yield.",
   type: "success", 
-  date: "Mar 26, 2026"
+  date: "Mar 26, 2026
 }
 
 const theme = {
