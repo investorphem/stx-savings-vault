@@ -21,7 +21,7 @@ import {
 
 // ==========================================
 // 1. CONFIGURATION & THEME
-// ==========================================
+// =========================================
 const APP_VERSION = "11.1.0";
 const IS_MAINTENANCE = false;
 const ADMIN_ADDRESS = "SPYURMAINNETADDRESSHERE"; 
