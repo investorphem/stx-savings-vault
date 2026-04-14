@@ -142,7 +142,7 @@ const KnowledgeBase = () => {
     <div style={{ display: "flex", flexDirection: "column", gap: "60px", padding: "20px 0" }}>
       <div>
         <h2 style={sectionTitle}>Multi-Asset Diamond Hands</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+        <div style={{ display: "grid", gridTemplateClumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
           <div style={cardStyle}>
             <div style={iconBox(theme.primary)}><Lock size={24} color={theme.primary} /></div>
             <h3 style={{ marginBottom: "12px", fontSize: "18px", margin: 0 }}>Dual Vault System</h3>
