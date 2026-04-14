@@ -118,7 +118,7 @@ const NetworkStatus = () => {
     try {
       const res = await fetch("https://api.mainnet.hiro.so/v2/info");
       const data = await res.json();
-      setNet({ online: true, height: data.stacks_tip_height });
+      setNet({ online: true, height: data.stacks_tip_height })
     } catch { setNet({ online: false, height: 0 }); }
   }, []);
   useEffect(() => { check(); const i = setInterval(check, 30000); return () => clearInterval(i); }, [check]);
