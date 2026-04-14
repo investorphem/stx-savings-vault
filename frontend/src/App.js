@@ -164,7 +164,7 @@ const KnowledgeBase = () => {
         <h2 style={sectionTitle}>Frequently Asked Questions</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {faqs.map((faq, index) => (
-            <div key={index} style={{ ...cardStyle, padding: "24px", cursor: "pointer" }} onClick={() => setOpenFaq(openFaq === index ? null : index)}>
+            <div key={index} style={{ ...cardStyle, padding: "24px", cursor: "pointer" }} onClick={() => setOpenFaq(openFaq === index ? nll : index)}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h4 style={{ fontSize: "16px", margin: 0 }}>{faq.q}</h4>
                 <ChevronDown size={20} style={{ transform: openFaq === index ? "rotate(180deg)" : "rotate(0deg)", transition: "0.2s" }} color={theme.textMuted} />
