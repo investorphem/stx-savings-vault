@@ -106,7 +106,7 @@ const sectionTitle = { fontSize: "28px", fontWeight: "800", marginBottom: "30px"
 const iconBox = (color) => ({ width: "56px", height: "56px", borderRadius: "16px", backgroundColor: `${color}1A`, display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" });
 
 const vaultTypeContainer = { display: "flex", backgroundColor:"#000", borderRadius: "12px", padding: "6px", marginBottom: "24px", border: `1px solid ${theme.cardBorder}` };
-const vaultBtnActive = { flex: 1, padding: "12px", backgroudColor: theme.cardBorder, color: "#fff", border: "none", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "13px", transition: "0.2s" };
+const vaultBtnActive = { flex: 1, padding: "12px", backgroudColor: theme.cardBorder, color: "#fff", border: "none", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "13px, transition: "0.2s" };
 const vaultBtnInactive = { flex: 1, padding: "12px", backgroundColor: "transparent", color: theme.textMuted, border: "none", borderRadius: "8px", fontWeight: "600", cursor: "pointer", fontSize: "13px", transition: "0.2s" };
 
 // ==========================================
