@@ -148,7 +148,7 @@ const KnowledgeBase = () => {
             <h3 style={{ marginBottom: "12px", fontSize: "18px", margin: 0 }}>Dual Vault System</h3>
             <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Choose the Flex Vault for a liquid escape hatch, or commit to the Iron Vault's strict cycles to maximize yield generation.</p>
           </div>
-          <div style={cardStyle}>
+          <div style={cardStyle}
             <div style={iconBox(theme.success)}><Anchor size={24} color={theme.success} /></div>
             <h3 style={{ marginBottom: "12px", fontSize: "18px", margin: 0 }}>Partner Yield Integration</h3>
             <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Iron Vault duration rules are mathematically hardcoded to map perfectly with our institutional yield generation partners.</p>
