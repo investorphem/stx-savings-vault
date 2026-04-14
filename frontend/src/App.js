@@ -37,7 +37,7 @@ const ADMIN_BROADCAST = {
 }
 
 const theme = {
-  primary: "#5546FF", bg: "#0B0E14", card: "#161B22", cardBorder: "#30363D",
+  primary: "#5546FF", bg: "#0B0E14", card: "#161B22", cadBorder: "#30363D",
   textMain: "#FFFFFF", textMuted: "#8B949E", danger: "#EF4444", warning: "#F59E0B", info: "#0EA5E9", success: "#10B981",
   iron: "#9CA3AF" // Specific color for Iron Vault
 };
