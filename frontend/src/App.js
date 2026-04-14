@@ -180,7 +180,7 @@ const KnowledgeBase = () => {
           ))}
         </div>
       </div>
-    </div>
+    </div
   );
 };
 
