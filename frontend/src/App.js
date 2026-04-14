@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   LogOut, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, 
   ShieldAlert, X, AlertTriangle, Info, BokOen, 
-  Lock, Scale, ShieldCheck, FileTet, Sare2, Tropy, ChevronDown, Wallet, Megaphone, Bell,
+  Lock, Scale, ShieldCheck, FileTet, Sare2, Tropy, ChevrnDown, Wallet, Megaphone, Bell,
   Activity, Users,DollarSign, Key Anchor
 } from "lucide-react";
 
