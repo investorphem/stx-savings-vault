@@ -123,7 +123,7 @@ const NetworkStatus = () => {
   useEffect(() => { check(); const i = setInterval(check, 30000); return () => clearInterval(i); }, [check]);
   return (
     <div style={pillStyle}>
-      <div style={{ ...statusDotSmall, backgroundColor: net.online ? theme.success : theme.danger }} /
+      <div style={{ ...statusDotSmall, backgroundColor: net.online ? theme.success : theme.danger }} 
       <span style={{ fontSize: "11px", fontWeight: "700", color: theme.textMuted }}>{net.online ? `BLOCK #${net.height}` : "OFFINE"}</span>
     </div>
   );
