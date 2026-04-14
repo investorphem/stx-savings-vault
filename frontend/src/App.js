@@ -10,34 +10,35 @@ import {
   makeStandardSTXPostCondition,
   callReadOnlyFunction, 
   cvToJSON 
-} from "@stacks/transactions"
+} from "@stacks/transactions";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LogOut, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, 
-  ShieldAlert, X, AlertTriangle, Info, BokOen, 
-  Lock, Scale, ShieldCheck, FileTet, Sare2, Tropy, ChevrnDown, Walet, Megaphone, Bell,l
-  Activity, Users,DollarSign, Key Anchor
+  ShieldAlert, X, AlertTriangle, Info, BookOpen, 
+  Lock, Scale, ShieldCheck, FileText, Share2, Trophy, ChevronDown, Wallet, Megaphone, Bell,
+  Activity, Users, DollarSign, Key, Anchor
 } from "lucide-react";
 
 // ==========================================
 // 1. CONFIGURATION & THEME
-// =========================================
+// ==========================================
 const APP_VERSION = "11.1.0";
 const IS_MAINTENANCE = false;
-const ADMIN_ADDRESS = "SPYURMAINNETADDRESSHERE";
-const contractAddress = "SYOURMAINNETADDRESSHERE";
+
+const ADMIN_ADDRESS = "SPYOURMAINNETADDRESSHERE"; 
+const contractAddress = "SPYOURMAINNETADDRESSHERE"; 
 const contractName = "stx-vault-v11"; // Upgraded to v11 for Iron Vault
 
 const ADMIN_BROADCAST = {
   id: "broadcast-004",
   title: "Dual Vault Isolation Complete",
-  message: "Flex and Iron vaults are now fully separated. Iron Vault durations are rigidly enforced for partner yield."
+  message: "Flex and Iron vaults are now fully separated. Iron Vault durations are rigidly enforced for partner yield.",
   type: "success", 
-  date: "Mar 26, 2026
-}
+  date: "Mar 26, 2026"
+};
 
 const theme = {
-  primary: "#5546FF", bg: "#0B0E14", card: "#161B22", cadBorder: "#30363D",
+  primary: "#5546FF", bg: "#0B0E14", card: "#161B22", cardBorder: "#30363D",
   textMain: "#FFFFFF", textMuted: "#8B949E", danger: "#EF4444", warning: "#F59E0B", info: "#0EA5E9", success: "#10B981",
   iron: "#9CA3AF" // Specific color for Iron Vault
 };
@@ -72,7 +73,7 @@ const exitBtn = { backgroundColor: "rgba(239,68,68,0.1)", border: `1px solid ${t
 const addressPill = { backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, padding: "8px 12px", borderRadius: "10px", fontSize: "13px", fontWeight: "700", color: theme.primary };
 const badge = { color: theme.primary, border: `1px solid ${theme.primary}`, padding: "6px 16px", borderRadius: "100px", fontSize: "12px", fontWeight: "900", marginBottom: "20px", display: "inline-block", letterSpacing: "1.5px" };
 const heroBtn = { backgroundColor: theme.primary, color: "#fff", padding: "18px 48px", borderRadius: "14px", fontSize: "18px", fontWeight: "800", border: "none", cursor: "pointer", display: "inline-flex", alignItems: "center" };
-const shareBtn = { width: "100%", padding: "12px", marginTop: "15px", borderRadius: "10px", backgroundColor: "#000", border: `1px solid${theme.cardBorder}`, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "13px", fontWeight: "700", cursor: "pointer" };
+const shareBtn = { width: "100%", padding: "12px", marginTop: "15px", borderRadius: "10px", backgroundColor: "#000", border: `1px solid ${theme.cardBorder}`, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "13px", fontWeight: "700", cursor: "pointer" };
 const statusDotSmall = { width: "6px", height: "6px", borderRadius: "50%", marginRight: "8px" };
 const pillStyle = { display: "flex", alignItems: "center", backgroundColor: "rgba(255,255,255,0.03)", padding: "6px 12px", borderRadius: "100px", border: `1px solid ${theme.cardBorder}` };
 const cardHead = { display: "flex", alignItems: "center", gap: "10px", margin: 0 };
@@ -93,19 +94,19 @@ const legalContent = { backgroundColor: theme.card, padding: "30px", borderRadiu
 const legalScrollArea = { height: "220px", overflowY: "auto", padding: "20px", backgroundColor: "#000", borderRadius: "12px", marginBottom: "20px", border: `1px solid ${theme.cardBorder}` };
 const legalHeading = { fontSize: "14px", color: theme.primary, marginBottom: "8px", margin: 0 };
 const legalText = { fontSize: "13px", color: theme.textMuted, marginBottom: "20px", lineHeight: "1.6" };
-const confirmBtn = { flex: 1, padding: "14px", backgroundColor: theme.danger, color: "#fff", border: "none", borderRadius: "12px", fontWeight: "700", cursor: "pointer" }
+const confirmBtn = { flex: 1, padding: "14px", backgroundColor: theme.danger, color: "#fff", border: "none", borderRadius: "12px", fontWeight: "700", cursor: "pointer" };
 const secondaryBtn = { flex: 1, padding: "14px", backgroundColor: "#30363D", color: "#fff", border: "none", borderRadius: "12px", fontWeight: "700", cursor: "pointer" };
-const dangerBtn = { backgroundColor: "transparent", color: theme.danger, border: `1px solid ${theme.danger}`, padding: "10px", borderRadius: "10px", fontSize: "12px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6x" };
+const dangerBtn = { backgroundColor: "transparent", color: theme.danger, border: `1px solid ${theme.danger}`, padding: "10px", borderRadius: "10px", fontSize: "12px", fontWeight: "700", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" };
 const maintCard = { textAlign: "center", padding: "100px 20px", backgroundColor: theme.card, borderRadius: "30px", border: `1px solid ${theme.cardBorder}` };
 const bellBtn = { background: "transparent", border: "none", cursor: "pointer", position: "relative", padding: "8px", display: "flex", alignItems: "center" };
-const badgeStyle = { position: "absolute", top: "0px", right: "2px", backgroundColor: theme.danger, color: "#fff", fontSize: "1px", fontWeight: "900", height: "16px", width: "16px", borderRadius: "50%", display: "flex", justifyContent: "center", alignItems: "center", border: `2px solid ${theme.bg}` };
-const notifDropdown = { position: "absolute", top: "45px", right: "-10px", width: "320px", backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, borderRadius: "16px", boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000, overflow: "hidden" ;
+const badgeStyle = { position: "absolute", top: "0px", right: "2px", backgroundColor: theme.danger, color: "#fff", fontSize: "10px", fontWeight: "900", height: "16px", width: "16px", borderRadius: "50%", display: "flex", justifyContent: "center", alignItems: "center", border: `2px solid ${theme.bg}` };
+const notifDropdown = { position: "absolute", top: "45px", right: "-10px", width: "320px", backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, borderRadius: "16px", boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000, overflow: "hidden" };
 const notifItem = { padding: "12px", backgroundColor: "rgba(255,255,255,0.02)", borderRadius: "8px", marginBottom: "8px" };
 const sectionTitle = { fontSize: "28px", fontWeight: "800", marginBottom: "30px", textAlign: "center", color: theme.textMain };
 const iconBox = (color) => ({ width: "56px", height: "56px", borderRadius: "16px", backgroundColor: `${color}1A`, display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" });
 
-const vaultTypeContainer = { display: "flex", backgroundColor:"#000", borderRadius: "12px", padding: "6px", marginBottom: "24px", border: `1px solid ${theme.cardBorder}` }
-const vaultBtnActive = { flex: 1, padding: "12px", backgroudColor: theme.cardBorder, color: "#fff", border: "none", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "13px, transition: "0.2s" };
+const vaultTypeContainer = { display: "flex", backgroundColor: "#000", borderRadius: "12px", padding: "6px", marginBottom: "24px", border: `1px solid ${theme.cardBorder}` };
+const vaultBtnActive = { flex: 1, padding: "12px", backgroundColor: theme.cardBorder, color: "#fff", border: "none", borderRadius: "8px", fontWeight: "700", cursor: "pointer", fontSize: "13px", transition: "0.2s" };
 const vaultBtnInactive = { flex: 1, padding: "12px", backgroundColor: "transparent", color: theme.textMuted, border: "none", borderRadius: "8px", fontWeight: "600", cursor: "pointer", fontSize: "13px", transition: "0.2s" };
 
 // ==========================================
@@ -117,14 +118,14 @@ const NetworkStatus = () => {
     try {
       const res = await fetch("https://api.mainnet.hiro.so/v2/info");
       const data = await res.json();
-      setNet({ online: true, height: data.stacks_tip_height })
+      setNet({ online: true, height: data.stacks_tip_height });
     } catch { setNet({ online: false, height: 0 }); }
   }, []);
   useEffect(() => { check(); const i = setInterval(check, 30000); return () => clearInterval(i); }, [check]);
   return (
     <div style={pillStyle}>
-      <div style={{ ...statusDotSmall, backgroundColor: net.online ? theme.success : theme.danger }} 
-      <span style={{ fontSize: "11px", fontWeight: "700", color: theme.textMuted }}>{net.online ? `BLOCK #${net.height}` : "OFFINE"}</span>
+      <div style={{ ...statusDotSmall, backgroundColor: net.online ? theme.success : theme.danger }} />
+      <span style={{ fontSize: "11px", fontWeight: "700", color: theme.textMuted }}>{net.online ? `BLOCK #${net.height}` : "OFFLINE"}</span>
     </div>
   );
 };
@@ -141,13 +142,13 @@ const KnowledgeBase = () => {
     <div style={{ display: "flex", flexDirection: "column", gap: "60px", padding: "20px 0" }}>
       <div>
         <h2 style={sectionTitle}>Multi-Asset Diamond Hands</h2>
-        <div style={{ display: "grid", gridTemplateClumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
           <div style={cardStyle}>
             <div style={iconBox(theme.primary)}><Lock size={24} color={theme.primary} /></div>
             <h3 style={{ marginBottom: "12px", fontSize: "18px", margin: 0 }}>Dual Vault System</h3>
-            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Choose the Flex Vault for a liquid escape htch, or commit to the Iron Vault's strict cycles to maximize yield generation.</p>
+            <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Choose the Flex Vault for a liquid escape hatch, or commit to the Iron Vault's strict cycles to maximize yield generation.</p>
           </div>
-          <div style={cardStyle}
+          <div style={cardStyle}>
             <div style={iconBox(theme.success)}><Anchor size={24} color={theme.success} /></div>
             <h3 style={{ marginBottom: "12px", fontSize: "18px", margin: 0 }}>Partner Yield Integration</h3>
             <p style={{ color: theme.textMuted, fontSize: "14px", lineHeight: "1.6" }}>Iron Vault duration rules are mathematically hardcoded to map perfectly with our institutional yield generation partners.</p>
@@ -163,14 +164,14 @@ const KnowledgeBase = () => {
         <h2 style={sectionTitle}>Frequently Asked Questions</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {faqs.map((faq, index) => (
-            <div key={index} style={{ ...cardStyle, padding: "24px", cursor: "pointer" }} onClick={() => setOpenFaq(openFaq === index ? nll : index)}>
+            <div key={index} style={{ ...cardStyle, padding: "24px", cursor: "pointer" }} onClick={() => setOpenFaq(openFaq === index ? null : index)}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <h4 style={{ fontSize: "16px", margin: 0 }}>{faq.q}</h4>
                 <ChevronDown size={20} style={{ transform: openFaq === index ? "rotate(180deg)" : "rotate(0deg)", transition: "0.2s" }} color={theme.textMuted} />
               </div>
               <AnimatePresence>
                 {openFaq === index && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}>
                     <p style={{ color: theme.textMuted, fontSize: "14px", marginTop: "16px", lineHeight: "1.6", margin: "16px 0 0 0" }}>{faq.a}</p>
                   </motion.div>
                 )}
@@ -179,7 +180,7 @@ const KnowledgeBase = () => {
           ))}
         </div>
       </div>
-    </div
+    </div>
   );
 };
 
@@ -290,21 +291,21 @@ const AdminPanel = ({ history }) => {
 function App() {
   const [userData, setUserData] = useState(null);
   const [dynamicAssets, setDynamicAssets] = useState({ STX: { symbol: "STX", decimals: 1000000, isToken: false, balance: 0 } });
-  
+
   // Isolated Vault States
   const [vaultType, setVaultType] = useState("flex"); 
   const [flexAsset, setFlexAsset] = useState("STX");
   const [ironAsset, setIronAsset] = useState("STX"); // Usually STX only for native yield, but keeping dynamic
-  
+
   const [flexVaultData, setFlexVaultData] = useState({ amount: 0, unlock: 0 });
   const [ironVaultData, setIronVaultData] = useState({ amount: 0, unlock: 0 });
-  
+
   const [flexAmount, setFlexAmount] = useState("");
   const [flexLockDays, setFlexLockDays] = useState("");
-  
+
   const [ironAmount, setIronAmount] = useState("");
   const [ironLockDuration, setIronLockDuration] = useState("90"); // Default 90 day cycle
-  
+
   const [networkHeight, setNetworkHeight] = useState(0); 
   const [history, setHistory] = useState([]);
   const [isPending, setIsPending] = useState(false);
@@ -384,7 +385,7 @@ function App() {
     try {
       const res = await fetch(`https://api.mainnet.hiro.so/extended/v1/address/${address}/balances`);
       const data = await res.json();
-      
+
       const stxBal = Number(data.stx.balance) / 1000000;
       const parsedAssets = { STX: { symbol: "STX", decimals: 1000000, isToken: false, balance: stxBal } };
 
@@ -423,7 +424,7 @@ function App() {
       const result = await callReadOnlyFunction({
         network: new StacksMainnet(), contractAddress, contractName, functionName, functionArgs, senderAddress: address,
       });
-      
+
       const json = cvToJSON(result);
       if (json?.value) {
         const payload = { amount: Number(json.value.amount.value) / asset.decimals, unlock: Number(json.value["unlock-block"].value) };
@@ -455,11 +456,11 @@ function App() {
     const targetAsset = isFlex ? flexAsset : ironAsset;
     const targetAmount = isFlex ? flexAmount : ironAmount;
     const targetDays = isFlex ? flexLockDays : ironLockDuration;
-    
+
     const asset = dynamicAssets[targetAsset];
     if (!targetAmount || !userData || !asset) return;
     setIsPending(true);
-    
+
     const amountMicro = BigInt(Math.floor(Number(targetAmount) * asset.decimals));
     const address = userData.profile.stxAddress.mainnet;
 
@@ -617,7 +618,7 @@ function App() {
               <span style={{ fontSize: "12px", color: theme.success, fontWeight: "700" }}>Avail: {currentAssetObj.balance.toLocaleString()} {ironAsset}</span>
             </div>
             <input type="number" placeholder={`Amount (${ironAsset})`} value={ironAmount} onChange={e=>setIronAmount(e.target.value)} style={inputStyle}/>
-            
+
             {/* ENFORCED DURATION SELECTOR FOR YIELD PARTNER */}
             <div style={{ position: "relative", width: "100%" }}>
                 <select value={ironLockDuration} onChange={(e) => setIronLockDuration(e.target.value)} style={selectDropdownStyle}>
