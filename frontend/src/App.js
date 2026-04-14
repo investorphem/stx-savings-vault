@@ -171,7 +171,7 @@ const KnowledgeBase = () => {
               </div>
               <AnimatePresence>
                 {openFaq === index && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}>
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: "hidden" }}
                     <p style={{ color: theme.textMuted, fontSize: "14px", marginTop: "16px", lineHeight: "1.6", margin: "16px 0 0 0" }}>{faq.a}</p>
                   </motion.div>
                 )}
