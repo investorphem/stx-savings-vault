@@ -100,7 +100,7 @@ const dangerBtn = { backgroundColor: "transparent", color: theme.danger, border:
 const maintCard = { textAlign: "center", padding: "100px 20px", backgroundColor: theme.card, borderRadius: "30px", border: `1px solid ${theme.cardBorder}` };
 const bellBtn = { background: "transparent", border: "none", cursor: "pointer", position: "relative", padding: "8px", display: "flex", alignItems: "center" };
 const badgeStyle = { position: "absolute", top: "0px", right: "2px", backgroundColor: theme.danger, color: "#fff", fontSize: "1px", fontWeight: "900", height: "16px", width: "16px", borderRadius: "50%", display: "flex", justifyContent: "center", alignItems: "center", border: `2px solid ${theme.bg}` };
-const notifDropdown = { position: "absolute", top: "45px", right: "-10px", width: "320px", backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, borderRadius: "16px", boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000, overflow: "hidden" };
+const notifDropdown = { position: "absolute", top: "45px", right: "-10px", width: "320px", backgroundColor: theme.card, border: `1px solid ${theme.cardBorder}`, borderRadius: "16px", boxShadow: "0 10px 40px rgba(0,0,0,0.5)", zIndex: 1000, overflow: "hidden" ;
 const notifItem = { padding: "12px", backgroundColor: "rgba(255,255,255,0.02)", borderRadius: "8px", marginBottom: "8px" };
 const sectionTitle = { fontSize: "28px", fontWeight: "800", marginBottom: "30px", textAlign: "center", color: theme.textMain };
 const iconBox = (color) => ({ width: "56px", height: "56px", borderRadius: "16px", backgroundColor: `${color}1A`, display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" });
