@@ -32,7 +32,7 @@ const contractName = "stx-vault-v11"; // Upgraded to v11 for Iron Vault
 const ADMIN_BROADCAST = {
   id: "broadcast-004",
   title: "Dual Vault Isolation Complete",
-  message: "Flex and Iron vaults are now fully separated. Iron Vault durations are rigidly enforced for partner yield.",
+  message: "Flex and Iron vaults are now fully separated. Iron Vault durations are rigidly enforced for partner yield."
   type: "success", 
   date: "Mar 26, 2026
 }
