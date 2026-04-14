@@ -24,7 +24,7 @@ import {
 // =========================================
 const APP_VERSION = "11.1.0";
 const IS_MAINTENANCE = false;
-const ADMIN_ADDRESS = "SPYURMAINNETADDRESSHERE"; 
+const ADMIN_ADDRESS = "SPYURMAINNETADDRESSHERE";
 const contractAddress = "SYOURMAINNETADDRESSHERE";
 const contractName = "stx-vault-v11"; // Upgraded to v11 for Iron Vault
 
