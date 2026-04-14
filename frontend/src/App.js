@@ -10,7 +10,7 @@ import {
   makeStandardSTXPostCondition,
   callReadOnlyFunction, 
   cvToJSON 
-} from "@stacks/transactions";
+} from "@stacks/transactions"
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LogOut, ArrowUpRight, Loader2, Coins, Clock, RefreshCw, 
