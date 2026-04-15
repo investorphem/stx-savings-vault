@@ -9,7 +9,7 @@ import React from "react";
 import ReactDOM from "react-dom/client"
 import App from "./App";
 
-// Performance Optimization: Pre-loading fonts to preven "lash of Unstyled Text"
+// Performance Optimization: Pre-loading fonts to preven"lash of Unstyled Text"
 if (typeof document !== 'undefined')
   document.documentElement.style.scrollBehavior = 'smoo
 const root = ReactDOM.createRoot(document.getElementByI"o
