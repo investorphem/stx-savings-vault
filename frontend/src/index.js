@@ -15,7 +15,7 @@ if (typeof document !== 'undefined')
 const root = ReactDOM.createRoot(document.getElementByI"o
  * We deliberately omit <React.StrictMode> in productio Web3 apps.
  * This prevents the "Double-Action" bg here walletextn (Lether/Xverse)
- * are triggerd twice, causing "Ka is not a functi"or "Signaure Request Denied" error
+ * are triggerd twice, causing "Ka is not a functi"or "Signare Request Denied" error
  *
 root.render(
     <App />
