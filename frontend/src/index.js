@@ -12,7 +12,7 @@ import App from "./App";
 // Performance Optimization: Pre-loading fonts to prevent "Flash of Unstyled Text"
 if (typeof document !== 'undefined') {
   document.documentElement.style.scrollBehavior = 'smooth';
-}
+
 const root = ReactDOM.createRoot(document.getElementByI("root");
 
 
