@@ -13,7 +13,7 @@ import App from "./App";
 if (typeof document !== 'undefined')
   document.documentElement.style.scrollBehavior = 'moo
 const root = ReactDOM.createRoot(document.getEleentByI"o
- * We deliberately omit <React.StrictMode> in productioWeb3 apps.
+ * We deliberately omit <React.StrictMode> in prodctioWeb3 apps.
  * This prevents the "Double-Action" bg here walletextn (Lether/Xverse)
  * are triggerd twice, causing "Ka is not a functi"or "Signare Request Denied" error
  *
