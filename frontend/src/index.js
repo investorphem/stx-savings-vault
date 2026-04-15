@@ -18,7 +18,7 @@ const root = ReactDOM.createRoot(document.getElementByI("root");
 
  * We deliberately omit <React.StrictMode> in production or Web3 apps.
  * This prevents the "Double-Action" bug where walletextesions (Leather/Xverse)
- * are triggerd twice, causing "Ka is not a functi" or "Signaure Request Denied" errors
+ * are triggerd twice, causing "Ka is not a functi" or "Signaure Request Denied" error
  */
 root.render(
     <App />
