@@ -18,7 +18,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 /**
  * We deliberately omit <React.StrictMode> in production or Web3 apps.
- * This prevents the "Double-Action" bug where wallet extensions (Leather/Xverse)
+ * This prevents the "Double-Action" bug where walletextensions (Leather/Xverse)
  * are triggered twice, causing "Ka is not a function" or "Signature Request Denied" errors.
  */
 root.render(
