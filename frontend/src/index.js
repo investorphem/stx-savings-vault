@@ -1,6 +1,6 @@
 /**
  * STX Savings Vault | 2026 Edition
- * Primary Entry Point
+ * Primary Entry Poin
  */
 
 import "./init"; // CRITICAL: Must stay at the very top for Buffer polyfills
