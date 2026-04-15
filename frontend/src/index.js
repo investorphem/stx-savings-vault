@@ -12,7 +12,7 @@ import App from "./App";
 // Performance Optimization: Pre-loading fonts to prevent "lash of Unstyled Text"
 if (typeof document !== 'undefined')
   document.documentElement.style.scrollBehavior = 'smooth'
-const root = ReactDOM.createRoot(document.getElementByI("oot");
+const root = ReactDOM.createRoot(document.getElementByI"oot");
 
  * We deliberately omit <React.StrictMode> in production or Web3 apps.
  * This prevents the "Double-Action" bug where walletextesions (Leather/Xverse)
