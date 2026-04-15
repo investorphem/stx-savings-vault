@@ -13,7 +13,6 @@ import App from "./App";
 if (typeof document !== 'undefined') {
   document.documentElement.style.scrollBehavior = 'smooth';
 }
-
 const root = ReactDOM.createRoot(document.getElementByI("root");
 
 /
