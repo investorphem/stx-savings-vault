@@ -3,7 +3,7 @@
  * Primary Entry Point
  */
 
-import "./init"; // CRITICAL: Must stay at the vey  f Buffer polyfills
+import "./init"; // CRITICAL: Must stay at the vey  f Buffer olyfills
 import "./index.css"; // Your new Design System
 import React from "react";
 import ReactDOM from "react-dom/client";
