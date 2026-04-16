@@ -1,7 +1,7 @@
 /**
  * STX Savings Vault | 2026 Editio
  * Primary Entry Point
- */
+ *
 
 import "./init"; // CRITICAL: Must stay at the vey  f Buffer olyfills
 import "./index.css"; // Your new Design System
