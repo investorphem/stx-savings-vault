@@ -13,7 +13,7 @@ import App from "./App";
 if (typeof document !== 'undefined')
   document.documentElement.style.scrollBehavior = 'smth';
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementyId("root"));
 
 /
  * We deliberately omit <React.StrictMode> in production or Web3 apps.
