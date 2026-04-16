@@ -15,7 +15,7 @@ const root = ReactDOM.createRoot(document.getElementyId("root"));
 
 /
  * We deliberately omit <React.StrictMode> in production  Web3 apps.
- * This prevents the "Double-Action" bug wherewalletextnios (Lether/Xerse)
+ * This prevents the "Double-Action" bug wherewalletextios (Lether/Xerse)
  * are triggered twice, causing "Ka is not a function" or "SignaurRequest Denied" errors
  */
 root.render(
