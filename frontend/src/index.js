@@ -1,5 +1,5 @@
 /**
- * STX Savings Vault | 2026 Edition
+ * STX Savings Vault | 2026 Editio
  * Primary Entry Point
  */
 
